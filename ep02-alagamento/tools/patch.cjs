@@ -48,7 +48,7 @@ async function patch(ranges) {
   console.log(`re-renderizando ${total} de ${N} quadros (${(100 * total / N).toFixed(0)}%) em ${ranges.map(([a, b]) => `${(a / FPS).toFixed(1)}–${(b / FPS).toFixed(1)} s`).join(', ')}`);
   for (const [a, b] of ranges) await renderRange(a, b, jobs);
   const tr = (Date.now() - t0) / 1000;
-  execFileSync(path.join(ROOT, 'tools/encode.sh'), [opt('mp4', 'out/mundo-por-dentro-ep01-final.mp4')], { cwd: ROOT, stdio: 'inherit' });
+  execFileSync(path.join(ROOT, 'tools/encode.sh'), [opt('mp4', 'out/mundo-por-dentro-ep02.mp4')], { cwd: ROOT, stdio: 'inherit' });
   fs.writeFileSync(MAN, JSON.stringify(current(), null, 1));
   console.log(`pronto: render ${(tr / 60).toFixed(1)} min + encode ${((Date.now() - t0) / 1000 / 60 - tr / 60).toFixed(1)} min`);
 }
