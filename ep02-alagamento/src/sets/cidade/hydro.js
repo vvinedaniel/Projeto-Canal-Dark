@@ -36,6 +36,7 @@ export function builds(st) {
     inlets: lin(34.25, 36.9, st),         // bocas de lobo (uma após a outra)
     gallery: lin(37.12, 40.1, st),        // galeria: aduelas de montante para jusante, depois as ligações
     canal: lin(40.65, 44.2, st),          // canal, bueiro sob a avenida, cabeceira e comporta no rio
+    plazaOut: lin(72.4, 73.9, st),        // praça desmontada (bancos, árvores, piso) antes da escavação
     reservoir: lin(73.6, 79.47, st),      // piscinão: escavação → estrutura → ligações → acabamento
     enlarge: lin(87.91, 89.6, st),        // galeria ampliada + bocas de lobo extras
     clean: lin(88.0, 89.0, st),           // limpeza do lixo das grelhas
