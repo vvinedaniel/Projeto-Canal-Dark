@@ -53,10 +53,26 @@ export function buildStreets(ctx, K) {
 
   /* ---------- asfalto, fresco, brita, terra ---------- */
   const paved = {};
+  // bocas de lobo: a drenagem publica shared.inletBoxK(x, S) (abertura da caixa); sem ela, limiares próprios
+  const inletOpen = (x, extra, i = 0, n = 1) => (S) => (shared.inletBoxK ? shared.inletBoxK(x, S) > 0.001 : extra ? S.build.enlarge > 0.01 : S.build.inlets > i / n + 0.002);
+  const HOLES = [...Lo.INLETS.map((x, i) => ({ x, open: inletOpen(x, false, i, Lo.INLETS.length) })), ...Lo.INLETS_EXTRA.map((x) => ({ x, open: inletOpen(x, true) }))];
+  const HZ = [22.74, 23.47], HW = 0.52;
   for (const k in ST) {
     const st = ST[k], o = { lat: st.lat, dir: 1, closed: false, uv: 4 };
     const mk = (v, m) => { const r = new Revealer(pieces(st, st.s0, st.s1, { ...o, prof: flatP(st.W, v) }), m, { cast: false }); root.add(r.mesh); return r; };
-    paved[k] = { dirt: mk(YD, dirtM), gravel: mk(YB, gravelM), asphalt: mk(YA, asphaltM), fresh: mk(YF, freshM) };
+    paved[k] = { dirt: mk(YD, dirtM), gravel: mk(YB, gravelM), asphalt: mk(YA, asphaltM), fresh: mk(YF, freshM), holes: [] };
+    if (k === 'A') { // furos no asfalto sobre as grelhas das bocas de lobo (abrem quando a drenagem começa cada boca)
+      root.remove(paved.A.asphalt.mesh);
+      const pcs = [], xs = [A.x0, A.x1]; HOLES.forEach((h) => xs.push(h.x - HW, h.x + HW)); xs.sort((a, b) => a - b);
+      for (let i = 0; i < xs.length - 1; i++) {
+        const a = xs[i], b = xs[i + 1], m = (a + b) / 2, h = HOLES.find((q) => Math.abs(q.x - m) < HW);
+        if (b - a < 1e-3) continue;
+        if (!h) { pcs.push(...pieces(st, a, b, { ...o, prof: flatP(st.W, YA) })); continue; }
+        pcs.push(...pieces(st, a, b, { ...o, prof: flatP(HZ[0] - A.z0, YA) }), ...pieces(st, a, b, { ...o, lat: HZ[1], prof: flatP(A.z1 - HZ[1], YA) }));
+        const r = new Revealer(pieces(st, a, b, { ...o, lat: HZ[0], prof: flatP(HZ[1] - HZ[0], YA, 1) }), asphaltM, { cast: false }); root.add(r.mesh); paved.A.holes.push({ r, h });
+      }
+      paved.A.asphalt = new Revealer(pcs, asphaltM, { cast: false }); root.add(paved.A.asphalt.mesh);
+    }
   }
   // tabuleiro da ponte (avenida D sobre o canal): laje, vigas, guarda-corpos — junto com o asfalto da avenida
   const BR = { z0: 24.3, z1: ZF + 0.005 };
@@ -79,12 +95,16 @@ export function buildStreets(ctx, K) {
     bridge.add(r.mesh(vmat({ roughness: 0.5, metalness: 0.4 })));
   }
   L.shadows(bridge);
+  // apoio da laje sobre o teto do bueiro (topo em CANAL.invert(x) + 1,95): aterro/encontro de concreto, com o canal pronto
+  const fill = (() => { const m = new Merge(), n = 8, zc = (BR.z0 + BR.z1) / 2, dz = BR.z1 - BR.z0;
+    for (let i = 0; i < n; i++) { const x0 = D.x0 - 0.25 + ((D.x1 - D.x0 + 0.5) * i) / n, x1 = x0 + (D.x1 - D.x0 + 0.5) / n, xm = (x0 + x1) / 2, yb = Lo.CANAL.invert(xm) + 1.95, yt = H(xm, zc) - 0.44;
+      if (yt > yb) m.add(G.box(x1 - x0 + 0.002, yt - yb, dz), i % 2 ? '#b4b9bd' : '#babfc3', TM(xm, (yb + yt) / 2, zc)); }
+    const f = m.mesh(vmat({ roughness: 0.9 })); root.add(f); L.shadows(f); return f; })();
 
   /* ---------- guias, sarjetas, calçadas ----------
      Grupos com regra de visibilidade própria (bocas de lobo, jardins, calçada permeável). */
   const groups = []; // { rev, kind, st, rule(S) -> bool }
   const add = (st, a, b, o, m, rule = null, kind = 'walk') => { const r = new Revealer(pieces(st, a, b, o), m); root.add(r.mesh); groups.push({ rev: r, st, rule, kind }); return r; };
-  const inletRule = (i, n, key) => (S) => !(S.build[key] > (key === 'inlets' ? i / n + 0.002 : 0.01));
   // jardins / calçada permeável: o módulo verde decide quando a calçada sai (shared.greenWalkHidden); senão, limiar próprio
   const greenHidden = (id, S, fb) => (shared.greenWalkHidden ? shared.greenWalkHidden(id, S) : fb);
   const gardenRule = (gi) => (S) => !greenHidden(Lo.GARDENS[gi].id, S, S.build.gardens > gi / 4 + 0.002);
@@ -99,8 +119,9 @@ export function buildStreets(ctx, K) {
     }
     return out;
   }
-  const IW = Lo.INLET.w / 2 + 0.15;
-  const inletZones = [...Lo.INLETS.map((x, i) => ({ x0: x - IW, x1: x + IW, rule: inletRule(i, Lo.INLETS.length, 'inlets') })), ...Lo.INLETS_EXTRA.map((x) => ({ x0: x - IW, x1: x + IW, rule: inletRule(0, 1, 'enlarge') }))];
+  const IW = Lo.INLET.w / 2 + 0.15, CW = 0.6; // caixa (calçada) e vão da guia/sarjeta
+  const inletZones = HOLES.map((h) => ({ x0: h.x - IW, x1: h.x + IW, rule: (S) => !h.open(S) }));
+  const curbZones = HOLES.map((h) => ({ x0: h.x - CW, x1: h.x + CW, rule: (S) => !h.open(S) }));
   const gz = (g, gi) => ({ x0: g.x0, x1: g.x1, rule: gardenRule(gi) });
   const GD = Lo.GARDENS, PERM = Lo.PERMEABLE[1];
   // rampas de acessibilidade nas faixas de pedestre (guia rebaixada + calçada inclinada + piso tátil)
@@ -130,7 +151,7 @@ export function buildStreets(ctx, K) {
     });
     XW.A.forEach((x) => tactile.push([x, A.z0 - 1.35, 'x']));
     // frente (z = 23.5): guia, sarjeta e calçada interrompidas nas bocas de lobo; a calçada termina no corte (z = ZF)
-    split(A.x0, A.x1 - 0.15, [...inletZones, ...cF, ...rA]).forEach((p) => {
+    split(A.x0, A.x1 - 0.15, [...curbZones, ...cF, ...rA]).forEach((p) => {
       add(st, p.a, p.b, { lat: A.z1, dir: 1, prof: cp(p) }, curbM, rule(p), 'curb');
       add(st, p.a, p.b, { lat: A.z1, dir: -1, prof: gutterP }, gutterM, rule(p), 'curb');
     });
@@ -194,7 +215,7 @@ export function buildStreets(ctx, K) {
     zebraX('A', C.x0 - 2.2, A.z0 + 0.4, A.z1 - 0.4); zebraX('A', D.x0 - 2.2, A.z0 + 0.4, A.z1 - 0.4);
     zebraX('B', C.x0 - 2.2, B.z0 + 0.4, B.z1 - 0.4);
     zebraX('C', XW.C[0], C.x0 + 0.4, C.x1 - 0.4); zebraX('C', XW.C[1], C.x0 + 0.4, C.x1 - 0.4);
-    band('A', 'W', A.x0 + 0.5, A.x1 - 0.5, A.z0 + 0.55, A.z0 + 0.67); band('A', 'W', A.x0 + 0.5, A.x1 - 0.5, A.z1 - 0.67, A.z1 - 0.55);
+    band('A', 'W', A.x0 + 0.5, A.x1 - 0.5, A.z0 + 0.55, A.z0 + 0.67); { const xs = [A.x0 + 0.5, ...HOLES.flatMap((h) => [h.x - HW - 0.1, h.x + HW + 0.1]).sort((a, b) => a - b), A.x1 - 0.5]; for (let i = 0; i < xs.length - 1; i += 2) if (xs[i + 1] - xs[i] > 0.2) band('A', 'W', xs[i], xs[i + 1], A.z1 - 0.67, A.z1 - 0.55); }
     dashes('B', 'Y', B.x0 + 1, B.x1 - 1, (B.z0 + B.z1) / 2);
     band('B', 'W', B.x0 + 0.5, B.x1 - 0.5, B.z0 + 0.55, B.z0 + 0.67); band('B', 'W', B.x0 + 0.5, B.x1 - 0.5, B.z1 - 0.67, B.z1 - 0.55);
     dashes('C', 'Y', B.z1 + 4.2, A.z0 - 4.2, (C.x0 + C.x1) / 2, 0.12, 1.5, 1.5);
@@ -262,6 +283,7 @@ export function buildStreets(ctx, K) {
       P.dirt.set(done || kd <= 0 ? -1 : len * kd + 0.01);
       P.gravel.set(done || kg <= 0 ? -1 : len * kg + 0.01);
       P.asphalt.set(roll > -5 ? Math.max(roll, -1) : -1);
+      P.holes.forEach(({ r, h }) => { if (h.open(S)) r.set(-1); else r.set(u >= 1 ? 1e9 : roll); });
       if (u > 0 && u < 1) P.fresh.range(Math.max(0, roll), screed); else P.fresh.set(-1);
       paint.Y[k].set(roll - 1.5); paint.W[k].set(roll - 1.5);
       if (u >= 1) { paint.Y[k].set(1e9); paint.W[k].set(1e9); P.asphalt.set(1e9); }
@@ -285,6 +307,7 @@ export function buildStreets(ctx, K) {
     tact.visible = kw > 0.95;
     // ponte e mobiliário
     const kb = L.prog(ka, 0, 0.35);
+    fill.visible = S.build.canal > 0.6 && kb > 0.5;
     bridge.visible = kb > 0.001; bridge.position.y = -2.5 * (1 - L.ease.out(kb));
     for (const p of posts) { const st = ST[p.st], k = L.clamp01(L.prog(kw, 0.6, 1) * 1.6 - (p.d / st.len) * 0.6); p.obj.visible = k > 0.001; p.obj.scale.set(1, Math.max(1e-3, L.ease.back(k)), 1); }
     K.xray(xrayMats, S.xray);
