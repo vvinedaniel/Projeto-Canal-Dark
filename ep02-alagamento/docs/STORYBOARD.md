@@ -3,10 +3,8 @@
 Narração recebida: `audio/narracao.mp3`, **114,9 s** (dentro da faixa 105–120 s; o vídeo terá ~116,5 s com a
 cartela final). 1080×1920, 30 fps, estilo "Maquete Viva 3D".
 
-> **Pendente:** o texto da narração. Não consigo transcrever o áudio aqui (os servidores de modelos de fala estão
-> bloqueados neste ambiente e a transcrição do ElevenLabs gastaria créditos). Os tempos abaixo são os **blocos
-> de fala medidos no áudio** (38 frases, pausas ≥ 0,22 s); a distribuição das 20 etapas por esses blocos é
-> provisória e será ajustada frase a frase assim que eu tiver o texto. O conteúdo visual de cada etapa não muda.
+Texto da narração: `docs/roteiro.txt`, alinhado aos 36 blocos de fala medidos no áudio (pausas ≥ 0,22 s).
+Os tempos abaixo são os reais de cada frase.
 
 ## Ideia central: uma única maquete que evolui
 
@@ -35,33 +33,35 @@ fique sem destino: toda tubulação desenhada termina no rio ou num reservatóri
 
 ## Storyboard (tempo provisório → frase do áudio → o que aparece)
 
-Gancho nos 3 primeiros segundos: começa **com a ação** — rua alagada com a água subindo até a porta de um carro e
-uma boca de lobo "afogada", câmera recuando para revelar a cidade inteira na chuva. Título "POR QUE A CIDADE
-ALAGA SE TEM BUEIRO?" no 1º quadro (padrão do ep01, sem fade de entrada).
+Gancho nos 3 primeiros segundos: começa **com a ação** (rua alagada, boca de lobo afogada) e com o título
+"POR QUE A CIDADE ALAGA SE TEM BUEIRO?" no 1º quadro (padrão do ep01, sem fade de entrada).
 
-| # | Tempo (prov.) | Etapa | Estado inicial → ação → consequência → resultado (visual) | Ciclo narrativo |
-|---|---|---|---|---|
-| 0 | 0,0–5,3 | **Gancho** | Rua alagada à noite, chuva forte, boca de lobo engolindo água sem dar conta, nível subindo na roda do carro → câmera recua: a cidade inteira na maquete, rio cheio ao fundo. Volta no tempo (rebobinar rápido: prédios descem para dentro do chão). | Curiosidade |
-| 1 | 5,3–9,3 | Terreno natural recebendo chuva | Terreno verde com mata, morro e rio calmo, solo em corte (camadas do ep01) → começa a chover (gotas instanciadas + respingos) → folhas e solo recebem a água → poças não se formam. | Curiosidade |
-| 2 | 9,3–16,9 | Infiltração e escoamento | Corte do solo: setas azuis descendo pelas camadas até o lençol freático; só um filete escorre pela encosta até o rio; raízes e serrapilheira seguram. Rótulos "Infiltra" × "Escoa". Nível do rio sobe pouco e devagar. | Curiosidade → Problema |
-| 3 | 16,9–22,4 | Construção progressiva da cidade | Chuva para. Montagem acelerada: ruas se desenham, lotes, casas sobem por camadas (fundação → paredes → telhado), árvores somem uma a uma. Mesmo morro, mesmo rio. | Problema |
-| 4 | 22,4–27,4 | Impermeabilização | Corte: asfalto, calçada e telhados cobrem o solo; as setas de infiltração ficam bloqueadas (setas batendo e desviando). Contador visual "solo coberto" crescendo. | Problema |
-| 5 | 27,4–33,8 | Acúmulo de água nas ruas | Mesma chuva da etapa 1 → a água não entra no chão: lâmina sobe nas sarjetas, corre ladeira abaixo e empoça no ponto baixo da rua. | Consequência |
-| 6 | 33,8–37,1 | Instalação das bocas de lobo | Close na guia: grelha + abertura lateral montadas peça a peça; caixa de captação em corte. | Solução |
-| 7 | 37,1–44,8 | Galerias subterrâneas | O asfalto "levanta" (desmontagem como no ep01): tubos de ligação descem das bocas de lobo para a galeria; galeria de concreto montada segmento a segmento, com caimento. Ao lado, o esgoto laranja menor, separado, rotulado. | Solução |
-| 8 | 44,8–48,7 | Conexão com o rio | Câmera segue a galeria até a margem: saída com comporta (válvula de retenção) e enrocamento; a galeria agora tem destino. | Solução |
-| 9 | 48,7–54,1 | Chuva normal | Barra de chuva em "normal". A água da rua entra nas bocas de lobo, enche a galeria até ~1/3, sai no rio. Rua seca, rio sobe um pouco. | Resultado |
-| 10 | 54,1–58,8 | Chuva intensa | Barra sobe para "intensa" (mais gotas, gotas maiores, céu mais escuro). Lâmina cresce mais rápido que as bocas de lobo engolem. | Novo problema |
-| 11 | 58,8–62,0 | Sobrecarga da drenagem | Galeria em corte enche até o topo (seção cheia, água pressurizada), água volta pelas bocas de lobo (jato saindo da grelha). Rótulo "Capacidade máxima". | Novo problema |
-| 12 | 62,0–66,6 | Obstrução por resíduos | Close: sacolas, garrafas e folhas arrastadas pela sarjeta tampam a grelha; a entrada de água cai (setas encolhem). | Consequência |
-| 13 | 66,6–73,1 | Rio sobe e não recebe | Corte na saída: nível do rio passa da boca da galeria, a comporta fecha / a água não tem para onde ir; refluxo na galeria. | Consequência |
-| 14 | 73,1–79,5 | Alagamento progressivo | Vista aérea da maquete: o ponto baixo alaga primeiro, a mancha d'água se espalha rua a rua, sobe nas calçadas, carros parados. Mesmo enquadramento do gancho, agora explicado. | Revelação parcial |
-| 15 | 79,5–84,3 | Reservatórios de contenção | Na praça baixa, um reservatório subterrâneo ("piscinão") é escavado e montado em corte; recebe o excesso da galeria e solta devagar para o rio depois da chuva. | Nova descoberta |
-| 16 | 84,3–87,9 | Ampliação da drenagem | Galeria troca de seção (maior), bocas de lobo extras e limpeza das grelhas (resíduos somem). | Solução |
-| 17 | 87,9–93,6 | Jardins de chuva, pavimento permeável e áreas verdes | Canteiros rebaixados nas calçadas, estacionamento com pavimento permeável (corte mostrando a água atravessando as camadas de brita), parque linear na margem do rio com várzea que pode encher. | Solução |
-| 18 | 93,6–99,6 | Nova simulação de chuva | Mesma chuva intensa da etapa 10 (barra no mesmo ponto). Parte infiltra nos jardins e no pavimento, o piscinão enche, a galeria trabalha cheia mas sem refluxo. | Resultado |
-| 19 | 99,6–106,9 | Antes × depois | Tela dividida com a **mesma maquete, mesmo instante, mesma chuva**: à esquerda a cidade sem melhorias (rua alagada), à direita com melhorias (lâmina rasa, ainda com água empoçada em pontos baixos). Texto "Mesma chuva". Nada fica totalmente seco. | Revelação |
-| 20 | 106,9–114,9 | Sistema completo | Recuo final: chuva → telhados → jardins/pavimento → bocas de lobo → galerias → piscinão → rio, com setas animadas por todo o caminho, e o esgoto seguindo separado para o tratamento. Fecho: "Menos alagamento, não alagamento zero" (só se a narração disser algo equivalente). Cartela final. | Revelação |
+| # | Tempo (s) | Narração | Etapa | Estado inicial → ação → consequência → resultado (visual) | Ciclo |
+|---|---|---|---|---|---|
+| 0 | 0,00–5,29 | "Se as ruas têm bueiros… por que as cidades continuam alagando?" | **Gancho** | 1º quadro já em ação: rua alagada, chuva forte, boca de lobo afogada, água subindo na roda do carro. Em "bueiros" a câmera mostra a grelha engolindo água sem dar conta; em "alagando" recua e revela a cidade inteira da maquete na chuva, rio cheio ao fundo. Título na tela. | Curiosidade |
+| 1 | 5,92–9,28 | "Pra entender isso, vamos começar antes de a cidade existir." | Volta no tempo | Rebobinar: a água recua, prédios descem para dentro do chão, o asfalto se enrola, a mata volta. Mesmo morro, mesma curva do rio. | Curiosidade |
+| 2 | 9,88–11,76 | "Quando chove sobre um terreno natural," | 1. Terreno natural recebendo chuva | Mata, campo e rio calmo; começa a chover (gotas + respingos nas folhas e no rio). Medidor de chuva aparece em "normal". | Curiosidade |
+| 3 | 12,12–14,02 | "parte da água penetra no solo," | 2. Infiltração | Corte do solo (camadas do ep01): setas e gotas descendo entre os grãos até o lençol freático; raízes e folhas no chão seguram. Rótulo "Infiltra". | — |
+| 4 | 14,27–16,85 | "enquanto outra parte escorre até os rios." | 2. Escoamento | Um filete escorre pela encosta e chega ao rio; rio sobe pouco e devagar. Rótulo "Escoa". Proporção visual: infiltra ≫ escoa. | Problema (semente) |
+| 5 | 17,37–22,38 | "Mas aí começamos a construir casas, prédios, calçadas e ruas de asfalto." | 3. Construção progressiva | Chuva para. Cada palavra = um batimento: casas sobem (fundação → paredes → telhado), prédios, calçadas, asfalto desenrolando nas 3 ruas; árvores somem. A cidade da maquete fica pronta. | Problema |
+| 6 | 22,96–27,37 | "O problema é que grande parte dessas superfícies não deixa a água passar." | 4. Impermeabilização | Corte de rua/calçada/telhado: gotas batem no asfalto e não entram (setas de infiltração bloqueadas, com X vermelho); o solo embaixo fica seco. | Problema |
+| 7 | 27,93–33,79 | "Então, aquela água que antes penetrava no solo começa a se acumular e correr pelas ruas." | 5. Acúmulo nas ruas | Mesma chuva "normal" da etapa 1 (medidor no mesmo ponto): lâmina nas sarjetas, enxurrada ladeira abaixo, poça crescendo no ponto baixo da rua. | Consequência |
+| 8 | 34,25–36,88 | "Pra resolver isso, instalamos bocas de lobo," | 6. Bocas de lobo | Close na guia: abertura lateral + grelha montadas peça a peça, caixa de captação em corte; a enxurrada começa a entrar. | Solução |
+| 9 | 37,12–40,10 | "conectadas a grandes tubulações debaixo da cidade." | 7. Galerias | O asfalto levanta (desmontagem como no ep01): ligações descem da boca de lobo para a galeria de concreto, montada aduela a aduela com caimento. Ao lado, o esgoto laranja/cinza, menor e separado. Rótulos: "Drenagem (chuva)" × "Esgoto (casas)". | Solução |
+| 10 | 40,65–44,83 | "Essas tubulações transportam a água da chuva até canais e rios." | 8. Conexão com canal e rio | Câmera segue a galeria: deságua num canal aberto de concreto (córrego canalizado) que chega ao rio, com saída com comporta. Setas correndo pelo caminho todo. O esgoto segue para a estação de tratamento ao fundo. | Solução |
+| 11 | 45,25–48,21 | "Mas existe um problema: elas têm um limite." | 9. Chuva normal | Chuva normal: a rua fica seca, a galeria em corte trabalha até ~1/3. Em "limite" aparece a linha tracejada "capacidade" no topo da seção. | Novo problema |
+| 12 | 48,73–50,73 | "Quando chove muito em pouco tempo," | 10. Chuva intensa | Medidor sobe para "intensa": mais gotas, maiores, céu escuro, trovão. | Novo problema |
+| 13 | 51,04–54,13 | "pode chegar mais água do que o sistema consegue transportar." | 11. Sobrecarga | A seção da galeria enche até a linha de capacidade e passa; a água volta pela grelha (jato saindo da boca de lobo); a lâmina na rua cresce. | Consequência |
+| 14 | 54,63–58,80 | "E se houver lixo bloqueando os bueiros, a situação fica ainda pior." | 12. Obstrução | Sacolas, garrafas, latas e folhas descem pela sarjeta e tampam a grelha; as setas de entrada encolhem; a poça cresce mais rápido. | Consequência |
+| 15 | 59,33–65,44 | "Além disso, quando o nível do rio sobe demais, a água das galerias pode encontrar dificuldade pra sair." | 13. Rio cheio | Corte na saída: o rio sobe e passa da boca da galeria; a comporta fecha / a água da galeria não sai e recua (setas parando e voltando). | Consequência |
+| 16 | 65,95–71,20 | "O resultado? Ruas alagadas, carros submersos e água entrando nas casas." | 14. Alagamento progressivo | Vista aérea, mesmo enquadramento do gancho: o ponto baixo enche primeiro e a mancha se espalha rua a rua; em "carros" a água cobre um carro; em "casas" passa da soleira de uma casa em corte. | Revelação parcial |
+| 17 | 71,72–79,47 | "Mas como resolver isso? Uma das soluções é construir enormes reservatórios de contenção, conhecidos como piscinões." | 15. Piscinão | A água baixa. Sob a praça, o piscinão é escavado e montado em corte (paredes, tubo de entrada vindo da galeria, saída controlada). Rótulo "Piscinão". | Nova descoberta |
+| 18 | 79,92–87,43 | "Eles armazenam temporariamente… e liberam tudo aos poucos, evitando sobrecarregar as galerias e os rios." | 15. Piscinão funcionando | Chuva: o excesso desce para o piscinão, que enche; depois da chuva ele esvazia devagar para o canal (seta fina e contínua). Galeria e rio ficam abaixo da linha de capacidade. | Solução |
+| 19 | 87,91–91,67 | "Também podemos ampliar as tubulações, criar jardins de chuva," | 16. Ampliação + 17. Jardins de chuva | Galeria troca de seção (maior) e grelhas limpas; canteiros rebaixados nas calçadas, em corte, mostrando as camadas que guardam e infiltram a água. | Solução |
+| 20 | 91,96–96,69 | "preservar áreas verdes e utilizar pavimentos que permitem a passagem da água." | 17. Áreas verdes + pavimento permeável | Parque linear na margem do rio (várzea que pode encher), estacionamento com pavimento permeável em corte (água atravessando blocos e brita). | Solução |
+| 21 | 97,17–101,48 | "Agora, quando uma nova tempestade chega, a cidade consegue absorver," | 18. Nova simulação | **Mesma chuva intensa da etapa 10** (medidor no mesmo ponto, mesmos parâmetros). Em "absorver": água entrando nos jardins, no pavimento e no parque. | Resultado |
+| 22 | 101,74–106,49 | "armazenar e distribuir melhor essa água. O risco de alagamento diminui." | 19. Antes × depois | "armazenar": piscinão enchendo; "distribuir": galeria e canal trabalhando abaixo do limite. Em "risco" a tela se divide: mesma maquete, mesmo instante, mesma chuva — à esquerda sem melhorias (rua alagada), à direita com melhorias (lâmina rasa, ainda com água empoçada nos pontos baixos). Texto "Mesma chuva". | Revelação |
+| 23 | 106,93–114,91 | "Porque proteger uma cidade das enchentes não é simplesmente instalar mais bueiros. É planejar pra onde toda essa água vai." | 20. Sistema completo | Recuo final sobre a cidade: setas mostram o caminho completo chuva → telhados → jardins/pavimento → bocas de lobo → galerias → piscinão → canal → rio, e o esgoto separado indo para o tratamento. Em "pra onde toda essa água vai" a câmera termina no rio. Cartela final. | Revelação |
 
 Mudança visual a cada 3–5 s e nova descoberta a cada 10–15 s (as etapas 6, 7, 11, 12, 15, 17 são as "descobertas").
 
@@ -81,8 +81,12 @@ Mudança visual a cada 3–5 s e nova descoberta a cada 10–15 s (as etapas 6, 
   reduzem e atrasam o pico de vazão; **não eliminam o risco** (o vídeo mostrará água residual no "depois").
 - **Remanso do rio:** quando o nível do rio passa a saída da galeria, a água da galeria não escoa (e comportas
   de retenção fecham para impedir que o rio entre na cidade) — fundamento da etapa 13.
-- Antes da produção eu confiro cada afirmação da narração contra essas fontes (e outras primárias se ela trouxer
-  números) e aponto qualquer frase que precise de ajuste.
+- **Conferência da narração (feita):** todas as frases estão corretas e nenhuma traz número. Pontos de atenção
+  resolvidos no visual: (a) "parte penetra, outra escorre" — a outra parte relevante, a evaporação, não é
+  citada, então o vídeo não mostra proporções numéricas; (b) "liberam tudo aos poucos" — o piscinão esvazia
+  devagar depois da chuva (por gravidade ou bomba), mostrado assim; (c) "o risco diminui" — o "depois" mantém
+  água empoçada nos pontos baixos, sem sugerir risco zero; (d) "canais e rios" — a galeria deságua num canal
+  aberto que chega ao rio, e o vídeo mostra os dois.
 
 ## Modelos reaproveitados do Ep. 01
 
