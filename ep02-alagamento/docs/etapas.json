@@ -1,0 +1,23 @@
+[
+ {"n": 0, "nome": "Gancho: rua alagada", "a": 0.0, "b": 5.29},
+ {"n": 1, "nome": "Rebobinar + terreno natural na chuva", "a": 5.6, "b": 11.76},
+ {"n": 2, "nome": "Infiltração e escoamento", "a": 12.12, "b": 16.85},
+ {"n": 3, "nome": "Construção da cidade", "a": 17.37, "b": 22.38},
+ {"n": 4, "nome": "Impermeabilização", "a": 22.96, "b": 27.37},
+ {"n": 5, "nome": "Acúmulo nas ruas", "a": 27.93, "b": 33.79},
+ {"n": 6, "nome": "Bocas de lobo", "a": 34.25, "b": 36.88},
+ {"n": 7, "nome": "Galerias", "a": 37.12, "b": 40.10},
+ {"n": 8, "nome": "Canal e rio", "a": 40.65, "b": 44.83},
+ {"n": 9, "nome": "Chuva normal / limite", "a": 45.25, "b": 48.21},
+ {"n": 10, "nome": "Chuva intensa", "a": 48.73, "b": 50.73},
+ {"n": 11, "nome": "Sobrecarga", "a": 51.04, "b": 54.13},
+ {"n": 12, "nome": "Lixo nas grelhas", "a": 54.63, "b": 58.80},
+ {"n": 13, "nome": "Rio cheio", "a": 59.33, "b": 65.44},
+ {"n": 14, "nome": "Alagamento progressivo", "a": 65.95, "b": 71.20},
+ {"n": 15, "nome": "Piscinão: obra", "a": 71.72, "b": 79.47},
+ {"n": 16, "nome": "Piscinão: funcionando", "a": 79.92, "b": 87.43},
+ {"n": 17, "nome": "Ampliação + jardins", "a": 87.91, "b": 91.67},
+ {"n": 18, "nome": "Áreas verdes + pavimento permeável", "a": 91.96, "b": 96.69},
+ {"n": 19, "nome": "Nova tempestade", "a": 97.17, "b": 104.39},
+ {"n": 20, "nome": "Antes × depois + sistema completo", "a": 104.0, "b": 116.0}
+]
