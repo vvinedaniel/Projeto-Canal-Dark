@@ -3,3 +3,4 @@ out/
 # gerados por tools/sfx.py e tools/mix.sh (reproduzíveis)
 audio/sfx.wav
 audio/mix.wav
+__pycache__/
