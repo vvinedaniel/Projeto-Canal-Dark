@@ -271,7 +271,7 @@ export function buildStreets(ctx, K) {
   const U = { A: [0, 0.96], B: [0.04, 1], C: [0.1, 0.75], D: [0, 0.92] };
   /** valor de S.build.asphalt em que o rolo passa pela posição s da rua k */
   const rollerAt = (k, s) => { const st = ST[k], d = st.dist(s); return U[k][0] + ((d + 5) / (st.len + 5)) * (U[k][1] - U[k][0]); };
-  function update(t, S) {
+  function update(t, S, cam) {
     if (shared.curbCuts && aBuilt !== shared.curbCuts) rebuildA();
     const kw = S.build.walks, ka = S.build.asphalt;
     for (const k in ST) {
@@ -309,7 +309,7 @@ export function buildStreets(ctx, K) {
     const kb = L.prog(ka, 0, 0.35);
     fill.visible = S.build.canal > 0.6 && kb > 0.5;
     bridge.visible = kb > 0.001; bridge.position.y = -2.5 * (1 - L.ease.out(kb));
-    for (const p of posts) { const st = ST[p.st], k = L.clamp01(L.prog(kw, 0.6, 1) * 1.6 - (p.d / st.len) * 0.6); p.obj.visible = k > 0.001; p.obj.scale.set(1, Math.max(1e-3, L.ease.back(k)), 1); }
+    for (const p of posts) { const st = ST[p.st], k = L.clamp01(L.prog(kw, 0.6, 1) * 1.6 - (p.d / st.len) * 0.6); const near = cam && Math.hypot(cam.position.x - p.obj.position.x, cam.position.z - p.obj.position.z) < 2.2 && cam.position.y < p.obj.position.y + 8.5; p.obj.visible = k > 0.001 && !near; p.obj.scale.set(1, Math.max(1e-3, L.ease.back(k)), 1); }
     K.xray(xrayMats, S.xray);
   }
   return { root, update, H, ST, xrayMats, surfaceY: YA, rollerAt };
