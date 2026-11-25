@@ -175,3 +175,31 @@ e `tools/bench-cap.cjs` (métodos de captura). Resultados em `out/bench.jsonl`.
 8. Dado nacional → confirmado no relatório oficial e mostrado na tela com fonte e ano-base.
 9. Sincronização → legendas alinhadas pela energia do áudio; rótulos de bitola em sequência sem sobreposição.
 10. Efeitos e mixagem → criados do zero (o vídeo anterior só tinha narração) e medidos.
+
+## Ep. 02 — "Por que as cidades alagam mesmo tendo bueiros?" (o que aprendemos)
+
+- **Uma maquete só para o episódio inteiro** (`ep02-alagamento/src/sets/cidade.js`): o cliente exige continuidade
+  (mesma cidade, mesmo relevo, mesmo rio). Em vez de cenários separados, um cenário com MÓDULOS (terreno, cidade,
+  drenagem, piscinão, soluções verdes, água), cada um com dono, montados por `createAsync`. Contrato e lista de
+  módulos em `ep02-alagamento/docs/MODULOS.md`; modelos reutilizáveis em `docs/MODELOS.md`.
+- **Layout com cotas conferidas** (`cidade/layout.js`): antes de modelar, checar por script as folgas (caixa da boca de
+  lobo × teto da galeria, cobertura, soleira das casas × níveis de alagamento). Isso evitou colisões entre módulos.
+- **Estado do mundo único** (`cidade/hydro.js`): `state(t, variant)` diz o que está construído (`build.*` 0..1) e onde
+  está a água (`flood`, `river`, `gal`, `res`...). Módulos não inventam tempos. Ganhos: água contínua e coerente,
+  obras que rebobinam sozinhas (relógio da história `st`), e variantes `before/after` para a tela dividida.
+- **Corte da frente com furos e tampões**: o terreno desenha a face com uma máscara de furos (furos sobrepostos se unem)
+  e tampões que "escavam" quando a obra começa. Estruturas com eixo em z = face (meia seção visível).
+- **Subagentes em paralelo (6)** funcionaram de novo; o brief comum + docs/MODULOS.md + o integrador repassando pedidos
+  entre agentes (SendMessage) resolveram as interfaces (ex.: `shared.inletBoxK`, `shared.gallery`, `greenHoleK`).
+- **Validação obrigatória antes do render** (`tools/validate.sh`): 4 quadros por etapa com todos os módulos; achou 10
+  problemas que só aparecem no conjunto (tela dividida desligada, obra fora de quadro, assunto atrás das legendas,
+  telhado tapando a casa alagada, obra terminando depois da fala). Relatório em `docs/RELATORIO-QUALIDADE.md`.
+- **Enquadramento**: o assunto no corte (galeria) precisa ficar acima da faixa das legendas (y 64–77%): mire a câmera
+  mais baixo que o objeto. Obras longas: a câmera acompanha a frente da obra.
+- **Armadilha three.js**: mudar `material.transparent` exige `material.needsUpdate = true` (senão o raio-x fica opaco).
+- **Custo**: ~5 s/quadro (1 processo) e 2 processos não aceleram (SwiftShader já usa todos os núcleos). Episódio de
+  117 s ≈ 4–5 h aqui. Correções pontuais continuam com `tools/patch.cjs`. GPU (computador do dono) segue sendo o
+  caminho para < 30 min.
+- **Áudio**: `tools/sfx_ep02.py` reaproveita a biblioteca de síntese do ep01 (`sfx.py`) e acrescenta chuva, trovão,
+  enxurrada, diesel/hidráulico, escavação, rolo, obra, plástico, rebobinar. Cuidado: parâmetros de síntese não podem
+  se chamar `rev`/`pan`/`bus`/`env`/`fi`/`fo` (colidem com a deixa `C(...)`).
