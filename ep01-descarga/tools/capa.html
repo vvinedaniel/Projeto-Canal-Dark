@@ -1,0 +1,22 @@
+<!doctype html><html><head><meta charset="utf-8"><style>
+@font-face { font-family: M; font-weight: 800; src: url("../node_modules/@fontsource/montserrat/files/montserrat-latin-800-normal.woff2"); }
+@font-face { font-family: M; font-weight: 900; src: url("../node_modules/@fontsource/montserrat/files/montserrat-latin-900-normal.woff2"); }
+html,body{margin:0;width:1080px;height:1920px;overflow:hidden;background:#07121b;font-family:M}
+.p{position:absolute;left:0;width:1080px;background-repeat:no-repeat;filter:contrast(1.14) saturate(1.22)}
+#vaso{top:0;height:1330px;background:url(../out/cover/vaso.png) 189px var(--vy,-90px)/702px 1248px no-repeat;-webkit-mask:linear-gradient(transparent 44%,#000 52%,#000 88%,transparent),linear-gradient(90deg,transparent 15%,#000 24%,#000 76%,transparent 85%);-webkit-mask-composite:source-in}
+#rede{top:1230px;height:690px;background:url(../out/cover/rede.png) 173px var(--ry,-212px)/734px 1305px no-repeat;-webkit-mask:linear-gradient(transparent,#000 14%),linear-gradient(90deg,transparent 14%,#000 20%,#000 80%,transparent 86%);-webkit-mask-composite:source-in}
+#vig{position:absolute;inset:0;background:radial-gradient(ellipse 85% 70% at 50% 52%,transparent 55%,rgba(3,10,16,.72));pointer-events:none}
+#top{position:absolute;inset:0 0 auto;height:700px;background:linear-gradient(rgba(4,12,20,.88),rgba(4,12,20,.55) 70%,transparent)}
+.kick{position:absolute;top:84px;width:100%;text-align:center;font-weight:800;font-size:34px;letter-spacing:.32em;color:#fff}
+.kick b{color:#ffd23f}
+h1{position:absolute;top:248px;width:100%;margin:0;text-align:center;font-weight:900;font-size:120px;line-height:.93;text-transform:uppercase;letter-spacing:-.02em;color:#fff;
+  -webkit-text-stroke:20px #050d14;paint-order:stroke fill;text-shadow:0 14px 0 rgba(0,0,0,.45)}
+h1 em{font-style:normal;color:#ffd23f;font-size:158px}
+.path{position:absolute;left:0;top:0;width:1080px;height:1920px}
+</style></head><body>
+<div class="p" id="rede"></div><div class="p" id="vaso"></div><div id="vig"></div><div id="top"></div>
+<svg class="path" viewBox="0 0 1080 1920"><defs><marker id="ah" viewBox="0 0 10 10" refX="5" refY="5" markerWidth="4.2" markerHeight="4.2" orient="auto"><path d="M0,0 L10,5 L0,10 z" fill="#ffd23f" stroke="#050d14" stroke-width="1.4"/></marker></defs>
+<path d="M680 1235 C 705 1360, 610 1460, 600 1600" fill="none" stroke="#050d14" stroke-width="26" stroke-linecap="round" stroke-dasharray="30 20" opacity=".85"/>
+<path d="M680 1235 C 705 1360, 610 1460, 600 1600" fill="none" stroke="#ffd23f" stroke-width="13" stroke-linecap="round" stroke-dasharray="30 20" marker-end="url(#ah)"/></svg>
+<h1>Para onde vai o seu<br><em>cocô?</em></h1>
+</body></html>

@@ -120,6 +120,7 @@ const glEl = $('#gl'), xfEl = $('#xfade'), xfCtx = xfEl.getContext('2d'), lensEl
 const setAt = (t) => sets.find((s) => t >= s.t0 && t < s.t1) || sets[sets.length - 1];
 function renderSet(set, t) {
   set.update(t, camera, ui);
+  if (window.__cam) { const c = window.__cam; camera.position.set(...c.p); camera.lookAt(...c.l); if (c.fov) { camera.fov = c.fov; camera.updateProjectionMatrix(); } } // capas: câmera livre
   camera.updateMatrixWorld(true); camera.matrixWorldInverse.copy(camera.matrixWorld).invert();
   L.WATER_U.uTime.value = t; L.WATER_U.uScale.value = set.wscale ?? 1;
   if (set !== current) {
@@ -167,7 +168,7 @@ $('#play').addEventListener('click', () => { playing = !playing; });
 function tick(ms) { const dt = Math.min(0.1, (ms - last) / 1000 || 0); last = ms; if (playing) { now = (now + dt) % DUR; frame(now); scrub.value = now; clock.textContent = now.toFixed(2); } requestAnimationFrame(tick); }
 // capas para publicação (?cover=1..3): um quadro do filme com o título por cima, sem legenda
 const COVERS = [
-  { t: 19.62, html: '<div class="kick">Mundo <b>por</b> Dentro</div><h1>Para onde vai o seu <em>cocô</em>?</h1><div class="tag">Veja por dentro</div>' },
+  { t: 19.62, html: '<div class="kick">Mundo <b>por</b> Dentro</div><h1>Para onde vai o seu <em>cocô</em>?</h1>' },
   { t: 39.7, html: '<div class="kick">Mundo <b>por</b> Dentro</div><h1>O caminho <em>escondido</em> da descarga</h1>' },
   { t: 98.9, html: '<div class="kick">Mundo <b>por</b> Dentro</div><h1>Metade do esgoto <em class="warn">não é tratada</em></h1>' }
 ];
@@ -179,6 +180,8 @@ if (coverN) {
   window.__coverT = c.t;
   document.head.insertAdjacentHTML('beforeend', '<style>#cap,#hook,#brand,#source,#labels{display:none!important}</style>');
 }
+// placas limpas para montar capas (?plate): só o 3D, sem legenda/marca/rótulos
+if (q.has('plate')) document.head.insertAdjacentHTML('beforeend', '<style>#cap,#hook,#brand,#source,#labels,#lens,#end{display:none!important}</style>');
 window.__frame = (t) => { now = t; frame(coverN ? window.__coverT : t); };
 window.__ready = true;
 frame(now);
