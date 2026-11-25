@@ -110,7 +110,7 @@ export function state(t, variant = null) {
   S.pump = B.reservoir > 0.99 && variant !== 'before' ? keys([[84.3, 0], [84.7, 1], [87.43, 1], [88, 0], [112.2, 0], [112.8, 1]], t) : 0;
 
   // visão de raio-x do subsolo (o chão fica translúcido para mostrar as duas redes)
-  S.xray = keys([[41.6, 0], [42.3, 0.8], [44.6, 0.8], [45.2, 0], [108.0, 0], [108.8, 0.7], [111.6, 0.7], [112.3, 0]], t);
+  S.xray = keys([[41.6, 0], [42.3, 1], [44.6, 1], [45.2, 0], [108.0, 0], [108.8, 0.95], [111.6, 0.95], [112.3, 0]], t);
   S.rewind = ss(REWIND[0], REWIND[0] + 0.3, t) * (1 - ss(REWIND[1] - 0.3, REWIND[1], t));
   return S;
 }

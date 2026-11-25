@@ -86,7 +86,7 @@ export const PLAZA = { x0: -7, x1: 5, z0: 1.5, z1: 11 };              // praça 
 export const RESERVOIR = { ...PLAZA, floor: -2.0, wall: 0.4 };        // piscinão aberto (bacia de concreto), fundo em y = −2
 export const HILL_FOREST = { x0: X0, x1: -21, z0: Z0, z1: -6 };       // mata do morro: NUNCA é derrubada (área verde preservada)
 export const CARS = [
-  { id: 'c1', x: 8.2, z: 21.9, rot: 0, color: '#d8433a' },           // parado no ponto baixo (gancho, submerso)
+  { id: 'c1', x: 10.4, z: 21.9, rot: 0, color: '#d8433a' },          // parado no ponto baixo (gancho, submerso), ao lado da boca de lobo
   { id: 'c2', x: 12.6, z: 16.2, rot: Math.PI, color: '#2f7fd6' },
   { id: 'c3', x: -21, z: 16.2, rot: Math.PI, color: '#f6c12c' },
   { id: 'c4', x: -6, z: -3.2, rot: 0, color: '#e7eef2' }
@@ -104,7 +104,7 @@ export const GALLERY = {
 export const galleryTop = (x, big = true) => GALLERY.invert(x) + (big ? GALLERY.big.h : GALLERY.small.h) + GALLERY.wall;
 // Bocas de lobo: na guia da frente da rua A (z = 23.5), caixa sob a calçada da frente (z 23.5–26, cortada na face).
 export const INLET = { w: 1.2, depth: 1.0, pipeR: 0.2 }; // caixa: largura em x, profundidade abaixo da calçada
-export const INLETS = [-30, -20, -10, 0, 8, 14];          // etapa 6
+export const INLETS = [8, 14, 0, -10, -20, -30];          // etapa 6 — a obra começa pelo ponto baixo (onde alaga)
 export const INLETS_EXTRA = [3.5, 11];                    // etapa 16 (ampliação)
 export const HOOK_INLET = 8;                              // a boca de lobo "afogada" do gancho, no ponto baixo
 // Canal aberto de concreto: continua a galeria até o rio (onde antes corria o córrego). Bueiro (galeria fechada)

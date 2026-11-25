@@ -84,13 +84,17 @@ export function buildPlaza(ctx, K) {
   function update(t, S) {
     const kw = S.build.walks, kr = S.build.reservoir;
     // praça
-    const gone = kr > 0.02;
-    piso.mesh.visible = !gone; if (!gone) piso.set(P.x0 + (P.x1 - P.x0) * L.prog(kw, 0.35, 0.85) - 0.25);
-    const out = L.prog(kr, 0.002, 0.018);
+    // desmontagem ordenada com S.build.plazaOut (lixeiras e bancos → postes → árvores/canteiros → chafariz → bordas → piso
+    // levantado em faixas de x1 para x0); fallback: janela curta de S.build.reservoir. Escondida com reservoir > 0,02.
+    const po = S.build.plazaOut ?? L.prog(kr, 0.002, 0.018), gone = kr > 0.02 || po >= 1;
+    const pisoIn = P.x0 + (P.x1 - P.x0) * L.prog(kw, 0.35, 0.85) - 0.25, pisoOut = P.x1 - (P.x1 - P.x0) * L.prog(po, 0.55, 1);
+    piso.mesh.visible = !gone; if (!gone) piso.range(P.x0 - 1, Math.min(pisoIn, pisoOut - 0.25) + 1e-3);
     items.forEach((it) => {
-      const k = L.prog(kw, 0.6 + it.d * 0.4 - 0.05, 0.75 + it.d * 0.4) * (1 - out), s = it.flat ? k : L.ease.back(k);
-      it.obj.visible = k > 0.002 && !gone;
-      if (it.flat) it.obj.position.y = -0.4 * (1 - k); else { it.obj.scale.setScalar(Math.max(1e-3, s)); }
+      const a = Math.max(0, (0.65 - it.d) * 0.6), out = L.prog(po, a, a + 0.22);
+      const k = L.prog(kw, 0.6 + it.d * 0.4 - 0.05, 0.75 + it.d * 0.4), s = it.flat ? k * (1 - out) : L.ease.back(k) * (1 - L.ease.in(out));
+      it.obj.visible = k * (1 - out) > 0.002 && !gone;
+      if (it.flat) it.obj.position.y = -0.4 * (1 - k * (1 - out));
+      else { it.obj.scale.setScalar(Math.max(1e-3, s)); it.obj.position.y = (it.y0 ?? (it.y0 = it.obj.position.y)) + 2.5 * L.ease.in(out); }
     });
     // estacionamento: asfalto revelado em faixas junto com as ruas; some faixa a faixa com o pavimento permeável
     const kp = S.build.permeable, shown = Math.ceil(L.prog(S.build.asphalt, 0.3, 0.75) * NS - 1e-6);
