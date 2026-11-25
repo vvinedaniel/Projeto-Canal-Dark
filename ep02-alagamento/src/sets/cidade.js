@@ -38,7 +38,7 @@ export async function createAsync(L, { PH }) {
     // medidor de chuva (sempre a mesma escala; no antes × depois mostra a mesma intensidade)
     const mv = Math.max(S.rain, 0), ma = L.sstep(0.02, 0.15, S.rain) * (t < 4.4 ? 0 : 1);
     if (ma > 0.01) ui.meter(mv, H.rainText(mv), ma);
-    if (!ui.variant) { const k = L.sstep(SPLIT[0], SPLIT[0] + 0.7, t) * (1 - L.sstep(SPLIT[1] - 0.6, SPLIT[1], t)); if (k > 0.001) ui.split(k, 'Antes', 'Depois', 'Mesma chuva'); }
+    if (ui.variant !== 'before') { const k = L.sstep(SPLIT[0], SPLIT[0] + 0.7, t) * (1 - L.sstep(SPLIT[1] - 0.6, SPLIT[1], t)); if (k > 0.001) ui.split(k, 'Antes', 'Depois', 'Mesma chuva'); }
     return S;
   }
 
@@ -52,9 +52,10 @@ export async function createAsync(L, { PH }) {
     ui.label('imper', 'A água não passa', P(-16, Lo.streetY(-16) + 0.2, 20), w(23.3, 27.3), { cls: 'warn' });
     ui.label('bl', 'Boca de lobo', P(Lo.HOOK_INLET, Lo.streetY(Lo.HOOK_INLET) + 0.3, 23.6), w(34.6, 37.2), { cls: 'accent' });
     ui.label('gal', 'Galeria de drenagem', P(-6, yG(-6) + 0.7, Lo.ZF), w(37.6, 41.4), { cls: 'accent' });
-    ui.label('canal', 'Canal', P(18, Lo.CANAL.invert(18) + 1.2, Lo.ZF), w(40.9, 42.4), { cls: 'accent' });
-    ui.label('chuva2rio', 'Chuva → rio', P(-4, yG(-4) + 0.7, Lo.ZF), w(42.4, 44.8), { cls: 'good' });
-    ui.label('esg', 'Esgoto → tratamento', P(-4, Lo.SEWER.y(-4), Lo.ZF), w(42.4, 44.8), { cls: 'plain', stem: 0, dy: 70 });
+    ui.label('canal', 'Canal', P(17.3, Lo.CANAL.invert(17.3) + 1.6, Lo.ZF), w(40.9, 42.4), { cls: 'accent' });
+    ui.label('chuva2rio', 'Chuva → rio', P(25.6, Lo.CANAL.invert(25.6) + 1.0, Lo.ZF), w(42.5, 44.0), { cls: 'good' });
+    ui.label('drn0', 'Drenagem → rio', P(6, yG(6) + 0.9, Lo.ZF), w(44.1, 45.3), { cls: 'good' });
+    ui.label('esg', 'Esgoto → tratamento', P(13, 3.6, -18), w(44.1, 45.3), { cls: 'accent' });
     ui.label('lim', 'Limite', P(-2, yG(-2) + Lo.GALLERY.small.h + 0.05, Lo.ZF), w(47.0, 50.6), { cls: 'warn' });
     ui.label('cap', 'Mais água do que cabe', P(4, yG(4) + Lo.GALLERY.small.h, Lo.ZF), w(51.6, 54.2), { cls: 'warn' });
     ui.label('lixo', 'Lixo na grelha', P(Lo.HOOK_INLET, Lo.streetY(Lo.HOOK_INLET) + 0.3, 23.6), w(55.6, 58.8), { cls: 'warn' });
@@ -88,45 +89,51 @@ const CAM = [
   // rebobina e terreno natural na chuva
   { t: 9.3, p: [42, 50, 78], l: [2, 1, 4], fov: 35 },
   { t: 11.8, p: [22, 26, 58], l: [-6, 2, 14], fov: 34 },
-  // infiltração no solo em corte, depois o escoamento até o rio
+  // infiltração no solo em corte, depois o escoamento pelo córrego até o rio
   { t: 13.9, p: [-10, 6, 46], l: [-12, 1.5, 24], fov: 34 },
-  { t: 16.6, p: [16, 14, 50], l: [16, 1, 20], fov: 34 },
+  { t: 15.2, p: [16, 16, 46], l: [18, 1.5, 22], fov: 34 },
+  { t: 16.6, p: [30, 15, 46], l: [24, 0, 22], fov: 34 },
   // construção da cidade (vista geral alta)
   { t: 19.5, p: [38, 56, 76], l: [-2, 2, 0], fov: 36 },
   { t: 22.4, p: [30, 44, 70], l: [-6, 3, 4], fov: 35 },
-  // impermeabilização em corte
-  { t: 25.6, p: [-14, 9, 44], l: [-16, 3.5, 22], fov: 34 },
+  // impermeabilização em corte (rua + casas em cima, setas batendo)
+  { t: 25.6, p: [-14, 13, 42], l: [-16, 4.5, 17], fov: 34 },
   // enxurrada e poça no ponto baixo
-  { t: 30.4, p: [-6, 16, 52], l: [0, 3.5, 18], fov: 35 },
-  { t: 33.6, p: [16, 12, 44], l: [8, 2.6, 19], fov: 35 },
-  // bocas de lobo
+  { t: 30.4, p: [-4, 20, 48], l: [0, 2.5, 13], fov: 35 },
+  { t: 33.6, p: [15, 15, 40], l: [8, 2.4, 15], fov: 35 },
+  // bocas de lobo (a primeira é a do ponto baixo)
   { t: 36.4, p: [10.5, 5.2, 33.5], l: [8, 1.8, 24.5], fov: 36 },
-  // galerias (no corte)
-  { t: 39.6, p: [-4, 6, 46], l: [-6, 1.8, 25], fov: 36 },
-  // canal e rio; raio-x das duas redes
-  { t: 42.0, p: [20, 9, 50], l: [18, 0.5, 24], fov: 36 },
-  { t: 44.6, p: [6, 14, 58], l: [2, 1.5, 22], fov: 36 },
-  // chuva normal → intensa → sobrecarga (corte da galeria + rua)
-  { t: 48.2, p: [0, 7, 44], l: [0, 1.6, 24], fov: 36 },
-  { t: 53.6, p: [7, 6.5, 40], l: [5, 1.8, 24], fov: 36 },
+  // galerias: a câmera acompanha a frente da obra (munck assentando aduelas de montante para jusante)
+  { t: 37.3, p: [-31, 9, 40], l: [-31, 4.2, 25], fov: 38 },
+  { t: 38.5, p: [-11, 8.5, 40], l: [-11, 2.6, 25], fov: 38 },
+  { t: 39.9, p: [2, 6.5, 40], l: [2, 0.8, 25], fov: 36 },
+  // canal, saída no rio; depois vista geral em raio-x com as duas redes
+  { t: 41.6, p: [21, 15, 37], l: [19.5, 0, 24], fov: 38 },
+  { t: 43.4, p: [33, 9, 42], l: [26, -0.5, 24], fov: 36 },
+  { t: 44.9, p: [14, 30, 64], l: [8, 0, 14], fov: 36 },
+  // chuva normal → intensa → sobrecarga (corte da galeria acima da faixa das legendas)
+  { t: 47.5, p: [0, 6, 42], l: [0, 0.4, 25], fov: 36 },
+  { t: 50.6, p: [3, 6.2, 41], l: [3, 0.5, 25], fov: 36 },
+  { t: 53.6, p: [8, 7, 38], l: [7.5, 0.8, 24], fov: 36 },
   // lixo na grelha
   { t: 57.6, p: [10.2, 4.6, 30.5], l: [8, 2.4, 23.4], fov: 36 },
-  // rio sobe, saída afogada
-  { t: 61.8, p: [36, 7, 46], l: [28, 0, 24], fov: 36 },
-  { t: 65.0, p: [30, 6, 42], l: [24, 0, 25], fov: 36 },
+  // rio sobe, saída afogada, comporta fecha
+  { t: 61.8, p: [36, 9, 50], l: [27, -0.5, 23], fov: 36 },
+  { t: 65.0, p: [34, 8.5, 48], l: [26.5, -0.3, 23], fov: 36 },
   // alagamento progressivo (mesmo enquadramento do gancho, mais alto), carros e casa
   { t: 68.6, p: [22, 22, 54], l: [6, 2.5, 14], fov: 36 },
-  { t: 71.2, p: [15, 9.5, 30], l: [8.5, 3.0, 12], fov: 36 },
+  { t: 71.2, p: [6, 6, 26], l: [8.5, 3.2, 11], fov: 36 },
   // piscinão: escavação, estrutura, ligações
-  { t: 74.6, p: [10, 26, 40], l: [-1, 1, 6], fov: 36 },
-  { t: 78.2, p: [-14, 24, 38], l: [-1, 0, 6], fov: 36 },
+  { t: 74.6, p: [6, 18, 27], l: [-1, 0, 6], fov: 38 },
+  { t: 78.2, p: [-10, 17, 27], l: [-1, -0.5, 6], fov: 38 },
   // piscinão funcionando: entra o excesso, nível sobe, depois a bomba devolve aos poucos
-  { t: 82.2, p: [-4, 22, 36], l: [0, 0, 7], fov: 36 },
-  { t: 86.8, p: [10, 20, 34], l: [1, 0, 5], fov: 36 },
+  { t: 82.2, p: [-3, 20, 32], l: [0, 0, 7], fov: 36 },
+  { t: 86.8, p: [9, 18, 30], l: [3, 0, 5], fov: 36 },
   // ampliação da galeria (corte) e jardins de chuva
-  { t: 88.6, p: [-8, 7, 42], l: [-6, 2.6, 25], fov: 36 },
+  { t: 88.6, p: [-6, 4.5, 40], l: [-6, -0.8, 25], fov: 36 },
   { t: 89.9, p: [-16, 6.6, 33], l: [-16, 4.6, 25], fov: 36 },
-  { t: 91.2, p: [-26, 8.4, 34.5], l: [-26, 6, 25], fov: 36 },
+  { t: 90.6, p: [-16.5, 6.8, 33.2], l: [-16.5, 4.6, 25], fov: 36 },
+  { t: 91.6, p: [-28, 8.6, 34.5], l: [-28, 6.2, 25], fov: 36 },
   // área verde na margem e pavimento permeável no estacionamento
   { t: 93.6, p: [44, 26, 40], l: [23, 1, 8], fov: 36 },
   { t: 96.4, p: [20, 24, -2], l: [1.5, 3, -18], fov: 36 },

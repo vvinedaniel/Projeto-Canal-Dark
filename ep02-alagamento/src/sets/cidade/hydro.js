@@ -35,7 +35,7 @@ export function builds(st) {
     sewer: lin(20.6, 22.4, st),           // rede de esgoto e ETE nascem com as ruas
     inlets: lin(34.25, 36.9, st),         // bocas de lobo (uma após a outra)
     gallery: lin(37.12, 40.1, st),        // galeria: aduelas de montante para jusante, depois as ligações
-    canal: lin(40.65, 44.2, st),          // canal, bueiro sob a avenida, cabeceira e comporta no rio
+    canal: lin(40.65, 42.7, st),          // canal, bueiro sob a avenida, cabeceira e comporta no rio
     plazaOut: lin(72.4, 73.9, st),        // praça desmontada (bancos, árvores, piso) antes da escavação
     reservoir: lin(73.6, 79.47, st),      // piscinão: escavação → estrutura → ligações → acabamento
     enlarge: lin(87.91, 89.6, st),        // galeria ampliada + bocas de lobo extras
@@ -83,7 +83,7 @@ export function state(t, variant = null) {
   S.gardenIn = greenOn * B.gardens; S.permIn = greenOn * B.permeable; S.parkIn = greenOn * B.park;
 
   // galeria: fração da altura ocupada (1 = cheia; >1 = sob pressão, água sobe pelas grelhas)
-  let gal = keys([[0, 1.08], [5.6, 1.08], [7.6, 0], [45.25, 0], [46.6, 0.35], [48.73, 0.38], [51.04, 0.72], [53.0, 1.0], [54.0, 1.08], [71.2, 1.08], [72.4, 0.4], [73.7, 0.04],
+  let gal = keys([[0, 1.08], [5.6, 1.08], [7.6, 0], [41.4, 0], [42.4, 0.14], [45.25, 0.16], [46.6, 0.35], [48.73, 0.38], [51.04, 0.72], [53.0, 1.0], [54.0, 1.08], [71.2, 1.08], [72.4, 0.4], [73.7, 0.04],
     [79.92, 0.04], [81.0, 0.62], [83.6, 0.66], [85.0, 0.3], [87.4, 0.12], [97.84, 0.05], [100.5, 0.6], [104, 0.82], [110.5, 0.8], [114, 0.55]], t);
   if (variant === 'before' && t >= STORM2) gal = Math.min(1.08, 0.05 + 1.03 * io(clamp01((t - STORM2) / 5)));
   S.gal = gal * (B.gallery > 0.98 ? 1 : 0);
@@ -110,7 +110,7 @@ export function state(t, variant = null) {
   S.pump = B.reservoir > 0.99 && variant !== 'before' ? keys([[84.3, 0], [84.7, 1], [87.43, 1], [88, 0], [112.2, 0], [112.8, 1]], t) : 0;
 
   // visão de raio-x do subsolo (o chão fica translúcido para mostrar as duas redes)
-  S.xray = keys([[41.6, 0], [42.3, 1], [44.6, 1], [45.2, 0], [108.0, 0], [108.8, 0.95], [111.6, 0.95], [112.3, 0]], t);
+  S.xray = keys([[41.6, 0], [42.3, 1], [45.0, 1], [45.6, 0], [108.0, 0], [108.8, 0.95], [111.6, 0.95], [112.3, 0]], t);
   S.rewind = ss(REWIND[0], REWIND[0] + 0.3, t) * (1 - ss(REWIND[1] - 0.3, REWIND[1], t));
   return S;
 }

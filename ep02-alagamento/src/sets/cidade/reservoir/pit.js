@@ -109,5 +109,5 @@ export function makePit(L, K, Lo, o) {
     rockIM.instanceMatrix.needsUpdate = true;
   }
   update(0, 0);
-  return { group, update, level, top, mats: [soilM, faceM] };
+  return { group, update, level, top, mats: [soilM, faceM], U };
 }

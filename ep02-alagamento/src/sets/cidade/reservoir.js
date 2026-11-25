@@ -9,6 +9,8 @@ import { makeKit } from './reservoir/kit.js';
 import { makeMachines } from './reservoir/machines.js';
 import { makePump } from './reservoir/pump.js';
 import { makePit } from './reservoir/pit.js';
+import * as THREE_ from 'three';
+const SURF_EARTH = new THREE_.Color('#7d5c3f');
 import { makeTrench } from './reservoir/trench.js';
 
 export function create(ctx) {
@@ -321,6 +323,8 @@ export function create(ctx) {
       /* ---- cava ---- */
       const slabK = pr(st, 0.0, 0.32), wallK = pr(st, 0.18, 0.72), bf = ss(0.55, 1, wallK);
       pit.update(ex, bf); pit.group.visible = !(fi > 0.5);
+      // topo do bloco acompanha o chão do terreno: campo verde no estado natural → terra exposta depois da derrubada
+      pit.U.uSurf.value.set('#5fb244').lerp(SURF_EARTH, L.clamp01(S.build.clear * 1.2));
       const moundK = Math.min(ss(0.05, 0.5, ex), 1 - ss(0.1, 0.5, st));
       mound.visible = moundK > 0.01; mound.scale.set(0.5 + 0.6 * moundK, moundK, 0.45 + 0.5 * moundK); mound.position.y = G(-9, 0.2) - 0.05;
       /* ---- estrutura ---- */
