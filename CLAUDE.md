@@ -128,6 +128,40 @@ ep01-descarga/
 - Superfícies coplanares: afaste 2–5 mm; transparências com `depthWrite:false` e `renderOrder` coerente.
 - `ui.dark` é por cenário; `set.ao` é lido só na troca de cenário.
 
+## Tempo de produção: benchmarks (25/11/2026, container 4 vCPU Xeon 2,3 GHz, sem GPU, SwiftShader)
+
+Medido com `node tools/bench.cjs [opções]` (1 quadro por cenário em t = 12/44/58/77/95 s, média de 3, 1080×1920)
+e `tools/bench-cap.cjs` (métodos de captura). Resultados em `out/bench.jsonl`.
+
+| Configuração (1 processo) | s/quadro | vs. base | Qualidade |
+|---|---|---|---|
+| Base (MSAA 4, GTAO ½ res, sombra 4096) | 3,20 | — | final |
+| GTAO ¼ res | 2,95 | −8% | AO mais borrado |
+| Sombra 2048 | 2,95 | −8% | bordas de sombra mais moles |
+| MSAA 2 | 3,03 | −5% | serrilhado leve |
+| Sem sombras (teto teórico) | 2,47 | −23% | inaceitável |
+| Sem GTAO | 2,39 | −25% | perde profundidade |
+| Sem MSAA | 2,18 | −32% | serrilhado visível |
+
+- **A captura não é o gargalo**: screenshot JPEG de um quadro já desenhado custa 0,05 s; CDP `optimizeForSpeed`
+  ganha ~3%. Quase todo o tempo é o WebGL emulado na CPU (rasterização + sombras + GTAO + MSAA).
+- Paralelismo: 1 processo ≈ 19 quadros/min; 2 processos ≈ 33/min (ótimo); 3 é mais lento. Encode x264 `slow`
+  do filme todo ≈ 2,2 min (`PRESET=medium tools/encode.sh` ≈ 1 min, tamanho quase igual).
+- Episódio inteiro (3075 quadros) nesta máquina: **~93 min**. Mesmo somando todos os cortes sem perda visível
+  (~15%), fica em ~80 min. **Meta de < 30 min por episódio completo só com GPU** (local ou na nuvem, esta
+  só com autorização do dono do canal): numa GPU dedicada o render cai para dezenas de ms/quadro e o limite
+  vira a captura (~0,05–0,1 s) → ~5 min de render + ~1–2 min de encode (ou segundos com NVENC).
+- **Correções pontuais sem re-renderizar o filme** (`tools/patch.cjs`, medido): trecho de 5 s = 150 quadros
+  → 3,7 min de render + 2,2 min de encode = **~6 min**, contra ~95 min do filme todo. Quadro re-renderizado
+  vs. original: PSNR 53,5 dB (idêntico a olho; as costuras não aparecem). O render é determinístico porque
+  `update(t)` é função pura de `t` — mantenha essa regra em todo cenário novo.
+  - `node tools/patch.cjs mark` depois de um render completo grava o manifesto (hash por cenário).
+  - `node tools/patch.cjs status` / `auto` acham e re-renderizam só os cenários cujos arquivos mudaram
+    (com 0,6 s de margem nas trocas). Mudou `main.js`/`lib.js`/`timeline.js`? Ele avisa: use `range`.
+  - `node tools/patch.cjs range 26 31` re-renderiza um trecho em segundos.
+- Já reaproveitado: geometrias/materiais são criados uma vez por cenário (no `create`), cenários fora do
+  ar não são desenhados, o snapshot do dissolve é cacheado por corte, sombras só de um sol por cenário.
+
 ## Revisão final do ep01 (o que o cliente pediu e como foi resolvido)
 
 1. Escurecimentos em 65 s/68 s → dissolve em zoom (`CUTS`) nos cortes macro↔micro e na troca ETE A → ETE B.
