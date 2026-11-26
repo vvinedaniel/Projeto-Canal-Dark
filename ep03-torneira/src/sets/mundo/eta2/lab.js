@@ -65,7 +65,7 @@ export function makeLab(ctx, K) {
   const glassM = L.glass('#e6f6ff', 0.32), waterS = L.water('#cfe9f6', 0.55, { side: THREE.DoubleSide }), pinkM = G('#f05aa0', { roughness: 0.15, transparent: true, opacity: 0.85 });
   const inst = [];   // cada instrumento é um grupo que "aparece" em sequência
   const S_ = 1.35;   // exagero de escala para ler no celular
-  const mk = (x, z, build) => { const g = new THREE.Group(); build(g); g.position.set(x, IT, z); g.scale.setScalar(S_); root.add(g); inst.push(g); return g; };
+  const mk = (x, z, build) => { const tmp = new THREE.Group(); build(tmp); const g = bake(tmp); g.position.set(x, IT, z); g.scale.setScalar(S_); root.add(g); inst.push(g); return g; };
   const disp = (g, w, h, x, y, z, txt) => { const tx = canvasTex(128, 64, (c, W, H) => { c.fillStyle = '#10261c'; c.fillRect(0, 0, W, H); c.fillStyle = '#7dffb5'; c.fillRect(10, 22, 70, 6); c.fillRect(10, 36, 46, 6); c.font = 'bold 22px sans-serif'; c.fillText(txt, 84, 40); }); const m = L.mesh(new THREE.PlaneGeometry(w, h), L.mat('#ffffff', { map: tx, emissive: '#ffffff', emissiveMap: tx, emissiveIntensity: 0.8 }), x, y, z, { cast: false }); g.add(m); };
   // turbidímetro (bancada): corpo, poço da cubeta com tampa aberta, tela
   mk(34.45, -39.95, (g) => { g.add(L.rbox(0.3, 0.13, 0.24, 0.02, M('#e8edf0', { roughness: 0.4 }), 0, 0.065, 0), L.rbox(0.3, 0.04, 0.08, 0.01, MAT.blueDark, 0, 0.12, -0.08)); g.add(L.cyl(0.026, 0.026, 0.09, glassM, 0.07, 0.17, 0.03, 12), L.cyl(0.022, 0.022, 0.07, waterS, 0.07, 0.16, 0.03, 12), L.cyl(0.03, 0.03, 0.02, MAT.black, 0.07, 0.225, 0.03, 12)); g.add(L.cyl(0.04, 0.04, 0.012, MAT.dark, 0.07, 0.131, 0.03, 14)); disp(g, 0.13, 0.07, -0.06, 0.1, 0.121, 'NTU'); });
@@ -115,7 +115,8 @@ export function makeLab(ctx, K) {
   const ck = new THREE.Shape(); ck.moveTo(-0.5, 0.05); ck.lineTo(-0.2, -0.3); ck.lineTo(0.55, 0.5); ck.lineTo(0.4, 0.62); ck.lineTo(-0.2, 0.0); ck.lineTo(-0.38, 0.18); ck.closePath();
   const ckGeo = new THREE.ExtrudeGeometry(ck, { depth: 0.2, bevelEnabled: false });
   const ckM = L.glow('#3df07a', 1.6, { toneMapped: false });
-  const checks = ITEMS.map((_, i) => { const m = new THREE.Mesh(ckGeo, ckM); const y = py0 + PH - ((170 + i * 98 + 28) / 648) * PH, x = px0 + ((56 + 32) / 1024) * PW; m.position.set(x, y, pz + 0.05); root.add(m); return m; });
+  const checks = new THREE.InstancedMesh(ckGeo, ckM, ITEMS.length); checks.frustumCulled = false; checks.castShadow = false; root.add(checks);
+  const ckPos = ITEMS.map((_, i) => [px0 + ((56 + 32) / 1024) * PW, py0 + PH - ((170 + i * 98 + 28) / 648) * PH, pz + 0.05]), _o = new THREE.Object3D();
 
   /* ---------- planta ---------- */
   const gh = ghost.of(bake((() => { const g = new THREE.Group(); g.add(bS.clone(), bW.clone(), bR.clone(), furB.clone()); return g; })())); root.add(gh);
@@ -137,7 +138,8 @@ export function makeLab(ctx, K) {
       const full = L.sstep(71.3, 72.6, st), flowing = st > 71.15 && st < 72.75 && b > 0.99;
       bottle.visible = b > 0.75; const hw = 0.02 + 0.13 * full; bWater.scale.y = hw; bWater.position.y = 0.01 + hw / 2;
       stream.visible = flowing; const ytop = SA[1] - 0.01, ybot = IT - 0.22 + 0.01 + hw; stream.scale.y = Math.max(0.01, ytop - ybot); stream.position.y = (ytop + ybot) / 2;
-      checks.forEach((m, i) => { const k = b > 0.999 ? L.ease.back(L.sstep(72.0 + 0.42 * i, 72.3 + 0.42 * i, st)) : 0; m.visible = k > 0.001; m.scale.setScalar(0.17 * Math.max(0.001, k)); });
+      ckPos.forEach((p, i) => { const k = b > 0.999 ? L.ease.back(L.sstep(72.0 + 0.42 * i, 72.3 + 0.42 * i, st)) : 0; _o.position.set(...p); _o.scale.setScalar(k > 0.001 ? 0.17 * k : 0.00001); _o.updateMatrix(); checks.setMatrixAt(i, _o.matrix); });
+      checks.instanceMatrix.needsUpdate = true;
     }
   };
 }

@@ -130,7 +130,7 @@ export function buildFloc(env) {
     waters.forEach((m, i) => m.userData.setLevel(lv[i]));
     transW.userData.setLevel(lv[2] >= 1 ? 1 : 0);
     // flocos (aparecem com a água e crescem com o tempo de agitação)
-    const grow = L.clamp01(phi / 2.5), any = wf > 0.02;
+    const grow = S.present ? 1 : L.clamp01(P.flocGrow(t) / 2.5), any = wf > 0.02;
     flocs.visible = any;
     if (any) {
       for (let i = 0; i < NFl; i++) {

@@ -28,7 +28,8 @@ export function create(ctx) {
     paddles: phaseTable((S) => S.run.paddles),
     scraper: phaseTable((S) => S.run.scraper * S.build.dec),
     thick: phaseTable((S) => S.build.sludge >= 1 ? 1 : 0),
-    decFill: phaseTable((S) => S.water.dec),
+    decFill: phaseTable((S) => (S.present ? 0 : S.water.dec)),
+    flocGrow: phaseTable((S) => (S.present ? 0 : S.water.floc)),
     sludgeOut: phaseTable((S) => Math.min(1, S.run.sludgeOut)),
     /** a câmera está a menos de d metros do ponto p? (setas e detalhes só nos planos próximos) */
     near: (cam, p, d) => !!cam && cam.position.distanceTo(_v.set(p[0], p[1], p[2])) < d

@@ -115,7 +115,7 @@ export function buildPumps(ctx, K, R) {
     const bz = MAT.bronze;
     rot.add(cylA(0.33, 0.03, bz, 0, 0, -0.145, 'z', 40), cylA(0.075, 0.18, bz, 0, 0, -0.06, 'z', 18), L.cyl(0.0, 0.075, 0.1, bz, 0, 0, 0.08, 18).rotateX(PI / 2));
     for (let i = 0; i < 6; i++) { const v = L.mesh(vaneGeo, bz); v.rotation.z = (i / 6) * L.TAU; rot.add(v); }
-    rot.add(L.mesh(new THREE.RingGeometry(0.17, 0.33, 40, 1), M('#b07a33', { roughness: 0.3, metalness: 0.7, side: THREE.DoubleSide, transparent: cut, opacity: cut ? 0.35 : 1, depthWrite: !cut }), 0, 0, 0.025)); // disco frontal (translúcido no corte)
+    rot.add(L.mesh(new THREE.RingGeometry(0.17, 0.33, 40, 1), M('#b07a33', { roughness: 0.3, metalness: 0.7, side: THREE.DoubleSide, transparent: cut, opacity: cut ? 0.12 : 1, depthWrite: !cut }), 0, 0, 0.025)); // disco frontal (translúcido no corte)
     rot.add(cylA(0.055, 2.4, steel, 0, 0, -1.2, 'z', 10), cylA(0.15, 0.1, steel, 0, 0, -0.9, 'z', 16), cylA(0.15, 0.1, steel, 0, 0, -1.06, 'z', 16));
     for (let i = 0; i < 6; i++) { const a = (i / 6) * L.TAU; rot.add(cylA(0.016, 0.24, MAT.dark, Math.cos(a) * 0.11, Math.sin(a) * 0.11, -0.98, 'z', 6)); }
     // água dentro da carcaça (vista no corte)
@@ -166,7 +166,7 @@ export function buildPumps(ctx, K, R) {
   const flowPts = [[X1, FY + SUC.bot + 0.3, Z1 + zs], [X1, FY - 2, Z1 + zs], [X1, FY + 0.3, Z1 + zs], [X1, FY + H - SUC.rb, Z1 + zs], [X1, FY + H - 0.08, Z1 + SUC.zr + 0.12], [X1, FY + H, Z1 + SUC.zr - 0.1], [X1, FY + H, Z1 + 0.3], [X1 + 0.02, FY + H + 0.03, Z1 + 0.1], ...spiralFlow,
     [X1 + XD, FY + H + YN, Z1], [X1 + XD, FY + H + YN + 0.5, Z1], [X1 + XD, FY + YH - 0.5, Z1], [X1 + XD, FY + YH - 0.1, Z1 + 0.25], [X1 + XD, FY + YH, Z1 + 0.6], [X1 + XD, FY + YH, Z1 + ZH - 0.3]];
   const flowCurve = L.curve(flowPts, false, 0.4);
-  const parts = new L.Flow(flowCurve, { n: 130, size: 0.03, colors: ['#e4cfa2', '#c7a46c', '#f3ead6', '#a88352'], jitter: [0.07, 0.07, 0.06], seed: 77 });
+  const parts = new L.Flow(flowCurve, { n: 110, size: 0.022, colors: ['#e4cfa2', '#c7a46c', '#f3ead6', '#a88352'], jitter: [0.07, 0.07, 0.06], seed: 77 });
   g.add(parts.mesh);
   const volCh = new L.Chevrons(L.curve([...spiralFlow.slice(8).map((p) => [p[0], p[1], Z1 + 0.06]), [X1 + XD, FY + H + YN + 0.1, Z1 + 0.06], [X1 + XD, FY + H + YN + 0.7, Z1 + 0.06]], false, 0.4), { n: 6, size: 0.075, normal: [0, 0, 1], material: L.flat(L.PAL.accent, { toneMapped: false }) });
   const sucCh = new L.Chevrons(L.curve([[X1, FY + 0.05, Z1 + zs + 0.0], [X1, FY + H - SUC.rb, Z1 + zs], [X1, FY + H - 0.08, Z1 + SUC.zr + 0.12], [X1, FY + H, Z1 + SUC.zr - 0.15], [X1, FY + H, Z1 + 0.32]], false, 0.4), { n: 4, size: 0.1, normal: [1, 0, 0.6], material: L.flat(L.PAL.accent, { toneMapped: false }) });
@@ -210,7 +210,7 @@ export function buildPumps(ctx, K, R) {
     const ct = S.present ? 1 : E.io(u(run, 0.15, 0.85));
     u1.cover.position.z = ct * 0.9; u1.cover.position.y = ct * 0.25; u1.covM.opacity = 1 - ct; u1.cover.visible = ct < 0.995;
     u1.sucM.opacity = 1 - 0.78 * ct;
-    u1.chan.visible = ct > 0.01; u1.chan.material.opacity = 0.9 * ct;
+    u1.chan.visible = ct > 0.01; u1.chan.material.opacity = 0.55 * ct;
     parts.update(t, { speed: 0.075 + 0.0 * run, amount: run * (ct > 0.3 ? 1 : 0) }); parts.mesh.visible = run > 0.02 && ct > 0.3;
     volCh.update(t, { speed: 0.55, amount: ct > 0.5 ? run : 0 });
     sucCh.update(t, { speed: 0.6, amount: ct > 0.5 ? run : 0 });

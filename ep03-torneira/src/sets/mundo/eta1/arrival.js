@@ -129,10 +129,10 @@ export function buildArrival(env) {
   // espuma do ressalto
   const NF = 110, foam = new THREE.InstancedMesh(new THREE.IcosahedronGeometry(1, 1), L.mat('#f2eee3', { roughness: 0.85 }), NF);
   foam.frustumCulled = false; out.add(foam);
-  const fr = L.rng(41), FO = []; for (let i = 0; i < NF; i++) FO.push({ x: 19.45 - fr() * 1.5, u: fr(), s: 0.05 + fr() * 0.11, ph: fr(), w: 0.3 + fr() * 0.5 });
+  const fr = L.rng(41), FO = []; for (let i = 0; i < NF; i++) FO.push({ x: 19.45 - fr() * 1.5, u: fr(), s: 0.03 + fr() * 0.06, ph: fr(), w: 0.3 + fr() * 0.5 });
   // coagulante: gotas do difusor + turbilhão (rolo do ressalto)
   const NDp = 36, NSw = 150, chemM = L.mat('#c7a0ee', { emissive: '#9a62d8', emissiveIntensity: 0.6, roughness: 0.4 });
-  const drops = new THREE.InstancedMesh(new THREE.SphereGeometry(1, 8, 6), chemM, NDp), swirl = new THREE.InstancedMesh(new THREE.SphereGeometry(1, 8, 6), chemM, NSw);
+  const drops = new THREE.InstancedMesh(new THREE.SphereGeometry(1, 8, 6), chemM, NDp), swirl = new THREE.InstancedMesh(new THREE.IcosahedronGeometry(1, 0), chemM, NSw);
   drops.frustumCulled = swirl.frustumCulled = false; out.add(drops, swirl);
   const sr = L.rng(77), SW = []; for (let i = 0; i < NSw; i++) SW.push({ r: 0.1 + sr() * 0.42, a: sr() * L.TAU, z: sr(), ph: sr(), s: 0.025 + sr() * 0.035 });
   const _d = new THREE.Object3D(), _c = new THREE.Color();
@@ -163,7 +163,7 @@ export function buildArrival(env) {
         const env = jumpEnv(x) * dep;
         // cor: bruta → com coagulante (após a garganta), com rastro lilás do produto na mistura
         _c.copy(RAW).lerp(COAG, coag * ss(20.6, 18.6, x));
-        const plume = coag * ss(20.7, 20.3, x) * ss(16.8, 19.3, x) * 0.35;
+        const plume = coag * ss(20.7, 20.3, x) * ss(16.8, 19.3, x) * 0.16;
         _c.lerp(CHEM, plume);
         for (let j = 0; j <= NZ; j++) {
           const z = L.lerp(Z - hw + 0.012, Z + hw - 0.012, j / NZ);

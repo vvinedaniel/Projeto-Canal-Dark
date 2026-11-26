@@ -67,7 +67,7 @@ export function buildMain(ctx, K, R) {
   const cp = L.cutPipe([[9, YP], [15, YP]], { r, wall: 0.045, seg: 60, radial: 16, mat: M('#8f7c63', { roughness: 0.42, metalness: 0.35, side: THREE.DoubleSide }), cutMat: M('#d9cfbf', { roughness: 0.8 }) });
   win.add(cp.group);
   const wIn = cp.waterIn(0.82, Lo.WATER.raw, 1.0);
-  [9, 15].forEach((x) => { const f = L.put(new THREE.Group()); K.flange(f, x, YP, 0, r * 0.97, 'x', MAT.rawPipeD, 10); win.add(bake(f)); });
+  [9, 15].forEach((x) => { const f = new THREE.Group(); K.flange(f, x, YP, 0, r * 0.97, 'x', MAT.rawPipeD, 10); win.add(bake(f)); });
   const winSilt = new L.Flow(L.curve([[9.05, YP - 0.05, -0.12], [15, YP - 0.05, -0.12]]), { n: 34, size: 0.028, colors: ['#d8c39b', '#b6955f', '#efe3c8'], jitter: [0, 0.12, 0.1], seed: 51 });
   win.add(winSilt.mesh);
   // setas marrons correndo por cima do tubo (frente d'água e fluxo contínuo)

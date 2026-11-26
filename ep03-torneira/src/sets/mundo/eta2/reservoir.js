@@ -4,7 +4,7 @@
 // Também: bomba de lavagem dos filtros (atrás do reservatório) e o tubo fino de amostra até o laboratório.
 // Obra: S.build.reservoir, S.build.lift. Água: S.water.reservoir. Funcionamento: S.run.lift.
 export function makeReservoir(ctx, K) {
-  const { L, THREE, Lo, ghost } = ctx, { MAT, M, G, bx, bake, pipe, gateValve, checkValve, gauge, railing, rod, flange, canvasTex } = K;
+  const { L, THREE, Lo, ghost } = ctx, { MAT, M, G, bx, bake, pipe, gateValve, checkValve, gauge, railing, rod, flange, canvasTex } = K, CB = K.chevB;
   const R = Lo.ETA.reservoir, LF = Lo.ETA.lift, P = Lo.P, W = Lo.WATER, PI = Math.PI, Y0 = Lo.ETA.y;
   const root = new THREE.Group(), sub = (b, a, c) => L.clamp01((b - a) / (c - a)), _o = new THREE.Object3D();
   const RO = R.r, RI = R.r - 0.3, CX = R.x, CZ = R.z;
@@ -93,7 +93,7 @@ export function makeReservoir(ctx, K) {
     g.add(L.box(0.5, 0.36, 0.3, blue, 0, -0.4, 0));                                                // pé da voluta
     g.add(L.cyl(0.15, 0.18, 0.55, bd, 0.45, 0, 0, 16).rotateZ(PI / 2), L.box(0.3, 0.32, 0.4, bd, 0.5, -0.28, 0));   // mancal
     const cpl = new THREE.Group(); cpl.add(L.cyl(0.14, 0.14, 0.22, MAT.steel, 0, 0, 0, 16).rotateZ(PI / 2)); for (let i = 0; i < 6; i++) { const a = (i / 6) * L.TAU; cpl.add(L.cyl(0.02, 0.02, 0.26, MAT.dark, 0, Math.cos(a) * 0.1, Math.sin(a) * 0.1, 5).rotateZ(PI / 2)); } cpl.add(L.box(0.24, 0.035, 0.05, MAT.yellow, 0, 0.13, 0));
-    cpl.position.x = 0.86; g.add(cpl);
+    cpl.position.x = 0.86; g.add(cpl); g.userData.cpl = cpl;
     const guard = L.lathe([[0.2, -0.16], [0.2, 0.16]], M('#f2b31b', { roughness: 0.4, side: THREE.DoubleSide }), 20, PI / 2 + 0.6, PI - 1.2); guard.rotation.z = PI / 2; guard.position.x = 0.86; g.add(guard); // proteção do acoplamento (aberta à frente)
     g.add(L.cyl(0.36, 0.36, 1.25, blue, 1.62, 0.04, 0, 28).rotateZ(PI / 2));                       // carcaça do motor
     for (let i = 0; i < 20; i++) { const a = (i / 20) * L.TAU; if (Math.sin(a) < -0.6) continue; const f = L.box(1.05, 0.03, 0.06, blue, 1.6, 0.04 + Math.cos(a) * 0.38, Math.sin(a) * 0.38); f.rotation.x = -a; g.add(f); } // aletas
@@ -102,7 +102,7 @@ export function makeReservoir(ctx, K) {
     g.add(L.box(0.95, 0.3, 0.62, bd, 1.62, -0.24, 0));                                              // pés do motor
     return { g, cpl };
   }
-  const pumps = zP.map((z) => { const p = pumpSet(); p.g.position.set(PC, PY, z); root.add(p.g); L.shadows(p.g); return p; });
+  const pumps = zP.map((z) => { const p = pumpSet(); p.g.remove(p.cpl); const g = bake(p.g), cpl = bake((() => { const c = new THREE.Group(); c.add(p.cpl); return c; })()); g.add(cpl); g.position.set(PC, PY, z); cpl.position.x = 0.86; cpl.children.forEach((m) => m.position.x -= 0.86); root.add(g); L.shadows(g); return { g, cpl }; });
   // barrilete: sucção (coletor ao longo de z, registro em cada ramal) e recalque (retenção + gaveta, sobe ao coletor)
   const suc = new THREE.Group(), dis = new THREE.Group(), YH = P.liftOut[1];
   pipe(suc, [[sucX, yS, CZ], [sucX, yS, zP[0] - 0.4]], 0.26, MAT.treated, { flanges: false });
@@ -133,7 +133,7 @@ export function makeReservoir(ctx, K) {
   // talha na monovia (desce as bombas na obra)
   const hoist = new THREE.Group(); hoist.add(L.rbox(0.36, 0.32, 0.3, 0.04, MAT.yellow, 0, -0.62, 0), L.box(0.3, 0.12, 0.2, MAT.dark, 0, -0.4, 0));
   const chain = L.cyl(0.015, 0.015, 1, MAT.steel, 0, 0, 0, 5); hoist.add(chain); const hook = L.torus(0.07, 0.018, MAT.steel, 0, 0, 0); hoist.add(hook);
-  root.add(hoist);
+  const hoistBody = bake((() => { const g = new THREE.Group(); g.add(hoist.children[0], hoist.children[0]); return g; })()); hoist.add(hoistBody); root.add(hoist);
 
   /* --- bomba de lavagem dos filtros (atrás do reservatório) → coletor de lavagem (filters.js termina em x 14,6) --- */
   const bwp = new THREE.Group(), bx0 = 15.2, bz = -59.0;
@@ -151,12 +151,11 @@ export function makeReservoir(ctx, K) {
   const smB = bake(sm); root.add(smB);
 
   /* --- setas (fluxo) --- */
-  const chev = (pts, n, size = 0.2, col = '#8fe3ff') => { const c = new L.Chevrons(pts, { n, size, normal: [0, 0, 1], material: L.flat(col, { transparent: true, toneMapped: false }) }); root.add(c.mesh); return c; };
+  const chev = (pts, n, size = 0.2, col = '#8fe3ff', normal = [0, 0, 1]) => { const id = CB.add(pts, { n, size, normal, color: col }); return { update: (t, o) => CB.update(id, t, o) }; };
   const cIn = chev([[P.contactOut[0] + 0.2, P.resvIn[1] + 0.32, CZ + 0.05], [P.resvIn[0] + 0.8, P.resvIn[1] + 0.32, CZ + 0.05]], 3, 0.18, L.PAL.accent);
   const cSuc = chev([[CX + RI - 0.6, yS + 0.36, CZ + 0.05], [sucX - 0.2, yS + 0.36, CZ + 0.05]], 3, 0.17);
-  const cRise = chev([[PC + 0.25, 15.4, zP[0] + 0.2], [PC + 0.25, YH - 0.2, zP[0] + 0.2]], 4, 0.16);
-  const cOut = chev([[PC + 0.32, YH, -51.4], [PC + 0.32, YH, ZC + 0.1]], 4, 0.17);
-  [cRise, cOut].forEach((c) => { c.normal.set(1, 0, 0.25).normalize(); });
+  const cRise = chev([[PC + 0.25, 15.4, zP[0] + 0.2], [PC + 0.25, YH - 0.2, zP[0] + 0.2]], 4, 0.16, '#8fe3ff', [1, 0, 0.25]);
+  const cOut = chev([[PC + 0.32, YH, -51.4], [PC + 0.32, YH, ZC + 0.1]], 4, 0.17, '#8fe3ff', [1, 0, 0.25]);
 
   /* --- plantas --- */
   const ghR = ghost.of(bake((() => { const g = new THREE.Group(); g.add(rsF.clone(), rsW.clone(), rsR.clone()); return g; })()));

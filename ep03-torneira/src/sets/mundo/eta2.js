@@ -11,6 +11,8 @@ export async function create(ctx) {
   const K = makeKit(L);
   const root = new THREE.Group(); root.name = 'eta2'; scene.add(root);
   const parts = [];
+  // setas de todo o módulo em duas InstancedMesh (sobrepostas ao corte / com profundidade normal)
+  K.chevA = new K.MultiChev(160, { depthTest: false }); K.chevB = new K.MultiChev(140); root.add(K.chevA.mesh, K.chevB.mesh);
   const add = (p) => { root.add(p.root); parts.push(p); return p; };
   add(makeFilters(ctx, K));
   add(makeContact(ctx, K));

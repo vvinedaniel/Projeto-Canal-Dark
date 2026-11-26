@@ -275,7 +275,7 @@ export function buildDec(env) {
     ecW.userData.setLevel(full ? 1 : 0); chW.userData.setLevel(full ? 1 : 0); canW.userData.setLevel(full && kc >= 1 ? 1 : 0);
     LW.forEach((m) => m.userData.setLevel(full ? 1 : 0));
     // manta de lodo: cresce com o tempo de decantação; o raspador a empurra para o poço
-    const kB = L.clamp01(P.decFill(t) / 3.0), running = S.run.scraper * b > 0.02, bladeX = br.x - 0.45;
+    const kB = S.present ? 1 : L.clamp01(P.decFill(t) / 3.0), running = S.run.scraper * b > 0.02, bladeX = br.x - 0.45;
     blanket.m.visible = kB > 0.01; hop.visible = kB > 0.01 && kw >= 1;
     if (blanket.m.visible) {
       const { pos } = blanket;
@@ -318,7 +318,7 @@ export function buildDec(env) {
     tankG.visible = kt > 0; tankG.scale.y = Math.max(0.001, L.ease.out(kt)); tankG.position.y = 14 * (1 - tankG.scale.y);
     mechPivot.visible = km > 0; mechPivot.position.y = (1 - L.ease.out(km)) * 5; mechPivot.rotation.y = -0.22 * P.thick(t);
     cenG.visible = kz > 0; cenG.position.y = (1 - L.ease.out(kz)) * 2;
-    const tl = b2 >= 1 ? L.clamp01(0.35 + P.sludgeOut(t) / 3) : 0;
+    const tl = b2 >= 1 ? 1 : 0;
     tkSludge.visible = tkWater.visible = tl > 0;   // (níveis fixos — o adensador já opera cheio)
   }
   return { update };

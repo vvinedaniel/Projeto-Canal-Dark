@@ -123,7 +123,7 @@ export function buildChem(env) {
         if (q.y > 15.5) { sg.add(L.box(0.12, q.y - 14 - 0.08, 0.12, MAT.galv, q.x, (14 + q.y - 0.08) / 2, q.z)); sg.add(L.box(0.5, 0.06, 0.5, MAT.galv, q.x, 14.03, q.z)); sg.add(L.box(Math.abs(a.x - b.x) > 0.1 ? 0.1 : 0.45, 0.06, Math.abs(a.x - b.x) > 0.1 ? 0.45 : 0.1, MAT.galv, q.x, q.y - lineR - 0.03, q.z)); }
         else { sg.add(L.box(Math.abs(a.x - b.x) > 0.1 ? 0.3 : 0.5, q.y - 14 - lineR, Math.abs(a.x - b.x) > 0.1 ? 0.5 : 0.3, MAT.concNew, q.x, (14 + q.y - lineR) / 2, q.z)); }
         // abraçadeira
-        const cl = L.torus(lineR + 0.012, 0.012, MAT.steel, q.x, q.y, q.z); if (Math.abs(a.x - b.x) > 0.1) cl.rotation.y = Math.PI / 2; cl.castShadow = false; sg.add(cl);
+        const cl = L.cyl(lineR + 0.015, lineR + 0.015, 0.05, MAT.steel, q.x, q.y, q.z, 8); if (Math.abs(a.x - b.x) > 0.1) cl.rotation.z = Math.PI / 2; else cl.rotation.x = Math.PI / 2; cl.castShadow = false; sg.add(cl);
       }
     }
     // braço sobre o tanque de contato (cloro, cal, flúor): poste atrás + viga em balanço com tirante

@@ -12,7 +12,7 @@ const MIME = { '.html': 'text/html', '.js': 'text/javascript', '.woff2': 'font/w
   const browser = await chromium.launch({ args: ['--use-gl=angle', '--use-angle=swiftshader', '--enable-unsafe-swiftshader', '--ignore-gpu-blocklist'] });
   const scale = +opt('scale', 1);
   const page = await browser.newPage({ viewport: { width: 1080, height: 1920 }, deviceScaleFactor: scale });
-  page.on('pageerror', (e) => console.log('[pageerror]', e.message));
+  page.on('pageerror', (e) => console.log('[pageerror]', e.message)); if (process.env.CONSOLE) page.on('console', (m) => console.log('[console]', m.text()));
   const qs = ['render', 'plate', 'scale=' + scale]; if (opt('only')) qs.push('only=' + opt('only')); if (opt('mods')) qs.push('mods=' + opt('mods')); if (opt('ao')) qs.push('ao=' + opt('ao'));
   await page.goto(`http://127.0.0.1:${server.address().port}/index.html?${qs.join('&')}`);
   await page.waitForFunction(() => window.__ready === true, null, { timeout: 180000 });

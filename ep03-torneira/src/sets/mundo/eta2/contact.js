@@ -5,7 +5,7 @@
 // Obra: S.build.contact (laje → paredes → chicanas uma a uma → passarela). Água: S.water.contact. Cloro: S.run.chlorine.
 // Saída: S.build.finalDose (agitador descido) e S.run.finalDose (mistura da cal e do flúor).
 export function makeContact(ctx, K) {
-  const { L, THREE, Lo, ghost } = ctx, { MAT, M, bx, bake, pipe, railing, walkway, rod, butterfly } = K;
+  const { L, THREE, Lo, ghost } = ctx, { MAT, M, bx, bake, pipe, railing, walkway, rod, butterfly, QuadBatch } = K, CB = K.chevB;
   const C = Lo.ETA.contact, W = Lo.WATER, D = Lo.ETA.dosing, P = Lo.P, PI = Math.PI;
   const X0 = C.x0, X1 = C.x1, ZB = C.z0, ZC = C.z1, FL = C.floor, WL = C.water, TOP = C.top, TH = 0.3, BT = 0.2, Y0 = Lo.ETA.y;
   const root = new THREE.Group(), sub = (b, a, c) => L.clamp01((b - a) / (c - a)), _o = new THREE.Object3D(), _c = new THREE.Color();
@@ -27,14 +27,14 @@ export function makeContact(ctx, K) {
   const baffles = bxs.map((x, i) => {
     const za = front(i) ? ZB + TH : ZB + TH + GAP, zb = front(i) ? ZC - GAP : ZC;
     const piv = L.group(root, 0, FL, 0), m = bx([x - BT / 2, 0, za], [x + BT / 2, TOP - FL - 0.05, zb], MAT.concOld); piv.add(m);
-    if (!front(i)) { const cap = L.mesh(new THREE.PlaneGeometry(BT, TOP - FL - 0.05), MAT.cut, x, (TOP - FL - 0.05) / 2, zb + 0.004, { cast: false }); piv.add(cap); }
     L.shadows(m); return piv;
   });
   L.shadows(slab); L.shadows(walls);
 
   /* ---------- água por compartimento (cor filtrada → tratada) ---------- */
-  const wm = comps.map((c) => L.water(new THREE.Color(W.filtered).lerp(new THREE.Color(W.treated), c.j / nB).getStyle(), 0.92, { side: THREE.DoubleSide }));
-  const wPl = comps.map((c) => { const f = new THREE.Mesh(new THREE.PlaneGeometry(1, 1), wm[c.j]), tg = new THREE.PlaneGeometry(1, 1); tg.rotateX(-PI / 2); const t = new THREE.Mesh(tg, wm[c.j]); f.receiveShadow = t.receiveShadow = true; root.add(f, t); return { f, t }; });
+  // gradiente próprio, mais contrastado: verde-água claro na entrada → Lo.WATER.treated na saída (cor por vértice)
+  const C0 = new THREE.Color('#9ed8c4'), C1 = new THREE.Color(W.treated), ccol = comps.map((c) => C0.clone().lerp(C1, Math.pow(c.j / nB, 0.85)));
+  const wQ = new QuadBatch(2 * (nB + 1), L.water('#ffffff', 0.93, { side: THREE.DoubleSide, vertexColors: true }), { colors: true }); root.add(wQ.mesh);
   // água nas passagens (por cima da chicana não: nas folgas) — a superfície contínua já cobre; faces de corte só nos compartimentos
 
   /* ---------- entrada (difusor), saída (tubo até o reservatório) ---------- */
@@ -58,7 +58,7 @@ export function makeContact(ctx, K) {
   for (let i = 0; i < 14; i++) { const a = (i / 14) * L.TAU, f = L.box(0.03, 0.42, 0.04, MAT.blue, Math.cos(a) * 0.25, 0.62, Math.sin(a) * 0.25); f.rotation.y = -a; head.add(f); }
   const shaft = new THREE.Group(); shaft.add(L.cyl(0.035, 0.035, TOP - FL - 0.4, MAT.steel, 0, -(TOP - FL - 0.4) / 2, 0, 8));
   for (let k = 0; k < 3; k++) { const bl = L.box(0.5, 0.03, 0.14, MAT.steel, 0.25, 0, 0); bl.rotation.x = 0.35; const hb = new THREE.Group(); hb.add(bl); hb.rotation.y = (k * L.TAU) / 3; hb.position.y = -(TOP - FL - 0.55); shaft.add(hb); }
-  mixer.add(head, shaft); mixer.position.set(mxX, TOP + 0.3, mxZ); root.add(mixer);
+  const headB = bake(head), shaftB = bake(shaft); mixer.add(headB, shaftB); mixer.position.set(mxX, TOP + 0.3, mxZ); root.add(mixer);
   const mixBeam = L.group(root); mixBeam.add(beam);
 
   /* ---------- setas do percurso em zigue-zague (= tempo de contato) ---------- */
@@ -71,23 +71,24 @@ export function makeContact(ctx, K) {
   });
   const pc = new THREE.CurvePath(); for (let i = 0; i < path.length - 1; i++) pc.add(new THREE.LineCurve3(L.v3(path[i]), L.v3(path[i + 1])));
   const pts = pc.getSpacedPoints(220);
-  const zig = new L.Chevrons(L.curve(pts.map((p) => [p.x, p.y, p.z]), false, 0.05), { n: 34, size: 0.26, normal: [0, 1, 0.45], material: L.flat(L.PAL.accent, { transparent: true, toneMapped: false }) });
-  zig.mesh.renderOrder = 35; root.add(zig.mesh);
+  const zig = CB.add(L.curve(pts.map((p) => [p.x, p.y, p.z]), false, 0.05), { n: 34, size: 0.28, normal: [0, 1, 0.45], color: L.PAL.accent });
   // linha luminosa fina do percurso (aparece junto com as setas)
   const pathLine = L.mesh(new THREE.TubeGeometry(L.curve(pts.map((p) => [p.x, p.y - 0.02, p.z]), false, 0.05), 400, 0.025, 6), L.flat('#ffe48a', { transparent: true, opacity: 0.5, toneMapped: false }), 0, 0, 0, { cast: false, receive: false });
   root.add(pathLine);
 
   /* ---------- nuvens de produto: cloro na entrada, cal e flúor na saída ---------- */
-  const pr = L.rng(515), sph = new THREE.IcosahedronGeometry(1, 1), cloudM = M('#ffffff', { roughness: 0.9, transparent: true, opacity: 0.85, depthWrite: false });
-  function cloud(n, col, at, spread) { const im = new THREE.InstancedMesh(sph, cloudM, n), d = []; for (let i = 0; i < n; i++) { d.push({ ph: pr(), a: pr() * L.TAU, r: pr(), s: 0.04 + pr() * 0.06, dy: pr() }); im.setColorAt(i, new THREE.Color(col).offsetHSL(0, 0, (pr() - 0.5) * 0.1)); } im.castShadow = false; im.frustumCulled = false; im.renderOrder = 6; root.add(im); return { im, d, at, spread }; }
-  const clC = cloud(60, '#e3f59a', D.chlorine, 1.0), limeC = cloud(56, '#fbfbf4', D.lime, 0.8), fluC = cloud(36, '#d9cdf7', D.fluoride, 0.7);
+  const pr = L.rng(515), sph = new THREE.IcosahedronGeometry(1, 1), cloudM = M('#ffffff', { roughness: 0.9, transparent: true, opacity: 0.9, depthWrite: false, emissive: '#ffffff', emissiveIntensity: 0.25 });
+  const CLN = [60, 70, 50], cloudIM = new THREE.InstancedMesh(sph, cloudM, CLN[0] + CLN[1] + CLN[2]); cloudIM.castShadow = false; cloudIM.frustumCulled = false; cloudIM.renderOrder = 6; root.add(cloudIM);
+  let cAt = 0;
+  function cloud(n, col, at, spread, size) { const d = [], base = cAt; for (let i = 0; i < n; i++) { d.push({ ph: pr(), a: pr() * L.TAU, r: pr(), s: size * (0.6 + pr() * 0.8), dy: pr() }); cloudIM.setColorAt(cAt++, new THREE.Color(col).offsetHSL(0, 0, (pr() - 0.5) * 0.1)); } return { base, d, at, spread }; }
+  const clC = cloud(CLN[0], '#e3f59a', D.chlorine, 1.0, 0.07), limeC = cloud(CLN[1], '#ffffff', D.lime, 1.25, 0.12), fluC = cloud(CLN[2], '#c9b6ff', D.fluoride, 1.1, 0.1);
   function updCloud(cl, t, amt, drift) {
     cl.d.forEach((p, i) => {
       const u = L.fract(p.ph + t * 0.35), rr = cl.spread * (0.15 + 0.85 * u) * (0.4 + p.r * 0.6), a = p.a + t * 1.6 * (1 - u * 0.5);
-      _o.position.set(cl.at[0] + Math.cos(a) * rr * 0.6 + drift[0] * u, Math.min(WL - 0.05, cl.at[1] - 0.25 - u * (0.6 + p.dy * 1.1)), cl.at[2] + Math.sin(a) * rr * 0.6 + drift[2] * u);
-      _o.scale.setScalar(amt > 0.01 ? p.s * (1 + u * 1.2) * amt * (1 - u * 0.6) : 0.00001); _o.updateMatrix(); cl.im.setMatrixAt(i, _o.matrix);
+      _o.position.set(cl.at[0] + Math.cos(a) * rr * 0.7 + drift[0] * u, WL + 0.02 - u * 0.12 * p.dy, cl.at[2] + Math.sin(a) * rr * 0.7 + drift[2] * u);
+      const sc = amt > 0.01 ? p.s * (1 + u * 1.6) * amt * (1 - u * 0.55) : 0.00001; _o.scale.set(sc, sc * 0.45, sc); _o.updateMatrix(); cloudIM.setMatrixAt(cl.base + i, _o.matrix);
     });
-    cl.im.instanceMatrix.needsUpdate = true;
+    cloudIM.instanceMatrix.needsUpdate = true;
   }
 
   /* ---------- planta ---------- */
@@ -106,18 +107,18 @@ export function makeContact(ctx, K) {
       pgB.visible = b > 0.75;
       // água: o caminho enche na ordem dos compartimentos
       comps.forEach((c, j) => {
-        const f = L.sstep(j / (nB + 4), j / (nB + 4) + 0.45, w), lv = L.lerp(FL, WL, f), on = f > 0.005, q = wPl[j];
-        q.f.visible = q.t.visible = on;
-        if (on) { q.f.position.set(c.c, (FL + lv) / 2, ZC + 0.006); q.f.scale.set(c.w, lv - FL, 1); q.t.position.set(c.c, lv, (ZB + TH + ZC) / 2); q.t.scale.set(c.w + BT, 1, ZC - ZB - TH); }
+        const f = L.sstep(j / (nB + 4), j / (nB + 4) + 0.45, w), lv = L.lerp(FL, WL, f);
+        if (f > 0.005) { wQ.front(2 * j, c.a, c.b, FL, lv, ZC + 0.006, null, ccol[j]); wQ.top(2 * j + 1, c.a - BT / 2, c.b + BT / 2, ZB + TH, ZC, lv, null, ccol[j]); } else { wQ.hide(2 * j); wQ.hide(2 * j + 1); }
       });
+      wQ.done();
       const flowA = L.sstep(0.6, 1, w);
-      zig.update(t, { speed: 0.035, amount: flowA }); pathLine.visible = flowA > 0.02; pathLine.material.opacity = 0.45 * flowA;
+      CB.update(zig, t, { speed: 0.035, amount: flowA }); pathLine.visible = flowA > 0.02; pathLine.material.opacity = 0.45 * flowA;
       updCloud(clC, t, w > 0.3 ? S.run.chlorine : 0, [1.2, 0, 3.2]);
       // saída: agitador desce e gira; cal (branca) e flúor (lilás claro) se misturam e seguem para o reservatório
       const kd = S.build.finalDose, kr = S.run.finalDose * (w > 0.5 ? 1 : 0);
       mixBeam.visible = mixer.visible = kd > 0.001;
       mixer.position.y = TOP + 0.3 + (1 - L.ease.out(L.clamp01(kd / 0.7))) * 2.2;
-      shaft.rotation.y = t * 9 * kr;
+      shaftB.rotation.y = t * 9 * kr;
       updCloud(limeC, t, kr, [0.7, 0, -0.6]); updCloud(fluC, t, kr, [0.5, 0, -1.2]);
     }
   };
