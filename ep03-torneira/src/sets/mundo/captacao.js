@@ -44,8 +44,10 @@ export async function create(ctx) {
   root.traverse((o) => { if (o.isGroup) o.renderOrder = -2; });
   ctx.shared.captacao = { rawOut: Lo.P.rawOut, rawIn: Lo.P.rawIn, path: R.mainPath };
 
-  return {
-    update(t, S, cam) { for (const p of parts) p.update(t, S, cam); },
+  const dbg = mods.includes('cstats');
+  const api = {
+    update(t, S, cam) { for (const p of parts) p.update(t, S, cam); if (dbg) { const s = api.stats(); console.log(`[captacao] t=${t} tri=${Math.round(s.tri)} calls=${s.calls}`); } },
     stats() { let tri = 0, calls = 0; root.traverse((o) => { if (o.isMesh && o.visible && o.geometry) { calls++; const n = o.geometry.index ? o.geometry.index.count : o.geometry.attributes.position.count; tri += (n / 3) * (o.isInstancedMesh ? o.count : 1); } }); return { tri, calls }; }
   };
+  return api;
 }

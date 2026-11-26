@@ -49,7 +49,7 @@ export function buildFaucet(ctx, K, H) {
   const cover = new THREE.Group(); fc.add(cover);
   cover.add(L.mesh(revolve(outer, 36, 'front'), chromeCover));
   { const sc = L.cutPipe(spPts, { r: 0.0131, wall: 0.004, mat: chromeCover, cutMat: chromeCover, seg: 80, radial: 12, tension: 0.5 }); sc.group.scale.z = -1; sc.group.children.slice(1).forEach((c) => { c.visible = false; }); cover.add(sc.group);
-    const ag = revolve([[0.0165, 0.0], [0.0165, -0.022]], 24, 'front'); ag.translate(AE.x, AE.y, 0); cover.add(L.mesh(ag, chromeCover)); }
+    const ag = revolve([[0, 0.0], [0.0165, 0.0], [0.0165, -0.022], [0.0, -0.022]], 24, 'front'); ag.translate(AE.x, AE.y, 0); cover.add(L.mesh(ag, chromeCover)); }
   /* ---------- haste, carrapeta, vedante, volante ---------- */
   const stem = new THREE.Group(); fc.add(stem);
   { const sm = new Merge(); sm.add(G.cyl(0.0072, 0.0072, 0.1, 16), '#d7dde2', TM(0, 0.118, 0));
