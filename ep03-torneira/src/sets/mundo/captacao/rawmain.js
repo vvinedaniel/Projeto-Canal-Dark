@@ -62,13 +62,20 @@ export function buildMain(ctx, K, R) {
   const collar = bake(L.put(new THREE.Group(), boxC(PI_[0] - 0.9, PI_[0] + 0.9, 13.85, 14.25, -81.3, -79.5, MAT.concNew)));
   g.add(collar);
 
-  /* ---------- janela em corte (meia seção do tubo, aberta para +z) com a água bruta ---------- */
-  const win = new THREE.Group(); win.position.z = -89.6; g.add(win);
-  const cp = L.cutPipe([[9, YP], [15, YP]], { r, wall: 0.045, seg: 60, radial: 16, mat: M('#8f7c63', { roughness: 0.42, metalness: 0.35, side: THREE.DoubleSide }), cutMat: M('#d9cfbf', { roughness: 0.8 }) });
-  win.add(cp.group);
-  const wIn = cp.waterIn(0.82, Lo.WATER.raw, 1.0);
-  [9, 15].forEach((x) => { const f = new THREE.Group(); K.flange(f, x, YP, 0, r * 0.97, 'x', MAT.rawPipeD, 10); win.add(bake(f)); });
-  const winSilt = new L.Flow(L.curve([[9.05, YP - 0.05, -0.12], [15, YP - 0.05, -0.12]]), { n: 34, size: 0.028, colors: ['#d8c39b', '#b6955f', '#efe3c8'], jitter: [0, 0.12, 0.1], seed: 51 });
+  /* ---------- janela em corte (metade de cima do tubo removida: vemos a água bruta correndo, de cima) ---------- */
+  const win = new THREE.Group(); g.add(win);
+  const WX0 = 9, WX1 = 15, ri = r - 0.045;
+  const halfPipe = (R0, flip) => { const pos = [], idx = [], n = 20; for (let i = 0; i <= n; i++) { const a = Math.PI + (i / n) * Math.PI; [WX0, WX1].forEach((x) => pos.push(x, YP + Math.sin(a) * R0, -89.6 + Math.cos(a) * R0)); }
+    for (let i = 0; i < n; i++) { const q = i * 2; flip ? idx.push(q, q + 2, q + 1, q + 1, q + 2, q + 3) : idx.push(q, q + 1, q + 2, q + 1, q + 3, q + 2); }
+    const ge = new THREE.BufferGeometry(); ge.setAttribute('position', new THREE.Float32BufferAttribute(pos, 3)); ge.setIndex(idx); ge.computeVertexNormals(); return ge; };
+  win.add(L.mesh(halfPipe(r, false), MAT.rawPipe), L.mesh(halfPipe(ri, true), M('#4a4036', { roughness: 0.6, metalness: 0.25 })));
+  [-1, 1].forEach((sd) => win.add(boxC(WX0, WX1, YP - 0.004, YP + 0.012, -89.6 + sd * ri - (sd > 0 ? 0 : 0.045), -89.6 + sd * ri + (sd > 0 ? 0.045 : 0), M('#efe6d6', { roughness: 0.7 }))));
+  { const f = new THREE.Group(); [WX0, WX1].forEach((x) => K.flange(f, x, YP, -89.6, r * 0.97, 'x', MAT.rawPipeD, 10)); win.add(bake(f)); }
+  const WLV = YP - 0.06, chord = Math.sqrt(ri * ri - (WLV - YP) ** 2) * 2;
+  const wGeo = new THREE.PlaneGeometry(1, chord).rotateX(-Math.PI / 2).translate(0.5, 0, 0);
+  const wSurf = L.mesh(wGeo, L.water(Lo.WATER.raw, 1.0), WX0, WLV, -89.6, { cast: false }); win.add(wSurf);
+  const wIn = { range(a, b) { wSurf.scale.x = Math.max(0.001, (WX1 - WX0) * b); }, group: wSurf };
+  const winSilt = new L.Flow(L.curve([[WX0 + 0.05, WLV + 0.005, -89.6], [WX1, WLV + 0.005, -89.6]]), { n: 40, size: 0.03, colors: ['#e8d6ae', '#c4a46c', '#f6eedb'], jitter: [0, 0, ri * 0.75], seed: 51 });
   win.add(winSilt.mesh);
   // setas marrons correndo por cima do tubo (frente d'água e fluxo contínuo)
   const chev = new L.Chevrons(new K.SubCurve(path, 0, sGround / LEN), { n: 44, size: 0.3, normal: [0, 1, 0], offset: [0, r + 0.16, 0], material: L.flat('#c08a4a', { toneMapped: false }) });

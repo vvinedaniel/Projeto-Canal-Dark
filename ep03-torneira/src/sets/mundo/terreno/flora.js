@@ -83,6 +83,7 @@ export function buildFlora(ctx, gr) {
   /** território livre para plantar (fora de estruturas dos outros módulos) */
   function free(x, z, m = 0) {
     if (x < X0 + 0.8 || x > X1 - 0.8 || z < Z0 + 0.8 || z > ZF - 0.8) return false;
+    if (x > -38 && x < 44 && z > -82 && z < -26) return false;                         // corredores das câmeras da ETA: nada alto
     if (inRect(R.ZONES.captacao, x, z, m)) return false;
     if (inDam(x, z, m)) return false;
     if (dIn(x, z) < R.RIN.hw + 1.0 + m || dOut(x, z) < R.ROUT.hw + 1.2 + m) return false;

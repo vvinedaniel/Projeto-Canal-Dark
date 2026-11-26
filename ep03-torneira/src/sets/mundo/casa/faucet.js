@@ -43,7 +43,7 @@ export function buildFaucet(ctx, K, H) {
   // arejador (rosqueado na ponta da bica): corpo + telas
   const AE = { x: 0.35, y: 0.27 };
   { const ap = [[0.0145, 0.0], [0.0165, 0.0], [0.0165, -0.022], [0.0145, -0.022]]; const g = revolve(ap, 24, 'back'); g.translate(AE.x, AE.y, 0); fc.add(L.mesh(g, chrome)); const c = revolveCaps(ap); c.translate(AE.x, AE.y, 0.0004); fc.add(L.mesh(c, brassCut, 0, 0, 0, { cast: false }));
-    const scr = new Merge(); [-0.006, -0.012, -0.018].forEach((y, i) => { scr.add(G.cyl(0.0143, 0.0143, 0.0015, 20, false, Math.PI / 2, Math.PI), i === 1 ? '#7d868d' : '#aab3ba', TM(AE.x, AE.y + y, 0)); for (let k = -3; k <= 3; k++) scr.add(G.box(0.0006, 0.002, 0.026), '#5d666d', TM(AE.x + k * 0.004, AE.y + y, -0.0)); });
+    const scr = new Merge(); [-0.006, -0.012, -0.018].forEach((y, i) => { scr.add(G.cyl(0.0143, 0.0143, 0.0015, 20, false, Math.PI / 2, Math.PI), i === 1 ? '#7d868d' : '#aab3ba', TM(AE.x, AE.y + y, 0)); for (let k = -3; k <= 3; k++) scr.add(G.box(0.0006, 0.002, 0.013), '#5d666d', TM(AE.x + k * 0.004, AE.y + y, -0.0066)); });
     fc.add(scr.mesh(vmat({ roughness: 0.4, metalness: 0.7 }))); }
   /* ---------- tampa (metade da frente, inteira no gancho) ---------- */
   const cover = new THREE.Group(); fc.add(cover);
@@ -103,12 +103,12 @@ export function buildFaucet(ctx, K, H) {
   /* ---------- estado ---------- */
   const knobAngle = (t, S) => {
     // gancho: a mão termina de abrir (≈ 75°) entre 0 e 1 s; final: abre com S.run.faucet
-    if (t < 7.05) return 1.6 + 1.3 * L.ease.out(L.clamp01(t / 1.0));
-    return S.run.faucet * 2.9;
+    if (t < 7.05) return 0.3 + 1.3 * L.ease.out(L.clamp01(t / 1.0));
+    return S.run.faucet * 1.6;
   };
   function update(t, S, supply) {
     const open = S.run.faucet, has = supply > 0.5;
-    const ang = knobAngle(t, S); stem.rotation.y = -ang; stem.position.y = 0.0145 * open;
+    const ang = knobAngle(t, S); stem.rotation.y = ang; stem.position.y = 0.0145 * open;
     // tampa: sai em 100,6–101,2 e volta em 106,9–107,5
     const cv = L.clamp01((t - 100.45) / 0.6) * (1 - L.clamp01((t - 106.9) / 0.6)), ce = L.ease.io(cv);
     cover.visible = ce < 0.995; cover.position.set(0, 0.05 * ce, 0.14 * ce); chromeCover.opacity = 1 - ce; chromeCover.depthWrite = ce < 0.5;

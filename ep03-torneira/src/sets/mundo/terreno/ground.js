@@ -31,6 +31,8 @@ export function buildGround(ctx) {
   // poço do reservatório apoiado da ETA (semienterrado): furo circular + piso rebaixado y 12,7 (pedido do eta2)
   const RES = { cx: Lo.ETA.reservoir.x, cz: Lo.ETA.reservoir.z, r: 5.9, floor: 12.7 };
   shared.terrainHoles.push({ cx: RES.cx, cz: RES.cz, r: RES.r, corners: true });
+  RES.pit = { x0: Math.floor(RES.cx - RES.r), x1: Math.ceil(RES.cx + RES.r), z0: RES.cz, z1: -42 };   // vala aberta na frente do corte do reservatório
+  shared.terrainHoles.push(RES.pit);
 
   /* ---------- grade ---------- */
   const sp = R.SPILL;
@@ -224,12 +226,16 @@ export function buildGround(ctx) {
 
   /* ---------- poço do reservatório apoiado: anel de chão (cobre o serrilhado do furo), parede de solo e piso ---------- */
   {
-    const ring = new THREE.RingGeometry(RES.r, RES.r + 1.6, 64, 1); ring.rotateX(-Math.PI / 2); ring.translate(RES.cx, Lo.PLATEAU_Y + 0.004, RES.cz);
+    const ring = new THREE.RingGeometry(RES.r, RES.r + 1.6, 48, 1, 0, Math.PI); ring.rotateX(-Math.PI / 2); ring.translate(RES.cx, Lo.PLATEAU_Y + 0.004, RES.cz); // só a metade de trás
     const pa = ring.attributes.position, ua = ring.attributes.uv; for (let i = 0; i < pa.count; i++) ua.setXY(i, (pa.getX(i) - X0) / (X1 - X0), (pa.getZ(i) - Z0) / (ZF - Z0));
     const rm = L.mesh(ring, gmat, 0, 0, 0, { cast: false }); rm.receiveShadow = true; rm.renderOrder = 2; grp.add(rm);
-    const wall = new THREE.CylinderGeometry(RES.r, RES.r, Lo.PLATEAU_Y - RES.floor, 64, 1, true); wall.translate(RES.cx, (Lo.PLATEAU_Y + RES.floor) / 2, RES.cz);
-    const fl = new THREE.CircleGeometry(RES.r, 64); fl.rotateX(-Math.PI / 2); fl.translate(RES.cx, RES.floor, RES.cz);
-    RES.meshes = [wall, fl];
+    const hh = Lo.PLATEAU_Y - RES.floor, cy = (Lo.PLATEAU_Y + RES.floor) / 2, Pt = RES.pit;
+    const wall = new THREE.CylinderGeometry(RES.r, RES.r, hh, 48, 1, true, Math.PI / 2, Math.PI); wall.translate(RES.cx, cy, RES.cz);
+    const fl = new THREE.CircleGeometry(RES.r, 48); fl.rotateX(-Math.PI / 2); fl.translate(RES.cx, RES.floor, RES.cz);
+    const pf = new THREE.PlaneGeometry(Pt.x1 - Pt.x0, Pt.z1 - Pt.z0); pf.rotateX(-Math.PI / 2); pf.translate((Pt.x0 + Pt.x1) / 2, RES.floor + 0.002, (Pt.z0 + Pt.z1) / 2);
+    const pw = [Pt.x0, Pt.x1].map((x) => new THREE.PlaneGeometry(Pt.z1 - Pt.z0, hh).rotateY(Math.PI / 2).translate(x, cy, (Pt.z0 + Pt.z1) / 2));
+    const pfr = new THREE.PlaneGeometry(Pt.x1 - Pt.x0, hh).translate((Pt.x0 + Pt.x1) / 2, cy, Pt.z1);
+    RES.meshes = [wall, fl, pf, ...pw, pfr];
   }
   /* ---------- mapa de altura para o solo em corte ---------- */
   const hHalf = new Uint16Array(fH.length), toHalf = THREE.DataUtils.toHalfFloat;
@@ -249,7 +255,8 @@ export function buildGround(ctx) {
   }
   const faces = new THREE.Group(); grp.add(faces);
   const cavMat = kit.material({ tint: 0.62 });
-  RES.meshes.forEach((g) => { const m = L.mesh(g, soilMat, 0, 0, 0, { cast: false }); m.receiveShadow = true; grp.add(m); });
+  { const brita = L.mat('#857f73', { roughness: 1 }); brita.onBeforeCompile = (sh) => { sh.uniforms.tGDet = GU.tGDet; sh.vertexShader = sh.vertexShader.replace('#include <common>', '#include <common>\nvarying vec3 vBP;').replace('#include <begin_vertex>', '#include <begin_vertex>\nvBP = (modelMatrix * vec4(transformed, 1.0)).xyz;'); sh.fragmentShader = sh.fragmentShader.replace('#include <common>', '#include <common>\nuniform sampler2D tGDet; varying vec3 vBP;').replace('#include <map_fragment>', '#include <map_fragment>\ndiffuseColor.rgb *= 0.6 + 0.8 * texture2D(tGDet, vBP.xz / 1.3).r;'); }; brita.customProgramCacheKey = () => 'ep3-brita';
+    RES.meshes.forEach((g, i) => { const m = L.mesh(g, i === 1 || i === 2 ? brita : soilMat, 0, 0, 0, { cast: false }); m.receiveShadow = true; grp.add(m); }); }
   const addFace = (g, mt = soilMat) => { const m = L.mesh(g, mt, 0, 0, 0, { cast: false }); m.receiveShadow = true; m.renderOrder = 2; faces.add(m); return m; };
   addFace(strip(xs.map((x) => [x, H(x, Z0), YB, Z0]), [0, 0, -1]));
   addFace(strip(zs.map((z) => [X0, H(X0, z), YB, z]), [-1, 0, 0]));

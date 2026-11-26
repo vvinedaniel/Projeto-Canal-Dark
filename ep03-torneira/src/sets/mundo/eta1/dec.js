@@ -276,7 +276,7 @@ export function buildDec(env) {
     LW.forEach((m) => m.userData.setLevel(full ? 1 : 0));
     // manta de lodo: cresce com o tempo de decantação; o raspador a empurra para o poço
     const kB = S.present ? 1 : L.clamp01(P.decFill(t) / 3.0), running = S.run.scraper * b > 0.02, bladeX = br.x - 0.45;
-    blanket.m.visible = kB > 0.01; hop.visible = kB > 0.01 && kw >= 1;
+    blanket.m.visible = kB > 0.01 && kw >= 1; hop.visible = kB > 0.01 && kw >= 1;
     if (blanket.m.visible) {
       const { pos } = blanket;
       for (let i = 0; i <= NB; i++) {

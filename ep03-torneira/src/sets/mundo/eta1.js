@@ -28,8 +28,8 @@ export function create(ctx) {
     paddles: phaseTable((S) => S.run.paddles),
     scraper: phaseTable((S) => S.run.scraper * S.build.dec),
     thick: phaseTable((S) => S.build.sludge >= 1 ? 1 : 0),
-    decFill: phaseTable((S) => (S.present ? 0 : S.water.dec)),
-    flocGrow: phaseTable((S) => (S.present ? 0 : S.water.floc)),
+    decFill: phaseTable((S) => (S.st > 150 ? 0 : S.water.dec)),
+    flocGrow: phaseTable((S) => (S.st > 150 ? 0 : S.water.floc)),
     sludgeOut: phaseTable((S) => Math.min(1, S.run.sludgeOut)),
     /** a câmera está a menos de d metros do ponto p? (setas e detalhes só nos planos próximos) */
     near: (cam, p, d) => !!cam && cam.position.distanceTo(_v.set(p[0], p[1], p[2])) < d
@@ -44,6 +44,6 @@ export function create(ctx) {
   shared.eta1 = { stats: st };
   let logged = false;
   return {
-    update(t, S, cam) { for (const p of parts) p.update(t, S, cam, P); if (!logged) { logged = true; const v = K.stats(root, true); console.warn(`[eta1] t=${t.toFixed(2)} visível: ${v.tris} triângulos, ${v.calls} draw calls`); root.children.forEach((c, i) => { const a = K.stats(c, true); const sub = c.children.map((d) => K.stats(d, true).calls + "/" + K.stats(d, true).tris).join(','); console.warn(`  [${i}] ${a.calls} calls ${a.tris} tris :: ${sub}`); }); } }
+    update(t, S, cam) { for (const p of parts) p.update(t, S, cam, P); if (!logged) { logged = true; const v = K.stats(root, true); console.warn(`[eta1] t=${t.toFixed(2)} visível: ${v.tris} triângulos, ${v.calls} draw calls`); } }
   };
 }
