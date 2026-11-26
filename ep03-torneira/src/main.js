@@ -19,7 +19,7 @@ const stage = $('#stage');
 
 const renderer = new THREE.WebGLRenderer({ canvas: $('#gl'), antialias: false, preserveDrawingBuffer: true, powerPreference: 'high-performance' });
 renderer.setPixelRatio(SCALE); renderer.setSize(L.W, L.H, false);
-renderer.shadowMap.enabled = true; renderer.shadowMap.type = THREE.PCFSoftShadowMap;
+renderer.shadowMap.enabled = !q.has('noshadow'); renderer.shadowMap.type = THREE.PCFSoftShadowMap; // ?noshadow: só diagnóstico
 renderer.toneMapping = THREE.ACESFilmicToneMapping; renderer.toneMappingExposure = 1.0;
 renderer.localClippingEnabled = true;
 const pmrem = new THREE.PMREMGenerator(renderer);
