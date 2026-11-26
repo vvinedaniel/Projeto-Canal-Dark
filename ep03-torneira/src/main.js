@@ -228,17 +228,17 @@ $('#play').addEventListener('click', () => { playing = !playing; });
 function tick(ms) { const dt = Math.min(0.1, (ms - last) / 1000 || 0); last = ms; if (playing) { now = (now + dt) % DUR; frame(now); scrub.value = now; clock.textContent = now.toFixed(2); } requestAnimationFrame(tick); }
 // capas para publicação (?cover=1..3): um quadro do filme com o título por cima, sem legenda
 const COVERS = [
-  { t: 70.6, html: '<h1>Por que a cidade <em>alaga</em>?</h1>' },
-  { t: 53.4, html: '<h1>O bueiro tem <em class="warn">limite</em></h1>' },
-  { t: 107.5, html: '<h1>Mesma <em>chuva</em></h1>' }
+  { t: 0.7, cam: { p: [-2.15, 1.42, 19.6], l: [-2.45, 1.02, 17.6], fov: 40 }, html: '<h1>Como a <em>água</em> chega à torneira?</h1>' },
+  { t: 55.4, cam: { p: [-10.5, 19.4, -38.5], l: [-10.5, 16.4, -47], fov: 40 }, html: '<h1>Por dentro do <em>filtro</em></h1>' },
+  { t: 113.2, html: '<h1>Da <em>represa</em> à torneira</h1>' }
 ];
 const coverN = parseInt(q.get('cover') || '0');
 if (coverN) {
   const c = COVERS[coverN - 1], cov = $('#cover');
   cov.innerHTML = c.html; cov.hidden = false;
   const _frame = frame;
-  window.__coverT = c.t;
-  document.head.insertAdjacentHTML('beforeend', '<style>#cap,#hook,#brand,#source,#labels,#meter,#splitBar .n{display:none!important} #splitBar span{top:560px!important;font-size:64px!important}</style>');
+  window.__coverT = c.t; if (c.cam) window.__cam = c.cam;
+  document.head.insertAdjacentHTML('beforeend', '<style>#cap,#hook,#brand,#source,#labels,#meter,#micro,#microSvg,#end,#splitBar .n{display:none!important} #splitBar span{top:560px!important;font-size:64px!important}</style>');
 }
 // placas limpas para montar capas (?plate): só o 3D, sem legenda/marca/rótulos
 if (q.has('plate')) document.head.insertAdjacentHTML('beforeend', '<style>#cap,#hook,#brand,#source,#labels,#lens,#end,#meter{display:none!important}</style>');

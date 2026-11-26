@@ -203,3 +203,27 @@ e `tools/bench-cap.cjs` (métodos de captura). Resultados em `out/bench.jsonl`.
 - **Áudio**: `tools/sfx_ep02.py` reaproveita a biblioteca de síntese do ep01 (`sfx.py`) e acrescenta chuva, trovão,
   enxurrada, diesel/hidráulico, escavação, rolo, obra, plástico, rebobinar. Cuidado: parâmetros de síntese não podem
   se chamar `rev`/`pan`/`bus`/`env`/`fi`/`fo` (colidem com a deixa `C(...)`).
+
+## Ep. 03 — "Como a água chega até sua torneira?" (o que aprendemos)
+
+- **Maquete única do manancial à torneira** (`ep03-torneira/src/sets/mundo/`), 7 módulos com dono (terreno, captação,
+  eta1, eta2, cidade, casa, micro), mesmo contrato do Ep. 02 (`docs/MODULOS.md`). Conexões entre módulos pelas **portas**
+  `Lo.P.*` do layout; quem é dono de cada trecho de tubo está na tabela. `shared` repassa furos (`terrainHoles`,
+  `cityFaceHoles`), luvas de espera (`houseTap`) e o chão desenhado (`groundY`).
+- **Relógio da história com "presente" e rebobinar**: 0–7 s tudo pronto e funcionando (gancho + caminho inverso), 7,05–7,9 s
+  rebobina e depois cada obra nasce quando a narração chega nela. O que ainda não existe aparece como **planta**
+  (contorno azul, `ghost.of(obj)`), em destaque na vista aérea.
+- **Lente de ampliação ilustrativa** (`ui.micro` no motor): segundo WebGLRenderer num canvas circular com haste até o
+  ponto ampliado; cena própria do módulo micro. Sempre com a etiqueta "Ampliação ilustrativa". Composição: lente no alto
+  (y 175–745 px), assunto entre a lente e as legendas.
+- **Validação**: além das 4 imagens por etapa, gerar trechos animados curtos (`render.cjs frames` → mp4 + tira) dos
+  mecanismos; e 1 quadro/s do filme todo. As câmeras provisórias dos agentes atravessavam paredes — peça a cada agente
+  chaves de câmera testadas para o seu trecho.
+- **Desempenho**: ~5 s/quadro; 2 processos não aceleram (SwiftShader já usa os 4 núcleos). O tempo cresce com a
+  geometria da maquete única (3 passes de geometria por quadro: sombra, principal, normais do GTAO). Peça aos agentes
+  meta de draw calls e `mergeGeometries` por material/fase (eta2: 504 → 213). `tools/bench3.cjs` mede s/quadro e
+  draw calls/triângulos por instante (`window.__info`).
+- **Servidor reclamado por inatividade**: o container é desligado quando nenhuma tarefa da sessão está ativa. Durante o
+  render, mantenha um vigia em segundo plano (loop com `out/resume.sh`, 2 h por vez) e checagens agendadas; `resume.sh`
+  descarta JPEG truncado e retoma do primeiro quadro que falta.
+- **Entrega**: MP4 original de ~300 MB não baixa no app; enviar também versão leve (~70 MB, 2 passes x264) e ZIP.
