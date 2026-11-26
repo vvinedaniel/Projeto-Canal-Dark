@@ -41,7 +41,8 @@ export function create(ctx) {
   const st = K.stats(root);
   console.warn(`[eta1] ${st.tris} triângulos, ${st.calls} draw calls (máximo, tudo visível)`);
   shared.eta1 = { stats: st };
+  let logged = false;
   return {
-    update(t, S, cam) { for (const p of parts) p.update(t, S, cam, P); }
+    update(t, S, cam) { for (const p of parts) p.update(t, S, cam, P); if (!logged) { logged = true; const v = K.stats(root, true); console.warn(`[eta1] t=${t.toFixed(2)} visível: ${v.tris} triângulos, ${v.calls} draw calls`); root.children.forEach((c, i) => { const a = K.stats(c, true); const sub = c.children.map((d) => K.stats(d, true).calls).join(','); console.warn(`  [${i}] ${a.calls} calls ${a.tris} tris :: ${sub}`); }); } }
   };
 }

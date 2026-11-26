@@ -158,5 +158,59 @@ export function makeKit(L) {
     const tx = new THREE.CanvasTexture(cv); tx.colorSpace = THREE.SRGBColorSpace; tx.anisotropy = 8;
     return tx;
   }
-  return { M, G, MAT, V, bake, rod, bx, flange, pipe, gateValve, butterfly, checkValve, gauge, railing, stairs, walkway, canvasTex, rotTo };
+
+  /** Lote de quadriláteros dinâmicos (uma malha, um draw call): set(i, a, b, c, d, n, uv?, col?) com cantos [x,y,z]
+      em ordem (inf-esq, inf-dir, sup-dir, sup-esq); hide(i) colapsa. Chame done() no fim do quadro. */
+  class QuadBatch {
+    constructor(n, material, o = {}) {
+      this.n = n; const g = new THREE.BufferGeometry();
+      this.pos = new Float32Array(n * 12); this.nor = new Float32Array(n * 12); this.uv = new Float32Array(n * 8); this.col = new Float32Array(n * 12).fill(1);
+      const idx = []; for (let i = 0; i < n; i++) { const a = i * 4; idx.push(a, a + 1, a + 2, a, a + 2, a + 3); }
+      g.setIndex(idx); g.setAttribute('position', new THREE.BufferAttribute(this.pos, 3)); g.setAttribute('normal', new THREE.BufferAttribute(this.nor, 3));
+      g.setAttribute('uv', new THREE.BufferAttribute(this.uv, 2)); if (o.colors) g.setAttribute('color', new THREE.BufferAttribute(this.col, 3));
+      [g.attributes.position, g.attributes.normal, g.attributes.uv].forEach((a) => a.setUsage(THREE.DynamicDrawUsage));
+      this.mesh = new THREE.Mesh(g, material); this.mesh.frustumCulled = false; this.mesh.castShadow = !!o.cast; this.mesh.receiveShadow = o.receive !== false; this.g = g;
+    }
+    set(i, a, b, c, d, n, uv = null, col = null) {
+      const P = this.pos, N = this.nor, U = this.uv, k = i * 12;
+      [a, b, c, d].forEach((v, j) => { P[k + j * 3] = v[0]; P[k + j * 3 + 1] = v[1]; P[k + j * 3 + 2] = v[2]; N[k + j * 3] = n[0]; N[k + j * 3 + 1] = n[1]; N[k + j * 3 + 2] = n[2]; });
+      if (uv) for (let j = 0; j < 8; j++) U[i * 8 + j] = uv[j];
+      if (col) for (let j = 0; j < 4; j++) { this.col[k + j * 3] = col.r; this.col[k + j * 3 + 1] = col.g; this.col[k + j * 3 + 2] = col.b; }
+    }
+    /** quadrilátero vertical no plano z (frente) de x0..x1, y0..y1 */
+    front(i, x0, x1, y0, y1, z, uv, col) { this.set(i, [x0, y0, z], [x1, y0, z], [x1, y1, z], [x0, y1, z], [0, 0, 1], uv, col); }
+    /** quadrilátero horizontal na cota y, x0..x1, z0..z1 (z0 atrás) */
+    top(i, x0, x1, z0, z1, y, uv, col) { this.set(i, [x0, y, z1], [x1, y, z1], [x1, y, z0], [x0, y, z0], [0, 1, 0], uv, col); }
+    hide(i) { this.pos.fill(0, i * 12, i * 12 + 12); }
+    done() { ['position', 'normal', 'uv', 'color'].forEach((k) => { if (this.g.attributes[k]) this.g.attributes[k].needsUpdate = true; }); }
+  }
+  /** Setas (chevrons) de vários caminhos numa só InstancedMesh: add(pts, {n,size,normal,color,offset}) → id; update(id, t, {speed, amount}) */
+  class MultiChev {
+    constructor(max, o = {}) {
+      const s = new THREE.Shape(); s.moveTo(-0.6, 0.7); s.lineTo(0.1, 0.7); s.lineTo(0.8, 0); s.lineTo(0.1, -0.7); s.lineTo(-0.6, -0.7); s.lineTo(0.1, 0); s.closePath();
+      const geo = new THREE.ExtrudeGeometry(s, { depth: 0.18, bevelEnabled: false }); geo.translate(0, 0, -0.09);
+      this.mesh = new THREE.InstancedMesh(geo, L.flat('#ffffff', { toneMapped: false, depthTest: o.depthTest !== false }), max);
+      this.mesh.frustumCulled = false; this.mesh.castShadow = false; this.mesh.renderOrder = o.depthTest === false ? 40 : 30; this.mesh.count = 0;
+      this.paths = []; this.used = 0; this.max = max; this.mx = new THREE.Matrix4(); this.p = V(0, 0, 0); this.t = V(0, 0, 0); this.b = V(0, 0, 0); this.nn = V(0, 0, 0); this.sc = V(0, 0, 0); this.zero = new THREE.Matrix4().makeScale(0, 0, 0);
+    }
+    add(pts, o = {}) {
+      const c = Array.isArray(pts) ? L.curve(pts, false, 0.05) : pts, n = o.n ?? 8, id = this.paths.length, col = new THREE.Color(o.color ?? L.PAL.accent);
+      this.paths.push({ c, n, at: this.used, size: o.size ?? 0.2, normal: L.v3(o.normal ?? [0, 0, 1]).clone().normalize(), off: L.v3(o.offset ?? [0, 0, 0]) });
+      for (let i = 0; i < n; i++) { this.mesh.setColorAt(this.used + i, col); this.mesh.setMatrixAt(this.used + i, this.zero); }
+      this.used += n; this.mesh.count = this.used; this.mesh.instanceColor.needsUpdate = true; return id;
+    }
+    update(id, t, o = {}) {
+      const P = this.paths[id], speed = o.speed ?? 0.25, amount = L.clamp01(o.amount ?? 1);
+      for (let i = 0; i < P.n; i++) {
+        if (amount < 0.01) { this.mesh.setMatrixAt(P.at + i, this.zero); continue; }
+        const u = L.fract(i / P.n + t * speed); P.c.getPointAt(u, this.p); P.c.getTangentAt(u, this.t);
+        this.b.crossVectors(P.normal, this.t).normalize(); this.nn.crossVectors(this.t, this.b).normalize();
+        const s = P.size * amount * Math.min(1, Math.min(u, 1 - u) * 12 + 0.15);
+        this.mx.makeBasis(this.t, this.b, this.nn); this.mx.scale(this.sc.set(s, s, s)); this.mx.setPosition(this.p.x + P.off.x, this.p.y + P.off.y, this.p.z + P.off.z);
+        this.mesh.setMatrixAt(P.at + i, this.mx);
+      }
+      this.mesh.instanceMatrix.needsUpdate = true;
+    }
+  }
+  return { M, G, MAT, V, bake, rod, bx, flange, pipe, gateValve, butterfly, checkValve, gauge, railing, stairs, walkway, canvasTex, rotTo, QuadBatch, MultiChev };
 }

@@ -54,7 +54,7 @@ export function buildMain(ctx, K, R) {
   const stand = bake(L.put(new THREE.Group(), boxC(PO[0] - 0.55, PO[0] - 0.45, 4.0, PO[1] - r, -90.0, -89.9, MAT.galv), boxC(PO[0] + 0.45, PO[0] + 0.55, 4.0, PO[1] - r, -90.0, -89.9, MAT.galv), boxC(PO[0] - 0.6, PO[0] + 0.6, PO[1] - r - 0.12, PO[1] - r, -90.05, -89.85, MAT.galv), boxC(PO[0] - 0.7, PO[0] + 0.7, 3.95, 4.05, -90.25, -89.65, MAT.concNew)));
   g.add(stand);
   // ventosa no ponto alto (topo do talude, no platô) e colar de concreto onde o tubo entra no chão
-  const VX = XC + 3.2, VY = 14 + CL;
+  const VX = XC + 3.2, VY = 14 + CL, sV = sAt((p) => p.x >= VX && p.y > 14.5);
   const vent = bake(L.put(new THREE.Group(), cylA(0.09, 0.35, MAT.iron, VX, VY + r + 0.12, -80.4, 'y', 12), cylA(0.16, 0.06, MAT.iron, VX, VY + r + 0.3, -80.4, 'y', 14),
     L.lathe([[0.001, 0], [0.18, 0.02], [0.2, 0.16], [0.16, 0.3], [0.06, 0.36], [0.001, 0.37]], M('#2f6db0', { roughness: 0.4 }), 18).translateX(VX).translateY(VY + r + 0.33).translateZ(-80.4),
     cylA(0.04, 0.12, MAT.dark, VX, VY + r + 0.75, -80.4, 'y', 8), L.torus(0.12, 0.02, MAT.red, VX, VY + r + 0.15, -80.4 + 0.0).rotateX(Math.PI / 2)));
@@ -71,7 +71,7 @@ export function buildMain(ctx, K, R) {
   const winSilt = new L.Flow(L.curve([[9.05, YP - 0.05, -0.12], [15, YP - 0.05, -0.12]]), { n: 34, size: 0.028, colors: ['#d8c39b', '#b6955f', '#efe3c8'], jitter: [0, 0.12, 0.1], seed: 51 });
   win.add(winSilt.mesh);
   // setas marrons correndo por cima do tubo (frente d'água e fluxo contínuo)
-  const chev = new L.Chevrons(path, { n: 44, size: 0.3, normal: [0, 1, 0], offset: [0, r + 0.16, 0], material: L.flat('#c08a4a', { toneMapped: false }) });
+  const chev = new L.Chevrons(new K.SubCurve(path, 0, sGround / LEN), { n: 44, size: 0.3, normal: [0, 1, 0], offset: [0, r + 0.16, 0], material: L.flat('#c08a4a', { toneMapped: false }) });
   chev.mesh.renderOrder = 30; g.add(chev.mesh);
   // planta (contorno do traçado)
   const planG = ghost.of(L.mesh(new THREE.TubeGeometry(path, 160, r, 6, false), MAT.rawPipe), 40); g.add(planG);
@@ -87,29 +87,28 @@ export function buildMain(ctx, K, R) {
     const kk = (k - 0.02) / 0.92 * NP, nDone = Math.max(0, Math.min(NP, Math.floor(kk))), fr = kk - Math.floor(kk);
     done.geometry.setDrawRange(0, nDone > 0 ? ranges[nDone - 1][1] : 0); done.visible = nDone > 0;
     const moving = nDone < NP && k > 0.02 && nDone !== winIdx;
-    cur.visible = moving; if (moving) { cur.geometry = all; cur.position.y = (1 - E.out(fr)) * 1.6; }
+    cur.visible = moving; if (moving) cur.position.y = (1 - E.out(fr)) * 1.6;
     win.visible = nDone > winIdx || (nDone === winIdx && k > 0.02); win.position.y = nDone === winIdx ? (1 - E.out(fr)) * 1.6 : 0;
     return { nDone, fr, moving };
   }
   // a malha "cur" precisa de drawRange próprio: usa uma segunda geometria que compartilha os atributos
   const curGeo = new THREE.BufferGeometry(); curGeo.setAttribute('position', all.attributes.position); curGeo.setAttribute('normal', all.attributes.normal); curGeo.setIndex(all.index); cur.geometry = curGeo;
-  const _setInst = setInstances;
 
   function update(t, S) {
     const k = S.build.rawMain;
     g.visible = true;
-    const st = _setInst(k); cur.geometry = curGeo;
+    const st = setInstances(k);
     if (st.moving) { const [a, b] = ranges[st.nDone]; curGeo.setDrawRange(a, b - a); }
     bellIM.visible = sadIM.visible = ancIM.visible = k > 0.005;
-    stand.visible = k > 0.01; vent.visible = k > u(sTop / LEN, 0, 1) * 0.92 + 0.08; collar.visible = k > 0.9;
+    stand.visible = k > 0.01; vent.visible = k > 0.02 + 0.92 * (sV / LEN) + 0.03; collar.visible = k > 0.9;
     // água: frente avançando (0 na casa de bombas → 1 na chegada da ETA), depois fluxo contínuo
     const w = S.water.raw, sw = w * LEN;
-    chev.update(t, { speed: 0.075, head: Math.min(1, w + 0.01), amount: w > 0.002 ? 1 : 0 });
+    chev.update(t, { speed: 0.075 * LEN / sGround, head: Math.min(1, (sw + 0.3) / sGround), amount: w > 0.002 ? 1 : 0 });
     const lw = L.clamp01((sw - W0) / (W1 - W0));
     wIn.range(0, lw); wIn.group.visible = lw > 0.001 && win.visible;
     winSilt.update(t, { speed: 0.22, head: lw, amount: lw > 0.05 ? 1 : 0 }); winSilt.mesh.visible = lw > 0.05;
     planG.visible = S.ghost > 0.01 && k < 0.98;
-    void sClimb0; void sDive; void sGround;
+    void sClimb0; void sDive; void sTop;
   }
   return { update, path, LEN };
 }

@@ -42,7 +42,7 @@ function plateauProfile(z) {
   return CITY_Y;
 }
 const mountains = (x, z) => (z < -140 ? 30 * ss(-140, -172, z) * (0.75 + 0.25 * Math.cos(x * 0.11) * Math.cos(z * 0.07)) : 0);
-const sideHills = (x, z) => (z < -98 ? 14 * ss(44, 62, Math.abs(x)) : 0);
+const sideHills = (x, z) => 14 * ss(44, 62, Math.abs(x)) * ss(-94, -106, z);
 /** profundidade do vale da represa (lago) em (x,z) — > 0 dentro do lago */
 function lakeCut(x, z) {
   const u = Math.max(ss(LAKE.x0 + 10, LAKE.x0, x), ss(LAKE.x1 - 8, LAKE.x1 + 1, x));

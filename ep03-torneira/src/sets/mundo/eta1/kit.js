@@ -6,7 +6,7 @@ export function makeKit(L) {
   const cache = new Map();
   const M = (color, o = {}) => { const k = 'm' + color + JSON.stringify(o); if (!cache.has(k)) cache.set(k, L.mat(color, o)); return cache.get(k); };
   const G = (color, o = {}) => { const k = 'g' + color + JSON.stringify(o); if (!cache.has(k)) cache.set(k, L.glossy(color, o)); return cache.get(k); };
-  const MAT = {
+  const MAT0 = {
     conc: M('#c7ccd0', { roughness: 0.88, side: DS }), concB: M('#b9bfc4', { roughness: 0.9, side: DS }), concNew: M('#d5d8da', { roughness: 0.85, side: DS }),
     cut: M('#e9e3d6', { roughness: 0.92, side: DS }), slab: M('#aeb5bb', { roughness: 0.92, side: DS }),
     steel: L.metal('#bcc6cf'), galv: M('#a7b1b8', { roughness: 0.42, metalness: 0.6 }), dark: M('#2a3036', { roughness: 0.6 }),
@@ -21,6 +21,8 @@ export function makeKit(L) {
     roof: M('#8e979e', { roughness: 0.8, side: DS }), wall: M('#e6dfd0', { roughness: 0.85, side: DS }), wallCut: M('#f3ede0', { roughness: 0.9, side: DS }),
     floorTile: M('#b9c2c6', { roughness: 0.7, side: DS }), bund: M('#c9a35a', { roughness: 0.6, side: DS })
   };
+  // menos materiais distintos = menos draw calls depois da fusão
+  const MAT = Object.assign(MAT0, { concB: MAT0.conc, slab: MAT0.conc, toe: MAT0.rail, railDark: MAT0.rail, steel: MAT0.galv, gray: MAT0.galv, concNew: MAT0.conc, roof: MAT0.conc, floorTile: MAT0.conc });
   const V = (x, y, z) => new THREE.Vector3(x, y, z), up = V(0, 1, 0);
   const clamp01 = L.clamp01, ph = (k, a, b) => clamp01((k - a) / (b - a)), ss = L.sstep;
 
@@ -81,9 +83,11 @@ export function makeKit(L) {
     for (let i = 0; i < 3; i++) { const sp = L.cyl(r * 0.09, r * 0.09, r * 2.45, wheelM, 0, 0, 0, 6); sp.rotation.z = (i * PI) / 3; wheel.add(sp); }
     wheel.add(L.cyl(r * 0.25, r * 0.25, r * 0.3, wheelM, 0, 0, 0, 10).rotateX(PI / 2));
     const wp = new THREE.Group(); wp.rotation.x = PI / 2; wp.position.y = r * 4.3; wp.add(wheel); body.add(wp);
+    wp.remove(wheel);
     if (dir === 'x') body.rotation.y = PI / 2; if (dir === 'y') body.rotation.x = PI / 2;
-    g.add(body); noShadow(wheel);
-    return { group: g, wheel };
+    g.add(bake(body)); const wb = bake(wheel); noShadow(wb); wp.add(wb);
+    const holder = new THREE.Group(); holder.rotation.copy(body.rotation); holder.add(wp); g.add(holder);
+    return { group: g, wheel: wb };
   }
   /** motor elétrico aletado com eixo em +x (comprimento len, raio r), base com pés; centro no eixo */
   function motor(len = 0.6, r = 0.2, m = MAT.motor) {
@@ -229,6 +233,6 @@ export function makeKit(L) {
   /** linha fina (planta) ao longo de pontos — para "ghost" de tubulações */
   function ghostLine(pts, gmat) { const g = new THREE.BufferGeometry().setFromPoints(pts.map(L.v3)); const l = new THREE.Line(g, gmat); l.renderOrder = 5; return l; }
   /** conta triângulos e draw calls de um objeto */
-  function stats(obj) { let tris = 0, calls = 0; obj.traverse((m) => { if (m.isMesh) { const g = m.geometry, n = g.index ? g.index.count : g.attributes.position.count; tris += (n / 3) * (m.isInstancedMesh ? m.count : 1); calls++; } else if (m.isLine || m.isLineSegments) calls++; }); return { tris: Math.round(tris), calls }; }
+  function stats(obj, vis = false) { let tris = 0, calls = 0; obj.traverse((m) => { if (vis) { let o = m; while (o) { if (!o.visible) return; o = o.parent; } } if (m.isMesh) { const g = m.geometry, n = g.index ? g.index.count : g.attributes.position.count; tris += (n / 3) * (m.isInstancedMesh ? m.count : 1); calls++; } else if (m.isLine || m.isLineSegments) calls++; }); return { tris: Math.round(tris), calls }; }
   return { M, G, MAT, V, PI, ph, ss, clamp01, bake, noShadow, rod, beam, flange, gateValve, motor, gearbox, railing, walkway, stair, ladder, lamp, canvasTex, sign, QB, capZ, pipe, waterBox, ghostLine, stats };
 }

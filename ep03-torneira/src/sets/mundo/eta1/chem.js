@@ -66,8 +66,9 @@ export function buildChem(env) {
     if (p.id === 'lime') { g.add(L.box(2.2, 0.12, 0.25, MAT.galv, p.x, y1 + 0.28, TZ)); const mo = K.motor(0.36, 0.12, MAT.motor); mo.rotation.z = Math.PI / 2; mo.position.set(p.x, y1 + 0.75, TZ); g.add(mo, K.gearbox(0.3, 0.25, 0.3, MAT.blue).translateX(p.x).translateY(y1 + 0.47).translateZ(TZ)); }
     const sg = K.sign(p.name, Math.min(1.7, p.r * 1.6), 0.5, { stripe: p.line, size: 0.55 });
     sg.position.set(p.x, y0 + p.h * 0.52, TZ + p.r + 0.04); g.add(sg);
-    const bk = K.bake(g); tanksG.add(bk); tankIn.push(bk);
+    tanksG.add(g); tankIn.push(g);
   });
+  { const all = new THREE.Group(); tankIn.forEach((g) => all.add(g)); tankIn.length = 0; const bk = K.bake(all); tanksG.add(bk); tankIn.push(bk); }
   out.add(tanksG);
   /* ---------------------------------------------------------------- bombas dosadoras (diafragma) e painéis */
   const heads = [], leds = [];
@@ -109,7 +110,7 @@ export function buildChem(env) {
   const lineR = 0.065;
   Object.entries(PATHS).forEach(([id, pts]) => {
     const p = PROD.find((q) => q.id === id), pm = K.G(p.line, { roughness: 0.35 });
-    const g = new THREE.Group(), tube = K.pipe(pts, lineR, pm, { bend: 0.22, step: 0.2, maxSeg: 900, radial: 8 }); tube.castShadow = false; g.add(tube);
+    const g = new THREE.Group(), tube = K.pipe(pts, lineR, pm, { bend: 0.22, step: 0.45, maxSeg: 420, radial: 7 }); tube.castShadow = false; g.add(tube);
     // suportes: postes com braço nos trechos altos, berços nos trechos baixos
     const sg = new THREE.Group();
     for (let i = 0; i < pts.length - 1; i++) {
@@ -129,7 +130,7 @@ export function buildChem(env) {
     const last = pts[pts.length - 1];
     if (id !== 'coag') { const ya = pts[pts.length - 2][1]; sg.add(L.box(0.14, ya + 0.9 - 14, 0.14, MAT.galv, last[0] + 0.25, (14 + ya + 0.9) / 2, -58.6)); sg.add(K.beam([last[0] + 0.25, ya - lineR - 0.05, -58.6], [last[0] + 0.25, ya - lineR - 0.05, last[2] + 0.3], 0.08, 0.1, MAT.galv)); sg.add(K.rod([last[0] + 0.25, ya + 0.85, -58.6], [last[0] + 0.25, ya - 0.1, last[2] + 0.2], 0.015, MAT.steel, 5)); sg.add(K.beam([last[0], ya - lineR - 0.05, last[2] + 0.12], [last[0] + 0.3, ya - lineR - 0.05, last[2] + 0.12], 0.06, 0.06, MAT.galv)); }
     // bico/difusor no ponto de aplicação
-    const ng = new THREE.Group();
+    let ng = new THREE.Group();
     if (id === 'coag') {
       const [cx, cy, cz] = DS.coag, hw = Lo.ETA.parshall.w / 2 - 0.05;
       ng.add(K.rod([cx, cy, cz - hw], [cx, cy, cz + hw], 0.05, pm, 10));
@@ -138,14 +139,15 @@ export function buildChem(env) {
     } else {
       ng.add(L.lathe([[lineR, last[1] + 0.06], [lineR * 1.2, last[1] + 0.02], [0.03, last[1] - 0.06], [0.012, last[1] - 0.09]], MAT.steel, 12).translateX(last[0]).translateZ(last[2]));
     }
+    ng = K.bake(ng);
     // etiquetas (faixa colorida + nome) a cada ~7 m nos trechos externos
     const tagG = new THREE.Group(), path = tube.userData.path, Ln = tube.userData.len;
-    for (let s = 6; s < Ln - 3; s += 7.5) {
+    for (let s = 6; s < Ln - 3; s += 12) {
       const q = path.getPointAt(s / Ln), tg = path.getTangentAt(s / Ln); if (q.x > C.x0 - 0.2 && q.z < C.z1) continue;
       const ring = L.cyl(lineR + 0.02, lineR + 0.02, 0.22, MAT.white, q.x, q.y, q.z, 10); ring.quaternion.setFromUnitVectors(new THREE.Vector3(0, 1, 0), tg); ring.castShadow = false; tagG.add(ring);
       const s1 = K.sign([p.name[0]], 0.5, 0.14, { stripe: p.line, size: 0.8 }); s1.position.set(q.x, q.y + 0.22, q.z); if (Math.abs(tg.z) > 0.7) s1.rotation.y = -Math.PI / 2 * Math.sign(tg.z) * 0 + Math.PI / 2; tagG.add(s1);
     }
-    const sb = K.bake(sg); g.add(sb, ng, tagG);
+    const sb = K.bake(sg); const tb = K.bake(tagG); g.add(sb, ng, tb);
     const gl = K.ghostLine(pts, ghost.line); root.add(gl);
     // pulsos de produto correndo na linha
     const fl = new L.Flow(path, { n: Math.max(6, Math.round(Ln / 1.4)), size: 0.085, material: L.mat('#ffffff', { emissive: p.line, emissiveIntensity: 1.4, roughness: 0.4 }), color: p.line, seed: 5 + id.length, sizeVar: 0.1 });
@@ -154,7 +156,7 @@ export function buildChem(env) {
     let drips = null;
     if (id !== 'coag') { drips = new THREE.InstancedMesh(new THREE.SphereGeometry(1, 8, 6), L.mat(p.line, { emissive: p.line, emissiveIntensity: 0.6 }), 4); drips.frustumCulled = false; g.add(drips); }
     out.add(g);
-    LINES[id] = { g, tube, sb, ng, tagG, gl, fl, drips, last, Ln };
+    LINES[id] = { g, tube, sb, ng, tagG: tb, gl, fl, drips, last, Ln };
   });
   // placa na parede por onde saem as linhas
   const wallSign = K.sign(['LINHAS DE DOSAGEM', 'coagulante · cloro · cal · flúor'], 2.4, 0.6, { stripe: '#ffd23f' });
@@ -168,7 +170,7 @@ export function buildChem(env) {
     shellG.visible = ks > 0; shellG.scale.y = Math.max(0.001, L.ease.out(ks)); shellG.position.y = 14 * (1 - shellG.scale.y);
     roofG.visible = kr > 0; roofG.position.y = (1 - L.ease.out(kr)) * 3;
     wallSign.visible = ks >= 1;
-    tankIn.forEach((m, i) => { const k = ph(kt, i * 0.18, i * 0.18 + 0.46); m.visible = k > 0; m.position.y = (1 - L.ease.out(k)) * 7; });
+    tankIn.forEach((m, i) => { const k = kt; m.visible = k > 0; m.position.y = (1 - L.ease.out(k)) * 7; });
     pumpsG.visible = kp > 0; pumpsG.position.y = (1 - L.ease.out(kp)) * 1.5;
     const runs = { coag: S.run.coag, chlorine: S.run.chlorine, lime: S.run.finalDose, fluoride: S.run.finalDose };
     const builds = { coag: kl, chlorine: ph(S.build.contact, 0.05, 0.85), lime: ph(S.build.finalDose, 0, 0.8), fluoride: ph(S.build.finalDose, 0.1, 0.9) };

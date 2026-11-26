@@ -28,6 +28,9 @@ export function buildGround(ctx) {
   const H = R.H;
   shared.groundY = H;
   shared.terrainHoles = shared.terrainHoles || [];
+  // poço do reservatório apoiado da ETA (semienterrado): furo circular + piso rebaixado y 12,7 (pedido do eta2)
+  const RES = { cx: Lo.ETA.reservoir.x, cz: Lo.ETA.reservoir.z, r: 5.9, floor: 12.7 };
+  shared.terrainHoles.push({ cx: RES.cx, cz: RES.cz, r: RES.r, corners: true });
 
   /* ---------- grade ---------- */
   const sp = R.SPILL;
@@ -44,13 +47,13 @@ export function buildGround(ctx) {
   const geo = new THREE.BufferGeometry();
   geo.setAttribute('position', new THREE.BufferAttribute(pos, 3)); geo.setAttribute('uv', new THREE.BufferAttribute(uv, 2));
   const isCity = (x, z) => z > -6 || (z > -31 && x > 18.5 && x < 29.5);
-  const holed = (x, z) => shared.terrainHoles.some((h) => (h.r ? Math.hypot(x - h.cx, z - h.cz) < h.r : inRect(h, x, z)));
+  const holed = (x, z, hw = 0, hd = 0) => shared.terrainHoles.some((h) => (h.r ? (h.corners ? [[-1, -1], [1, -1], [-1, 1], [1, 1]].some(([a, b]) => Math.hypot(x + a * hw - h.cx, z + b * hd - h.cz) < h.r) : Math.hypot(x - h.cx, z - h.cz) < h.r) : inRect(h, x, z)));
   let idxNat = [], idxCity = [];
   function buildIndex() {
     idxNat = []; idxCity = [];
     for (let iz = 0; iz < nz - 1; iz++) for (let ix = 0; ix < nx - 1; ix++) {
       const xc = (xs[ix] + xs[ix + 1]) / 2, zc = (zs[iz] + zs[iz + 1]) / 2;
-      if (shared.terrainHoles.length && holed(xc, zc)) continue;
+      if (shared.terrainHoles.length && holed(xc, zc, (xs[ix + 1] - xs[ix]) / 2, (zs[iz + 1] - zs[iz]) / 2)) continue;
       const a = iz * nx + ix, b = a + 1, d = a + nx, e = d + 1;
       // diagonal que segue o relevo (menor diferença de altura)
       const tri = Math.abs(pos[a * 3 + 1] - pos[e * 3 + 1]) < Math.abs(pos[b * 3 + 1] - pos[d * 3 + 1]) ? [a, d, e, a, e, b] : [a, d, b, b, d, e];
@@ -219,6 +222,15 @@ export function buildGround(ctx) {
   const ground = L.mesh(geoN, gmat, 0, 0, 0, { cast: false }); ground.receiveShadow = true; ground.renderOrder = 2; grp.add(ground);
   const cityGround = L.mesh(geoC, cmat, 0, 0, 0, { cast: false }); cityGround.receiveShadow = true; cityGround.renderOrder = 2; grp.add(cityGround);
 
+  /* ---------- poço do reservatório apoiado: anel de chão (cobre o serrilhado do furo), parede de solo e piso ---------- */
+  {
+    const ring = new THREE.RingGeometry(RES.r, RES.r + 1.6, 64, 1); ring.rotateX(-Math.PI / 2); ring.translate(RES.cx, Lo.PLATEAU_Y + 0.004, RES.cz);
+    const pa = ring.attributes.position, ua = ring.attributes.uv; for (let i = 0; i < pa.count; i++) ua.setXY(i, (pa.getX(i) - X0) / (X1 - X0), (pa.getZ(i) - Z0) / (ZF - Z0));
+    const rm = L.mesh(ring, gmat, 0, 0, 0, { cast: false }); rm.receiveShadow = true; rm.renderOrder = 2; grp.add(rm);
+    const wall = new THREE.CylinderGeometry(RES.r, RES.r, Lo.PLATEAU_Y - RES.floor, 64, 1, true); wall.translate(RES.cx, (Lo.PLATEAU_Y + RES.floor) / 2, RES.cz);
+    const fl = new THREE.CircleGeometry(RES.r, 64); fl.rotateX(-Math.PI / 2); fl.translate(RES.cx, RES.floor, RES.cz);
+    RES.meshes = [wall, fl];
+  }
   /* ---------- mapa de altura para o solo em corte ---------- */
   const hHalf = new Uint16Array(fH.length), toHalf = THREE.DataUtils.toHalfFloat;
   for (let i = 0; i < fH.length; i++) hHalf[i] = toHalf(fH[i]);
@@ -237,6 +249,7 @@ export function buildGround(ctx) {
   }
   const faces = new THREE.Group(); grp.add(faces);
   const cavMat = kit.material({ tint: 0.62 });
+  RES.meshes.forEach((g) => { const m = L.mesh(g, soilMat, 0, 0, 0, { cast: false }); m.receiveShadow = true; grp.add(m); });
   const addFace = (g, mt = soilMat) => { const m = L.mesh(g, mt, 0, 0, 0, { cast: false }); m.receiveShadow = true; m.renderOrder = 2; faces.add(m); return m; };
   addFace(strip(xs.map((x) => [x, H(x, Z0), YB, Z0]), [0, 0, -1]));
   addFace(strip(zs.map((z) => [X0, H(X0, z), YB, z]), [-1, 0, 0]));

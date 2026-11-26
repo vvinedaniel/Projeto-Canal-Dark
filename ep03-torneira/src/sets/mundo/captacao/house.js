@@ -156,7 +156,6 @@ export function buildHouse(ctx, K, R) {
   const chain = cylA(0.025, 1, MAT.chain, 0, 0, MONO.z, 'y', 6); chainLen.add(chain);
   const hook = new THREE.Group(); chainLen.add(hook);
   hook.add(bake(L.put(new THREE.Group(), L.rbox(0.18, 0.22, 0.14, 0.03, MAT.yellow, 0, 0.0, MONO.z), L.torus(0.09, 0.025, MAT.steel, 0, -0.2, MONO.z))));
-  hook.children[0].children.forEach(() => {});
   R.hoist = { group: hoist, chain, hook, y0: MONO.y - 0.65 };
   /** posiciona a talha: x do carro, y do gancho (mundo) */
   R.setHoist = (x, yHook) => {
