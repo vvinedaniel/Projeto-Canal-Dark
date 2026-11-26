@@ -33,7 +33,7 @@ export function makeContact(ctx, K) {
   L.shadows(slab); L.shadows(walls);
 
   /* ---------- água por compartimento (cor filtrada → tratada) ---------- */
-  const wm = comps.map((c) => L.water(new THREE.Color(W.filtered).lerp(new THREE.Color(W.treated), c.j / nB).getStyle(), 0.84, { side: THREE.DoubleSide }));
+  const wm = comps.map((c) => L.water(new THREE.Color(W.filtered).lerp(new THREE.Color(W.treated), c.j / nB).getStyle(), 0.92, { side: THREE.DoubleSide }));
   const wPl = comps.map((c) => { const f = new THREE.Mesh(new THREE.PlaneGeometry(1, 1), wm[c.j]), tg = new THREE.PlaneGeometry(1, 1); tg.rotateX(-PI / 2); const t = new THREE.Mesh(tg, wm[c.j]); f.receiveShadow = t.receiveShadow = true; root.add(f, t); return { f, t }; });
   // água nas passagens (por cima da chicana não: nas folgas) — a superfície contínua já cobre; faces de corte só nos compartimentos
 

@@ -21,7 +21,15 @@ export function buildCars(ctx) {
     [-26, SB.z1 - 1.1, 0], [4, SB.z1 - 1.1, 0], [52, SB.z1 - 1.1, 0],
     [AV.x1 - 1.1, 12.5, -Math.PI / 2], [AV.x0 + 1.1, -9.0, Math.PI / 2]
   ];
-  parked.forEach(([x, z, yaw], i) => { const c = mk(i + 3); place(c, x, z, yaw, 0); });
+  // estacionados: assados numa malha só (carroceria/vidros/rodas) + uma malha de faróis/lanternas
+  const bakeA = [], bakeB = [];
+  parked.forEach(([x, z, yaw], i) => {
+    const c = mk(i + 3); place(c, x, z, yaw, 0); c.g.updateMatrixWorld(true);
+    c.g.traverse((o) => { if (!o.isMesh) return; const g = (o.geometry.index ? o.geometry.toNonIndexed() : o.geometry.clone()); for (const k of Object.keys(g.attributes)) if (!['position', 'normal', 'color'].includes(k)) g.deleteAttribute(k); g.applyMatrix4(o.matrixWorld); (o.material.vertexColors ? bakeA : bakeB).push(g); });
+    root.remove(c.g);
+  });
+  const pa = L.mesh(L.BGU.mergeGeometries(bakeA, false), K.vmat({ roughness: 0.25, metalness: 0.25 })); L.shadows(pa); root.add(pa);
+  const pb = L.mesh(L.BGU.mergeGeometries(bakeB, false), L.mat(0xffffff, { vertexColors: true, emissive: '#ffd9a0', emissiveIntensity: 0.6 }), 0, 0, 0, { cast: false }); root.add(pb);
   // andando devagar (velocidade ~3–4 m/s), sempre no sentido da mão
   const moving = [
     { lane: 'x', z: SB.z0 + 2.6, a: SB.x0 + 2, b: SB.x1 - 2, dir: -1, v: 3.6, off: 12 },

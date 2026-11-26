@@ -17,7 +17,7 @@ export function buildFace(ctx, parts) {
   const conc = L.mat('#b9bec2', { roughness: 0.9, side: DS }), concCut = L.mat('#9ea4a9', { roughness: 0.95, side: DS });
 
   /* ---------- ÁGUA ---------- */
-  const SEGW = 248;
+  const SEGW = 124;
   const wMat = L.mat(N.water.color, { roughness: 0.4, side: DS }), wCut = L.mat('#1f5fa6', { roughness: 0.7, side: DS });
   const wp = L.cutPipe([[X0, N.water.y], [X1, N.water.y]], { r: N.water.r, wall: 0.035, seg: SEGW, radial: 16, mat: wMat, cutMat: wCut });
   wp.group.position.z = ZF; root.add(wp.group);

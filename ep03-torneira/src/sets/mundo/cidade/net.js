@@ -23,7 +23,7 @@ export function buildNet(ctx, parts) {
     for (let i = 0; i < n; i++) {
       const u0 = i / n, u1 = (i + 1) / n;
       base.push({ s: s0 + u0 * len, geo: new THREE.TubeGeometry(new Off(c, u0, u1, 0), 2, r, o.radial ?? 10, false), color: o.color });
-      if (o.glow !== false) glow.push({ s: s0 + u0 * len, geo: new THREE.TubeGeometry(new Off(c, u0, u1, r + 0.035), 2, o.gr ?? 0.055, 5, false) });
+      if (o.glow !== false) glow.push({ s: s0 + u0 * len, geo: new THREE.TubeGeometry(new Off(c, u0, u1, r + 0.035), 2, o.gr ?? 0.08, 5, false) });
     }
     return { base, glow, len, curve: c, s0 };
   }
@@ -54,7 +54,7 @@ export function buildNet(ctx, parts) {
   /* ---------- 4. ramais de água ---------- */
   const cons = shared.cityConsumers || [];
   const ramal = (c) => {
-    const big = !!c.big, r = big ? 0.13 : 0.085;
+    const big = !!c.big, r = big ? 0.15 : 0.11;
     let pts, s0;
     if (c.from === 'casa') {
       const x = c.x; s0 = Math.abs(x - XC);
@@ -67,7 +67,7 @@ export function buildNet(ctx, parts) {
       pts.push([x, G(x, zf) - 0.5, zf + 0.35], [x, G(x, zf) + 0.4, zf + 0.2]);
       FITT.add(K.G.sph(0.25, 10, 8), '#2667ad', K.TM(x, -1.2, ZBW));
     }
-    const p = pipe(smooth(pts), r, s0, { color: '#3b8be0', gr: 0.045, step: 1.2 });
+    const p = pipe(smooth(pts), r, s0, { color: '#3b8be0', gr: 0.07, step: 1.2 });
     W_BASE.push(...p.base); W_GLOW2.push(...p.glow);
     const e = new THREE.Vector3(...pts[pts.length - 1]);
     ends.push({ ...c, p: e, s: s0 + p.len });
@@ -78,12 +78,12 @@ export function buildNet(ctx, parts) {
   const D2 = Math.max(1, ...ends.map((e) => e.s), backL.len, backR.len);
 
   /* ---------- 5. esgoto: ramais (das edificações até o coletor) e coletor da rua de trás ---------- */
-  const sewM = L.mat(Lo.PIPE.sewer, { roughness: 0.6 });
+  const sewM = L.mat(Lo.PIPE.sewer, { roughness: 0.6 }), boxM = L.mat('#a7adb1', { roughness: 0.9 }), shaftM = L.mat('#b9a79a', { roughness: 0.88, side: THREE.DoubleSide });
   cons.forEach((c, i) => {
     if (c.from === 'casa') {
       const x = c.x + (c.kind === 'casa' ? -2.2 : -3.0);
       SEW.push(L.tube(smooth([[x, 0.25, 21.4], [x, -0.45, 21.9], [x, -0.75, 23.5], [x, N.sewer.y + 0.25, ZF - 1.3], [x, N.sewer.y + 0.05, ZF - 0.38]]), 0.1, sewM, 40, 8));
-      SEW.push(L.box(0.5, 0.45, 0.5, L.mat('#a7adb1'), x, 0.0, 21.0 - 0.3));   // caixa de inspeção no lote
+      SEW.push(L.box(0.5, 0.45, 0.5, boxM, x, 0.0, 21.0 - 0.3));   // caixa de inspeção no lote
     } else {
       const x = c.x + 3.6, zf = c.z, pts = [[x, G(x, zf) + 0.2, zf + 0.25], [x, G(x, zf) - 0.6, zf + 0.6]];
       for (let z = zf + 1.6; z < SB.walkBack[0] - 0.4; z += 1.5) pts.push([x, G(x, z) - 1.0, z]);
@@ -97,7 +97,7 @@ export function buildNet(ctx, parts) {
   root.add(backSewChev.mesh);
   // PVs de esgoto da rua de trás (tampa no asfalto, chaminé até o coletor)
   [-40, -10, 14, 44].forEach((x) => {
-    const sh = L.mesh(new THREE.CylinderGeometry(0.42, 0.42, -YBS + 0.02, 16, 1, true).translate(0, (YBS + 0.02) / 2, 0), L.mat('#b9a79a', { roughness: 0.88, side: THREE.DoubleSide }), x, 0.02, ZBS); SEW.push(sh);
+    const sh = L.mesh(new THREE.CylinderGeometry(0.42, 0.42, -YBS + 0.02, 16, 1, true).translate(0, (YBS + 0.02) / 2, 0), shaftM, x, 0.02, ZBS); SEW.push(sh);
     const lid = K.lid('ESGOTO', '#4a3d33'); lid.position.set(x, 0.034, ZBS); root.add(lid);
   });
 
@@ -112,13 +112,18 @@ export function buildNet(ctx, parts) {
 
   /* ---------- malhas ---------- */
   const pipeMat = L.mat('#ffffff', { vertexColors: true, roughness: 0.5, metalness: 0.05 });
-  const baseRev = new Revealer(W_BASE, pipeMat); baseRev.set(1e9); L.shadows(baseRev.mesh, false, true); root.add(baseRev.mesh);
+  const baseRev = new Revealer(W_BASE, pipeMat); baseRev.set(1e9);
+  const STUB = 3.0;   // primeiros metros do tronco (aparentes no pé da torre): só existem com a torre pronta L.shadows(baseRev.mesh, false, true); root.add(baseRev.mesh);
   const glowMat = L.glow('#5fc0ff', 2.0);
   const g1 = new Revealer(W_GLOW1, glowMat, { cast: false }), g2 = new Revealer(W_GLOW2, glowMat, { cast: false });
   root.add(g1.mesh, g2.mesh);
   if (!FITT.empty) root.add(FITT.mesh(vmat({ roughness: 0.5, metalness: 0.3 })));
-  SEW.forEach((m) => { m.castShadow = false; root.add(m); });
-  DRN.forEach((m) => { m.castShadow = false; root.add(m); });
+  // tubos de esgoto e de drenagem: uma malha por material
+  const bake = (list, material) => { const gs = list.map((m) => { m.updateMatrix(); const g = (m.geometry.index ? m.geometry.toNonIndexed() : m.geometry.clone()); for (const k of Object.keys(g.attributes)) if (!['position', 'normal'].includes(k)) g.deleteAttribute(k); g.applyMatrix4(m.matrix); return g; }); const mm = L.mesh(L.BGU.mergeGeometries(gs, false), material, 0, 0, 0, { cast: false }); root.add(mm); return mm; };
+  bake(SEW.filter((m) => m.material === sewM), sewM);
+  bake(SEW.filter((m) => m.material !== sewM && m.material.side === THREE.DoubleSide), SEW.find((m) => m.material !== sewM && m.material.side === THREE.DoubleSide).material);
+  bake(SEW.filter((m) => m.material !== sewM && m.material.side !== THREE.DoubleSide), SEW.find((m) => m.material !== sewM && m.material.side !== THREE.DoubleSide).material);
+  bake(DRN, conc);
   // setas no tronco e na rede de trás
   const chT = new L.Chevrons(new Off(trunk.curve, 0, 1, 0.5), { n: 22, size: 0.36, color: '#ffd23f', normal: [0, 1, 0] });
   const chL = new L.Chevrons(new Off(backL.curve, 0, 1, 0.45), { n: 18, size: 0.34, color: '#ffd23f', normal: [0, 1, 0] });
@@ -135,6 +140,7 @@ export function buildNet(ctx, parts) {
 
   function update(t, S) {
     const { f1, f2 } = fronts(S);
+    if (S.build.tower > 0.8) baseRev.set(1e9); else baseRev.range(STUB, 1e9);
     const d1 = f1 * D1, d2 = f2 * D2;
     g1.set(f1 >= 1 ? 1e9 : d1); g2.set(f2 >= 1 ? 1e9 : d2 - 1e-6); g2.mesh.visible = g2.mesh.visible && f2 > 0;
     const kT = L.clamp01(d1 / D_T);

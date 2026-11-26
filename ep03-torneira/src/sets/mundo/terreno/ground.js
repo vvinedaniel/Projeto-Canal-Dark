@@ -30,8 +30,9 @@ export function buildGround(ctx) {
 
   /* ---------- grade ---------- */
   const sp = R.SPILL;
-  const xs = axis(X0, X1, 1, [[14, 50, 0.5]], [R.DAMG.c0, R.DAMG.c1, sp.sill0, sp.sill1, sp.chute1, sp.basin1, sp.end]);
-  const zs = axis(Z0, ZF, 1, [[-128, -116, 0.5], [-104, -78, 0.5], [30, ZF, 0.5]], [sp.z - sp.hw, sp.z + sp.hw, sp.z - sp.hw - sp.wall, sp.z + sp.hw + sp.wall]);
+  const xs = axis(X0, X1, 1, [[30, 50, 0.5]], [R.DAMG.c0, R.DAMG.c1, sp.sill0, sp.sill1, sp.chute1, sp.basin1, sp.end]);
+  // z: 1 m; 0,5 m na beira da represa e no talude; 2 m na cidade (plana, y = 0)
+  const zs = axis(Z0, -6, 1, [[-101, -97, 0.5], [-89, -80, 0.5]], [sp.z - sp.hw, sp.z + sp.hw, sp.z - sp.hw - sp.wall, sp.z + sp.hw + sp.wall, ...axis(-6, ZF, 2, [], [])]).concat(axis(-4, ZF, 2, [], [])).filter((v, i, a) => a.indexOf(v) === i).sort((a, b) => a - b);
   const nx = xs.length, nz = zs.length, NV = nx * nz;
   const pos = new Float32Array(NV * 3), uv = new Float32Array(NV * 2);
   for (let iz = 0; iz < nz; iz++) for (let ix = 0; ix < nx; ix++) {
@@ -82,10 +83,10 @@ export function buildGround(ctx) {
   const g2 = cv.getContext('2d'), img = g2.createImageData(CW, CH), px = img.data;
   const E = Lo.ETA, lake = Lo.LAKE.level;
   const col = {
-    grassA: C('#5fae45'), grassB: C('#3f8c34'), meadow: C('#93bf52'), dry: C('#a6a65a'), forest: C('#355f2a'), litter: C('#5d4a30'),
-    rock: C('#7d7a72'), rock2: C('#97928a'), sandW: C('#9c8a62'), sand: C('#c9b483'), mud: C('#5f553e'), deep: C('#4a4a38'),
-    pebble: C('#8a8170'), concrete: C('#c4c2bb'), concrete2: C('#b3b1aa'), gravel: C('#a9a397'), gravel2: C('#8f897d'), asphalt: C('#4a4d52'),
-    lawn: C('#66b548'), lawn2: C('#58a63f'), earth: C('#8a7254'), riprap: C('#8e8b84'), crest: C('#a8a294'), bank: C('#6e6450')
+    grassA: C('#4c9636'), grassB: C('#336f28'), meadow: C('#7aa53e'), dry: C('#8f8c48'), forest: C('#264a1f'), litter: C('#4a3a26'),
+    rock: C('#5f5c57'), rock2: C('#77736b'), sandW: C('#7d6e4e'), sand: C('#ab9868'), mud: C('#4d4533'), deep: C('#3b3b2e'),
+    pebble: C('#757062'), concrete: C('#b4b2ab'), concrete2: C('#a19f98'), gravel: C('#949086'), gravel2: C('#7a766d'), asphalt: C('#3c3f44'),
+    lawn: C('#4f9b38'), lawn2: C('#43892f'), earth: C('#76603f'), riprap: C('#77746e'), crest: C('#958f82'), bank: C('#5a5242')
   };
   const c = new THREE.Color(), c2 = new THREE.Color();
   const etaRects = [
@@ -234,7 +235,8 @@ export function buildGround(ctx) {
     return g;
   }
   const faces = new THREE.Group(); grp.add(faces);
-  const addFace = (g) => { const m = L.mesh(g, soilMat, 0, 0, 0, { cast: false }); m.receiveShadow = true; m.renderOrder = 2; faces.add(m); return m; };
+  const cavMat = kit.material({ tint: 0.62 });
+  const addFace = (g, mt = soilMat) => { const m = L.mesh(g, mt, 0, 0, 0, { cast: false }); m.receiveShadow = true; m.renderOrder = 2; faces.add(m); return m; };
   addFace(strip(xs.map((x) => [x, H(x, Z0), YB, Z0]), [0, 0, -1]));
   addFace(strip(zs.map((z) => [X0, H(X0, z), YB, z]), [-1, 0, 0]));
   addFace(strip(zs.map((z) => [X1, H(X1, z), YB, z]), [1, 0, 0]));
@@ -262,14 +264,14 @@ export function buildGround(ctx) {
     slots.forEach((s) => {
       if (s.round) {
         const cg = new THREE.CylinderGeometry(s.r, s.r, SX[1] - SX[0], 20, 1, true, Math.PI / 2, Math.PI); // meia casca atrás da face (z < ZF)
-        cg.rotateZ(Math.PI / 2); cg.translate((SX[0] + SX[1]) / 2, s.cy, ZF); addFace(cg);
-        [SX[0], SX[1]].forEach((x) => { const cap = new THREE.CircleGeometry(s.r, 20, Math.PI / 2, Math.PI); cap.rotateY(-Math.PI / 2); cap.translate(x, s.cy, ZF); addFace(cap); });
+        cg.rotateZ(Math.PI / 2); cg.translate((SX[0] + SX[1]) / 2, s.cy, ZF); addFace(cg, cavMat);
+        [SX[0], SX[1]].forEach((x) => { const cap = new THREE.CircleGeometry(s.r, 20, Math.PI / 2, Math.PI); cap.rotateY(-Math.PI / 2); cap.translate(x, s.cy, ZF); addFace(cap, cavMat); });
       } else {
         const w = SX[1] - SX[0], cx = (SX[0] + SX[1]) / 2;
-        const back = new THREE.PlaneGeometry(w, s.y1 - s.y0); back.translate(cx, (s.y0 + s.y1) / 2, ZF - s.d); addFace(back);
-        const top = new THREE.PlaneGeometry(w, s.d); top.rotateX(Math.PI / 2); top.translate(cx, s.y1, ZF - s.d / 2); addFace(top);
-        const bot = new THREE.PlaneGeometry(w, s.d); bot.rotateX(-Math.PI / 2); bot.translate(cx, s.y0, ZF - s.d / 2); addFace(bot);
-        [SX[0], SX[1]].forEach((x) => { const e = new THREE.PlaneGeometry(s.d, s.y1 - s.y0); e.rotateY(Math.PI / 2); e.translate(x, (s.y0 + s.y1) / 2, ZF - s.d / 2); addFace(e); });
+        const back = new THREE.PlaneGeometry(w, s.y1 - s.y0); back.translate(cx, (s.y0 + s.y1) / 2, ZF - s.d); addFace(back, cavMat);
+        const top = new THREE.PlaneGeometry(w, s.d); top.rotateX(Math.PI / 2); top.translate(cx, s.y1, ZF - s.d / 2); addFace(top, cavMat);
+        const bot = new THREE.PlaneGeometry(w, s.d); bot.rotateX(-Math.PI / 2); bot.translate(cx, s.y0, ZF - s.d / 2); addFace(bot, cavMat);
+        [SX[0], SX[1]].forEach((x) => { const e = new THREE.PlaneGeometry(s.d, s.y1 - s.y0); e.rotateY(Math.PI / 2); e.translate(x, (s.y0 + s.y1) / 2, ZF - s.d / 2); addFace(e, cavMat); });
       }
     });
   }

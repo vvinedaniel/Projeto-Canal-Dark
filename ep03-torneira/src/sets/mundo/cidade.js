@@ -21,7 +21,7 @@ export async function create(ctx) {
   const root = new THREE.Group(); root.name = 'cidade'; scene.add(root);
   shared.cityFaceHoles = FACE_HOLES;      // furos extras na face de corte (câmaras dos PVs e caixas das bocas de lobo)
   // chão provisório só para testes isolados (?dbgGround): o terreno de verdade é do módulo terreno
-  if (ctx.q && ctx.q.has('dbgGround')) root.add(debugGround(L, THREE, Lo));
+  const dbg = ctx.q && ctx.q.has('dbgGround') ? debugGround(L, THREE, Lo) : null; if (dbg) root.add(dbg);
   const parts = [];
   const ctx2 = { ...ctx, K, root };
   for (const build of [buildStreets, buildBuildings, buildCars, buildTower, buildMain, buildNet, buildFace, buildPiezo]) {
@@ -29,13 +29,13 @@ export async function create(ctx) {
     catch (e) { console.warn('[cidade]', build.name, e.message, (e.stack || '').split('\n')[1]); }
   }
   if (ctx.q && ctx.q.has('cidadeInfo')) {
-    let tris = 0, meshes = 0; root.updateMatrixWorld(true);
-    root.traverse((o) => { if (o.isMesh) { meshes++; const g = o.geometry, n = g.index ? g.index.count / 3 : g.attributes.position.count / 3; tris += n * (o.isInstancedMesh ? o.count : 1); } });
-    window.__cidadeInfo = { tris: Math.round(tris), meshes };
-    console.log('[cidade] triângulos', Math.round(tris), 'malhas', meshes);
+    const count = (obj) => { let tris = 0, meshes = 0; obj.traverse((o) => { if (o.isMesh) { meshes++; const g = o.geometry, n = g.index ? g.index.count / 3 : g.attributes.position.count / 3; tris += n * (o.isInstancedMesh ? o.count : 1); } }); return [Math.round(tris), meshes]; };
+    const [tris, meshes] = count(root);
+    window.__cidadeInfo = { tris, meshes };
+    console.log('[cidade] triângulos', tris, 'malhas', meshes, parts.map((p, i) => (p.root ? i + ':' + count(p.root).join('/') : '')).join(' '));
   }
   return {
-    update(t, S, cam) { for (const p of parts) p.update(t, S, cam); }
+    update(t, S, cam) { if (dbg) K.xray([dbg.material], S.xray); for (const p of parts) p.update(t, S, cam); }
   };
 }
 

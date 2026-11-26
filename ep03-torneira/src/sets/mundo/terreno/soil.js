@@ -102,7 +102,7 @@ float soilH(vec2 xz) { vec2 uv = (xz - vec2(SX0, SZ0)) / vec2(SX1 - SX0, SZ1 - S
   vec4 pa = texture2D(tSPebA, vec2(su, sy) * 0.2), pb = texture2D(tSPebB, vec2(su + 3.7, sy + 1.3) / 9.0);
   c = mix(c, pa.rgb * (0.85 + 0.3 * sgr), pa.a * wA);
   c = mix(c, pb.rgb, pb.a * wB);
-  diffuseColor.rgb = c;
+  diffuseColor.rgb = c * SOIL_TINT;
   float sBump = 0.025 * pa.a * wA + 0.05 * pb.a * wB + 0.006 * sgr;
 `;
   const bump = `
@@ -117,12 +117,12 @@ float soilH(vec2 xz) { vec2 uv = (xz - vec2(SX0, SZ0)) / vec2(SX1 - SX0, SZ1 - S
       sh.vertexShader = sh.vertexShader
         .replace('#include <common>', '#include <common>\nvarying vec3 vSWP; varying vec3 vSWN;')
         .replace('#include <begin_vertex>', '#include <begin_vertex>\nvSWP = (modelMatrix * vec4(transformed, 1.0)).xyz; vSWN = normalize(mat3(modelMatrix) * objectNormal);');
-      sh.fragmentShader = defs + sh.fragmentShader
+      sh.fragmentShader = defs + `#define SOIL_TINT ${(o.tint ?? 1).toFixed(3)}\n` + sh.fragmentShader
         .replace('#include <common>', '#include <common>\n' + fragHead)
         .replace('#include <map_fragment>', fragMain)
         .replace('#include <normal_fragment_maps>', '#include <normal_fragment_maps>\n' + bump);
     };
-    m.customProgramCacheKey = () => 'ep3-soil-v1';
+    m.customProgramCacheKey = () => 'ep3-soil-v1-' + (o.tint ?? 1);
     return m;
   }
   return { U, material };

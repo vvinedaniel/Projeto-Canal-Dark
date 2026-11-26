@@ -243,9 +243,11 @@ export function makeKit(L, Lo) {
     const t = new THREE.CanvasTexture(cv); t.colorSpace = THREE.SRGBColorSpace; t.anisotropy = 4; return t;
   }
   const ironM = L.metal('#3b4148', { roughness: 0.6 });
+  const lidCache = new Map();
   function lid(text, tone, r = 0.36) {
     const g = new THREE.Group();
-    const top = L.metal('#ffffff', { map: lidTex(text, tone), roughness: 0.55, metalness: 0.55 });
+    if (!lidCache.has(text)) lidCache.set(text, L.metal('#ffffff', { map: lidTex(text, tone), roughness: 0.55, metalness: 0.55 }));
+    const top = lidCache.get(text);
     const c = L.mesh(new THREE.CylinderGeometry(r, r, 0.04, 28), [ironM, top, ironM], 0, -0.02, 0, { cast: false });
     c.rotation.y = -Math.PI / 2;
     g.add(c, L.mesh(new THREE.CylinderGeometry(r + 0.09, r + 0.09, 0.03, 28), ironM, 0, -0.025, 0, { cast: false }));

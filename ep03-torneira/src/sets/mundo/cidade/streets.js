@@ -97,8 +97,9 @@ export function buildStreets(ctx) {
   }
 
   /* ---------- mobiliário: postes, placas, lixeiras ---------- */
+  const raw = (mg, geo, m) => { const g = geo.index ? geo.toNonIndexed() : geo.clone(); for (const k of Object.keys(g.attributes)) if (!['position', 'normal', 'color'].includes(k)) g.deleteAttribute(k); g.applyMatrix4(m); mg.list.push(g); };
   const lampM = new Merge(), lensM = new Merge(), signM = new Merge(), binM = new Merge();
-  const lamp = (x, z, ry) => { lampM.add(K.lampGeo, '#9aa3aa', TM(x, H(x, z) + CH, z, 0, ry, 0)); lensM.add(K.lampLensGeo, '#fff1c4', TM(x, H(x, z) + CH, z, 0, ry, 0).multiply(TM(1.98, 7.4, 0))); };
+  const lamp = (x, z, ry) => { raw(lampM, K.lampGeo, TM(x, H(x, z) + CH, z, 0, ry, 0)); lensM.add(K.lampLensGeo, '#fff1c4', TM(x, H(x, z) + CH, z, 0, ry, 0).multiply(TM(1.98, 7.4, 0))); };
   // nada de postes entre x −9 e 9 na Rua da Casa (a câmera passa ali: casa, hidrômetro, tê)
   [-50, -36, -22, 14.5, 36, 50].forEach((x) => lamp(x, SC.z0 - 0.35, -Math.PI / 2));
   [-56, -42, -28, -14, 16, 31, 45].forEach((x) => lamp(x, SC.z1 + 0.35, Math.PI / 2));
@@ -106,10 +107,11 @@ export function buildStreets(ctx) {
   [-42, -26, -10, 6, 40, 54].forEach((x) => lamp(x, SB.z1 + 0.35, Math.PI / 2));
   [-12, -7, 10, 17].forEach((z) => lamp(AV.x0 - 0.35, z, Math.PI));
   [-14, 12].forEach((z) => lamp(AV.x1 + 0.35, z, 0));
-  const sign = (kind, x, z, ry) => signM.add(K.signGeo(kind), '#ffffff', TM(x, H(x, z) + CH, z, 0, ry, 0));
+  /** acrescenta uma geometria que já tem cor por vértice (árvores, placas) sem repintar */
+  const sign = (kind, x, z, ry) => raw(signM, K.signGeo(kind), TM(x, H(x, z) + CH, z, 0, ry, 0));
   sign('stop', AV.x0 - 0.5, SC.z0 - 0.5, Math.PI / 2); sign('name', AV.x1 + 0.5, SC.z0 - 0.5, 0);
   sign('stop', AV.x0 - 0.5, SB.z0 - 0.5, Math.PI / 2); sign('name', AV.x1 + 0.6, SB.z1 + 0.6, 0);
-  [[-31, SC.z1 + 0.3], [-46, SB.z1 + 0.3], [12, SB.z0 - 0.3], [40, SC.z0 - 0.3]].forEach(([x, z]) => binM.add(K.binGeo, '#ffffff', TM(x, H(x, z) + CH, z)));
+  [[-31, SC.z1 + 0.3], [-46, SB.z1 + 0.3], [12, SB.z0 - 0.3], [40, SC.z0 - 0.3]].forEach(([x, z]) => raw(binM, K.binGeo, TM(x, H(x, z) + CH, z)));
   const furn = new THREE.Group(); root.add(furn);
   furn.add(L.mesh(lampM.geo(), vmat({ roughness: 0.5, metalness: 0.3 })), L.mesh(lensM.geo(), L.glow('#fff1c4', 1.1), 0, 0, 0, { cast: false }));
   furn.add(L.mesh(signM.geo(), vmat({ roughness: 0.5, metalness: 0.2 })), L.mesh(binM.geo(), vmat({ roughness: 0.55 })));
@@ -118,7 +120,7 @@ export function buildStreets(ctx) {
 
   /* ---------- árvores de calçada (uma malha) ---------- */
   const trees = new Merge();
-  const tree = (x, z, seed, h = 3.2, r = 1.4) => trees.add(K.treeGeo(seed, h, r), '#ffffff', TM(x, H(x, z) + CH, z));
+  const tree = (x, z, seed, h = 3.2, r = 1.4) => raw(trees, K.treeGeo(seed % 7, h, r), TM(x, H(x, z) + CH, z));
   [-54, -45, -39, -27, -17, 11, 19.5, 33, 43, 57].forEach((x, i) => { if (Math.abs(x - 24) > 5) tree(x, SC.walkBack[0] + 0.9, i + 1, 2.8 + (i % 3) * 0.4, 1.2 + (i % 2) * 0.3); });
   [-57, -38, -22, -6, 9, 32, 46, 58].forEach((x, i) => tree(x, SB.walkFront[1] - 0.9, i + 20, 3.0 + (i % 3) * 0.3, 1.3));
   [-54, -30, -14, 8, 36, 52].forEach((x, i) => tree(x, SB.walkBack[0] + 0.8, i + 40, 3.0, 1.3));

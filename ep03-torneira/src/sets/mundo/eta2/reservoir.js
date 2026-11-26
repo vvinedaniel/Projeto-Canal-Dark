@@ -15,7 +15,7 @@ export function makeReservoir(ctx, K) {
   const halfDisc = (r, y0, y1, m) => { const c = new THREE.Mesh(new THREE.CylinderGeometry(r, r, y1 - y0, 48, 1, false, HALF[0], HALF[1]), m); c.position.set(CX, (y0 + y1) / 2, CZ); c.castShadow = c.receiveShadow = true; return c; };
   const cutRect = (g, x0, y0, x1, y1, z = CZ + 0.004, m = MAT.cut) => { const p = L.mesh(new THREE.PlaneGeometry(x1 - x0, y1 - y0), m, (x0 + x1) / 2, (y0 + y1) / 2, z, { cast: false }); g.add(p); };
   rsFloor.add(halfDisc(RO + 0.25, R.floor - 0.3, R.floor, MAT.conc)); cutRect(rsFloor, CX - RO - 0.25, R.floor - 0.3, CX + RO + 0.25, R.floor);
-  const wl = L.lathe([[RI, R.floor], [RO, R.floor], [RO, R.top], [RI, R.top], [RI, R.floor]], MAT.conc, 64, HALF[0], HALF[1]); wl.position.set(CX, 0, CZ); wl.material = MAT.conc; rsWall.add(wl);
+  const concD = M('#c9cdcf', { roughness: 0.88, side: THREE.DoubleSide }); const wl = L.lathe([[RI, R.floor], [RO, R.floor], [RO, R.top], [RI, R.top], [RI, R.floor]], concD, 64, HALF[0], HALF[1]); wl.position.set(CX, 0, CZ); rsWall.add(wl);
   cutRect(rsWall, CX - RO, R.floor, CX - RI, R.top); cutRect(rsWall, CX + RI, R.floor, CX + RO, R.top);
   // régua de nível pintada na parede interna (faixas)
   for (let y = R.floor + 0.5; y < R.top - 0.2; y += 0.5) { const a = PI * 0.62, s = L.box(0.5, 0.06, 0.02, MAT.yellow, CX + Math.sin(a) * (RI - 0.015), y, CZ + Math.cos(a) * (RI - 0.015)); s.rotation.y = a; rsWall.add(s); }
@@ -58,10 +58,10 @@ export function makeReservoir(ctx, K) {
   const X0 = LF.x0, X1 = LF.x1, ZB = LF.z0, ZC = LF.z1, FLR = LF.floor, RF = LF.roof, T = 0.25;
   const bSlab = new THREE.Group(), bWall = new THREE.Group(), bRoof = new THREE.Group();
   bSlab.add(bx([X0, FLR - 0.12, ZB], [X1, FLR + 0.05, ZC], MAT.conc)); cutRect(bSlab, X0, FLR - 0.12, X1, FLR + 0.05, ZC + 0.004);
-  const wallM = MAT.brickWall;
+  const wallM = M('#e8e1d3', { roughness: 0.85, side: THREE.DoubleSide });
   bWall.add(bx([X0, FLR, ZB], [X1, RF, ZB + T], wallM));
   // parede esquerda (encostada no reservatório) e direita com janelas e porta
-  const holed = (x0, x1, holes) => { const m = L.extrude([[ZB, FLR], [ZC, FLR], [ZC, RF], [ZB, RF]], x1 - x0, wallM, { holes: holes.map(([a, b, c, d]) => [[a, c], [b, c], [b, d], [a, d]]) }); m.rotation.y = -PI / 2; m.position.x = x0; m.scale.z = -1; bWall.add(m); };
+  const holed = (x0, x1, holes) => { const m = L.extrude([[ZB, FLR], [ZC, FLR], [ZC, RF], [ZB, RF]], x1 - x0, wallM, { holes: holes.map(([a, b, c, d]) => [[a, c], [b, c], [b, d], [a, d]]) }); m.rotation.y = -PI / 2; m.position.x = x1; bWall.add(m); };
   holed(X0, X0 + T, [[-54.6, -53.0, 16.4, 17.8]]);
   holed(X1 - T, X1, [[-55.4, -53.6, 16.4, 17.8], [-51.4, -49.4, FLR + 0.05, 17.0]]);
   cutRect(bWall, X0, FLR, X0 + T, RF, ZC + 0.004); cutRect(bWall, X1 - T, FLR, X1, RF, ZC + 0.004);
@@ -114,14 +114,14 @@ export function makeReservoir(ctx, K) {
     const gv = gateValve(0.2, MAT.iron); gv.g.rotation.y = PI / 2; gv.g.position.set(26.55, PY, z); suc.add(gv.g);
     pipe(dis, [[PC, PY + 0.86, z], [PC, YH, z]], 0.15, MAT.treated, { flanges: false });
     const cv = checkValve(0.15, MAT.iron); cv.position.set(PC, 15.75, z); cv.rotation.y = -PI / 2; dis.add(cv);
-    const gv2 = gateValve(0.15, MAT.iron); gv2.g.rotation.x = -PI / 2; gv2.g.position.set(PC, 16.6, z); dis.add(gv2.g);
+    const gv2 = gateValve(0.15, MAT.iron); gv2.g.rotation.x = PI / 2; gv2.g.position.set(PC, 16.6, z); dis.add(gv2.g);
     const ga = gauge(0.11); ga.g.position.set(PC, 17.25, z + 0.2); dis.add(ga.g);
   });
-  pipe(dis, [[PC, YH, zP[0] - 0.3], [PC, YH, ZC + 0.15], P.liftOut], 0.2, MAT.treated, { flanges: 'end', bend: 0.05 });
+  pipe(dis, [[PC, YH, zP[0] - 0.3], P.liftOut], 0.2, MAT.treated, { flanges: 'end' });
   dis.add(L.sph(0.21, MAT.treated, PC, YH, zP[0] - 0.3));
   const hg = gauge(0.13); hg.g.position.set(PC + 0.32, YH + 0.32, -49.4); hg.g.rotation.y = 0; dis.add(hg.g); dis.add(rod([PC + 0.2, YH, -49.4], [PC + 0.32, YH + 0.2, -49.4], 0.02, MAT.steel, 5));
   // suportes do coletor de recalque
-  [-53.0, -49.6].forEach((z) => dis.add(rod([PC, FLR, z], [PC, YH - 0.2, z], 0.06, MAT.galv, 8)));
+  dis.add(rod([PC, YH, -52.4], [PC, RF - 0.05, -52.4], 0.05, MAT.galv, 8)); // tirante na laje
   // quadro elétrico (CCM) com luzes de "operando"
   const panel = new THREE.Group(); panel.add(L.rbox(1.6, 2.0, 0.45, 0.03, M('#c7ccd0', { roughness: 0.5 }), 26.6, FLR + 1.05, ZB + T + 0.24));
   [26.15, 27.05].forEach((x) => { panel.add(L.box(0.7, 1.8, 0.02, M('#b9bfc4', { roughness: 0.5 }), x, FLR + 1.05, ZB + T + 0.47)); panel.add(L.box(0.04, 0.2, 0.03, MAT.dark, x + 0.28, FLR + 1.05, ZB + T + 0.49)); });
@@ -190,7 +190,7 @@ export function makeReservoir(ctx, K) {
         if (k > 0 && k < 1) { hz = zP[i]; hy = (1 - k) * 3.2; }
       });
       hoist.visible = bl > 0.3; hoist.position.set(mrX, RF - 0.46, bl < 0.7 ? hz : zP[1]);
-      const hlen = 0.55 + (bl < 0.7 ? Math.max(0, (RF - 0.46 - 0.7) - (PY + 0.95 + hy)) * 0 + (RF - 1.1 - (PY + 1.0 + hy)) : 0.6);
+      const hookY = bl < 0.7 ? PY + 0.62 + hy : 16.9, hlen = Math.max(0.05, (RF - 0.46 - 0.75) - hookY);
       chain.scale.y = Math.max(0.05, hlen); chain.position.y = -0.7 - hlen / 2; hook.position.y = -0.72 - hlen;
       sucB.visible = bl > 0.62; disB.visible = bl > 0.72; panB.visible = bl > 0.85; lamps.forEach((m) => { m.visible = bl > 0.85; });
       needles.forEach((n, i) => { n.visible = bl > 0.72; n.rotation.z = 1.2 - (i === 1 ? 0.25 : 1.7) * run; });

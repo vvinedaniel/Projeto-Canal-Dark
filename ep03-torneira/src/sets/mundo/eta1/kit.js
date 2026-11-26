@@ -212,14 +212,15 @@ export function makeKit(L) {
   /** água com volume numa caixa: superfície (com subdivisão nx em x) + face vertical no corte (z = zf) + laterais
       opcionais. Geometria relativa ao fundo (y = 0..h): ajuste o nível com setLevel(k). col(x, yRel) → THREE.Color */
   function waterBox(x0, x1, zb, zf, y0, h, color, op = 0.6, o = {}) {
-    const nx = o.nx ?? 24, ny = o.ny ?? 6, pos = [], cols = [], idx = [], col = o.col;
-    const add = (x, y, z) => { pos.push(x, y, z); const c = col ? col(x, y / h, z) : new THREE.Color(color); cols.push(c.r, c.g, c.b); return pos.length / 3 - 1; };
+    const nx = o.nx ?? 24, ny = o.ny ?? 6, pos = [], cols = [], idx = [], col = o.col, aTop = o.topA ?? Math.min(0.95, op + 0.3), aFront = o.frontA ?? op;
+    let A = 1;
+    const add = (x, y, z) => { pos.push(x, y, z); const c = col ? col(x, y / h, z) : new THREE.Color(color); cols.push(c.r, c.g, c.b, A); return pos.length / 3 - 1; };
     const grid = (f, nu, nv) => { const base = pos.length / 3; for (let j = 0; j <= nv; j++) for (let i = 0; i <= nu; i++) add(...f(i / nu, j / nv)); for (let j = 0; j < nv; j++) for (let i = 0; i < nu; i++) { const a = base + j * (nu + 1) + i, b = a + 1, c = a + nu + 1, d = c + 1; idx.push(a, b, d, a, d, c); } };
-    grid((u, v) => [L.lerp(x0, x1, u), h, L.lerp(zf, zb, v)], nx, 2);       // topo
-    grid((u, v) => [L.lerp(x0, x1, u), L.lerp(0, h, v), zf], nx, ny);        // frente (corte)
+    A = aTop; grid((u, v) => [L.lerp(x0, x1, u), h, L.lerp(zf, zb, v)], nx, 2);       // topo
+    A = aFront; grid((u, v) => [L.lerp(x0, x1, u), L.lerp(0, h, v), zf], nx, ny);     // frente (corte)
     if (o.sides) { grid((u, v) => [x0, L.lerp(0, h, v), L.lerp(zf, zb, u)], 3, ny); grid((u, v) => [x1, L.lerp(0, h, v), L.lerp(zb, zf, u)], 3, ny); }
-    const g = new THREE.BufferGeometry(); g.setAttribute('position', new THREE.Float32BufferAttribute(pos, 3)); g.setAttribute('color', new THREE.Float32BufferAttribute(cols, 3)); g.setIndex(idx); g.computeVertexNormals();
-    const wm = o.material ?? L.water('#ffffff', op, { vertexColors: true, side: DS });
+    const g = new THREE.BufferGeometry(); g.setAttribute('position', new THREE.Float32BufferAttribute(pos, 3)); g.setAttribute('color', new THREE.Float32BufferAttribute(cols, 4)); g.setIndex(idx); g.computeVertexNormals();
+    const wm = o.material ?? L.water('#ffffff', 0.999, { vertexColors: true, side: DS });
     const m = L.mesh(g, wm, 0, y0, 0, { cast: false }); m.renderOrder = o.order ?? 2;
     m.userData.setLevel = (k) => { m.scale.y = Math.max(0.001, k); m.visible = k > 0.004; };
     m.userData.recolor = (f) => { const ca = g.attributes.color, pa = g.attributes.position, c = new THREE.Color(); for (let i = 0; i < pa.count; i++) { f(pa.getX(i), pa.getY(i) / h, pa.getZ(i), c); ca.setXYZ(i, c.r, c.g, c.b); } ca.needsUpdate = true; };

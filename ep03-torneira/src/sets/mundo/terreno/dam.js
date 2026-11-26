@@ -91,7 +91,7 @@ export function buildDam(ctx) {
   }
 
   /* ---------- enrocamento: blocos de pedra na linha d'água do talude de montante ---------- */
-  const rockGeoD = new THREE.IcosahedronGeometry(1, 1); { const p = rockGeoD.attributes.position; for (let i = 0; i < p.count; i++) { const x = p.getX(i), y = p.getY(i), z = p.getZ(i), f = 1 + 0.22 * Math.sin(x * 4.1 + y * 2.3) * Math.cos(z * 3.7 - y); p.setXYZ(i, x * f, y * f * 0.7, z * f); } rockGeoD.computeVertexNormals(); }
+  const rockGeoD = new THREE.IcosahedronGeometry(1, 0); { const p = rockGeoD.attributes.position; for (let i = 0; i < p.count; i++) { const x = p.getX(i), y = p.getY(i), z = p.getZ(i), f = 1 + 0.22 * Math.sin(x * 4.1 + y * 2.3) * Math.cos(z * 3.7 - y); p.setXYZ(i, x * f, y * f * 0.7, z * f); } rockGeoD.computeVertexNormals(); }
   const rrock = [];
   { const rd = L.rng(808); for (let i = 0; i < 520 && rrock.length < 240; i++) {
     const z = lerp(D.z0 + 6, D.z1 + 2, rd()), y = lerp(Lo.LAKE.level - 0.9, Lo.LAKE.level + 1.1, rd()), x = D.c0 - (crest - y) * D.up;

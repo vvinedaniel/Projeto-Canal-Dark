@@ -8,8 +8,19 @@
 //   terrainHoles   [] — outro módulo pode empurrar { x0,x1,z0,z1 } ou { cx,cz,r } no seu create(): o chão some ali
 //   faceSlots      rasgos da face da frente (id, x0,x1, y0,y1, z)
 import { buildGround } from './terreno/ground.js';
+import { buildWater } from './terreno/water.js';
+import { buildDam } from './terreno/dam.js';
+import { buildFlora } from './terreno/flora.js';
 
 export function create(ctx) {
-  const parts = [buildGround(ctx)];
+  const gr = buildGround(ctx);
+  const parts = [gr, buildWater(ctx), buildDam(ctx), buildFlora(ctx, gr)];
+  if ((ctx.q.get('mods') || '').includes('tdebug')) {
+    const rep = {}; const cnt = (o) => (o.geometry.index ? o.geometry.index.count : o.geometry.attributes.position.count) / 3 * (o.isInstancedMesh ? o.count : 1);
+    ctx.scene.traverse((o) => { if (o.isMesh && o.geometry) { let g = o; while (g.parent && !g.name) g = g.parent; const k = g.name + (o.isInstancedMesh ? ':inst' : ''); rep[k] = rep[k] || [0, 0]; rep[k][0] += cnt(o); rep[k][1]++; } });
+    parts[3].meshes.forEach((m) => { rep['  ' + m.key] = [m.n * ((m.im.geometry.index ? m.im.geometry.index.count : m.im.geometry.attributes.position.count) / 3), m.n]; });
+    console.warn('[terreno] ' + JSON.stringify(Object.fromEntries(Object.entries(rep).map(([k, v]) => [k, [Math.round(v[0]), v[1]]]))));
+  }
+  if ((ctx.q.get('mods') || '').includes('tnoflora')) parts[3].grp.visible = false;
   return { update(t, S, cam) { for (const p of parts) p.update(t, S, cam); } };
 }

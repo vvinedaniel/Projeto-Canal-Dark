@@ -109,7 +109,7 @@ export function buildWater(ctx) {
   /* ---------- espuma e flocos correndo (instâncias, posições só de t) ---------- */
   const foamMat = L.mat('#f4f8f8', { roughness: 0.55, transparent: true, opacity: 0.92, depthWrite: false });
   const flake = new THREE.CircleGeometry(1, 7); flake.rotateX(-Math.PI / 2); flake.scale(1, 1, 0.45);
-  const puff = new THREE.IcosahedronGeometry(1, 1);
+  const puff = new THREE.IcosahedronGeometry(1, 0);
   const rd = L.rng(4242);
   // rio de entrada
   const NI = 170, fin = []; for (let i = 0; i < NI; i++) fin.push({ ph: rd(), lane: (rd() * 2 - 1) * 0.85, sp: 0.85 + rd() * 0.4, s: 0.1 + rd() * 0.16, r: rd() * 6 });

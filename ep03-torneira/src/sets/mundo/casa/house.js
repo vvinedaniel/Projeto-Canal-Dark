@@ -207,7 +207,7 @@ export function buildHouse(ctx, K, opt = {}) {
         let za = Math.min(zA, zB), zb = Math.max(zA, zB);
         if (x > CUTX) { if (s > 0) continue; zb = Math.min(zb, CUTZ); }
         const zm = (za + zb) / 2, len = (zb - za) / Math.cos(ang);
-        bx(wood, 0.05, 0.07, len, x, roofY(zm) - 0.12, zm, '#a8744e', -s * ang);
+        bx(wood, 0.05, 0.07, len, x, roofY(zm) - 0.12, zm, '#a8744e', s * ang);
       }
     });
     // cumeeira de madeira
