@@ -28,11 +28,11 @@ export async function create(ctx) {
       house.lamp.visible = house.fill.visible = near;
       meter.update(t, S, cam);
       const pw = pipes.update(t, S);
-      const fz = faucet.update(t, S, pw.faucetWater);
+      const fz = faucet.update(t, S, pw.faucetWater, cam);
       // mão: gancho (já segurando e girando) e final (chega, gira, solta)
       if (t < 7.05) hand.pose(faucet.knobWorld, fz.ang, 0.3, 1, 1 - pr(t, 1.0, 1.3), pr(t, 1.4, 2.6));
       else hand.pose(faucet.knobWorld, fz.ang, 0, pr(t, 99.9, 100.65), pr(t, 100.6, 100.74) * (1 - pr(t, 101.65, 101.85)), pr(t, 101.85, 102.7));
-      const tk = tank.update(t, S);
+      const tk = tank.update(t, S, cam);
       const conn = S.present || tk.k > 0.85; pipes.SYS.up[2].group.visible = conn; pipes.SYS.down[0].group.visible = conn;
     }
   };

@@ -160,6 +160,7 @@ function overlay(t) {
 /* ---------- quadro ---------- */
 let current = null;
 const glEl = $('#gl'), xfEl = $('#xfade'), xfCtx = xfEl.getContext('2d'), lensEl = $('#lens'), sourceEl = $('#source');
+if (SOURCE && SOURCE.text) sourceEl.innerHTML = SOURCE.text;
 const meterEl = $('#meter'), meterFill = $('#meter b'), meterTxt = $('#meter span'), spEl = $('#split'), spCtx = spEl.getContext('2d'), spBar = $('#splitBar');
 const setAt = (t) => sets.find((s) => t >= s.t0 && t < s.t1) || sets[sets.length - 1];
 function renderSet(set, t) {

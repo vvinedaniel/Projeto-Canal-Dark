@@ -192,7 +192,8 @@ export function buildMeter(ctx, K, H) {
   const flow = new L.Flow(L.curve(jetPath, false, 0.5), { n: 46, size: 0.0042, colors: ['#e9f8ff', '#bfe9fb', '#ffffff'], jitter: [0.004, 0.006, 0.004], material: L.flat(0xffffff), seed: 7 });
   meter.add(flow.mesh);
 
-  L.shadows(root); flow.mesh.castShadow = false;
+  L.shadows(root, false, true); door.traverse((o) => { if (o.isMesh) o.castShadow = true; }); flow.mesh.castShadow = false;
+  const detail = [...gears, ...rollers, ...pointers, star, drive, filterMesh, flow.mesh, ...seals, turb];
   [wFace, wBack, lens].forEach((o) => { o.castShadow = false; });
 
   /* ---------------- planta (contorno) antes da instalação ---------------- */
@@ -217,6 +218,7 @@ export function buildMeter(ctx, K, H) {
   }
   const _q = new THREE.Vector3();
   function update(t, S, cam) {
+    const near = cam.position.distanceTo(O) < 4.5; detail.forEach((o) => { o.visible = near; });
     const k = S.build.meter, present = S.present;
     const built = present ? 1 : k;
     plan.visible = !present && k < 0.02;
@@ -228,7 +230,7 @@ export function buildMeter(ctx, K, H) {
     const kc = e(0, 0.3); cav.position.y = 0.6 * (1 - kc); cav.visible = kc > 0.001;
     const km = e(0.25, 0.6); meter.visible = km > 0.001; meter.position.set(O.x, O.y + 0.45 * (1 - km) * (1 - km), O.z + 0.7 * (1 - km)); meter.rotation.set(0, 0, 0.5 * (1 - km));
     const kn = e(0.55, 0.72); nuts.forEach((n, i) => { n.rotation.x = (1 - kn) * 8 * (i ? 1 : -1); n.position.x = (i ? 1 : -1) * (0.178 + 0.03 * (1 - kn)); });
-    const ks = L.ease.back(L.clamp01((built - 0.66) / 0.12)); seals.forEach((s) => { s.visible = ks > 0.01; s.scale.setScalar(Math.max(1e-3, ks)); });
+    const ks = L.ease.back(L.clamp01((built - 0.66) / 0.12)); seals.forEach((s) => { s.visible = near && ks > 0.01; s.scale.setScalar(Math.max(1e-3, ks)); });
     lever.rotation.y = -Math.PI / 2 * (1 - e(0.8, 0.92));
     const kb = L.ease.back(L.clamp01((built - 0.84) / 0.16)); box.visible = kb > 0.01; box.scale.setScalar(1); door.rotation.y = -1.0 - 0.9 * kb; door.scale.setScalar(Math.max(1e-3, kb)); door.visible = kb > 0.01;
     // água: o ramal enche até o cavalete (fração alta de S.water.ramal)
@@ -248,7 +250,7 @@ export function buildMeter(ctx, K, H) {
     rollers.forEach((r, i) => { r.rotation.x = -((P[i] % 10) / 10) * Math.PI * 2 + ROLL0; });
     pointers[0].rotation.y = -((V % 10) / 10) * Math.PI * 2; pointers[1].rotation.y = -((V % 1)) * Math.PI * 2;
     star.rotation.y = -I * 4.0;
-    flow.update(t, { speed: 0.55, amount: run * fMet });
+    if (near) flow.update(t, { speed: 0.55, amount: run * fMet });
   }
   const ROLL0 = 0;  // ajuste da fase do dígito sob a janela (calibrado no teste)
   // curvas para o raciocínio do fluxo (setas)

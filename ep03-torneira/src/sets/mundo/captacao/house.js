@@ -30,6 +30,7 @@ export function buildHouse(ctx, K, R) {
   }
   const fill = L.mesh(new THREE.PlaneGeometry(PIT.x1 - PIT.x0, PIT.z1 - PIT.z0), M('#7a5a3e', { roughness: 0.97 }), (PIT.x0 + PIT.x1) / 2, PIT.top, (PIT.z0 + PIT.z1) / 2, { cast: false });
   fill.rotation.x = -Math.PI / 2; g.add(fill);
+  const GRAVEL = new THREE.Color('#a9a398'), DIRT = new THREE.Color('#7a5a3e'); fill.material = fill.material.clone();
   const pitMask = R.mask(PIT.x0, PIT.x1, PIT.z0, PIT.z1, PIT.top + 0.03);
   // furo permanente no chão do terreno sobre a cava (antes da escavação o "aterro" fecha o furo na cota do pátio)
   if (shared.terrainHoles) shared.terrainHoles.push({ x0: PIT.x0, x1: PIT.x1, z0: PIT.z0, z1: PIT.z1 });
@@ -228,6 +229,7 @@ export function buildHouse(ctx, K, R) {
     R.fillLevel = L.lerp(PIT.top, PIT.bot, ex);
     pitMask.visible = k > 0.004; pit.visible = k > 0.004;
     fill.visible = k > 0 || !!shared.terrainHoles; fill.position.y = R.fillLevel + 0.005;
+    fill.material.color.copy(GRAVEL).lerp(DIRT, Math.min(1, ex * 8));
     setExcavator(k, t);
     // poço: laje de fundo, paredes subindo
     const kf = E.out(u(k, 0.24, 0.3)), kw = E.io(u(k, 0.28, 0.55));

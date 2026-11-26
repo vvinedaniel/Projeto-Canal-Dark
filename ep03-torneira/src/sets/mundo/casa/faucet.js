@@ -97,7 +97,7 @@ export function buildFaucet(ctx, K, H) {
   const jetG = new THREE.CylinderGeometry(0.0062, 0.0055, 1, 14, 1, true); jetG.translate(0, -0.5, 0);
   const jet = L.mesh(jetG, L.water('#e8f7ff', 0.78, { depthWrite: false }), BX + AE.x, DY + AE.y - 0.022, FZ, { cast: false }); jet.renderOrder = 6; root.add(jet);
   const jetF = new L.Flow(L.curve([[BX + AE.x, DY + AE.y - 0.022, FZ], [BX + AE.x, GL.y, FZ]]), { n: 26, size: 0.0022, colors: ['#ffffff'], jitter: [0.004, 0, 0.004], material: L.flat(0xffffff), seed: 3 }); root.add(jetF.mesh);
-  L.shadows(root); [jet, top, side, men, bub, spl, jetF.mesh, inFlow.mesh].forEach((o) => { o.castShadow = false; });
+  L.shadows(root, false, true); [jet, top, side, men, bub, spl, jetF.mesh, inFlow.mesh].forEach((o) => { o.castShadow = false; });
   const _d = new THREE.Object3D();
 
   /* ---------- estado ---------- */
@@ -106,7 +106,8 @@ export function buildFaucet(ctx, K, H) {
     if (t < 7.05) return 0.3 + 1.3 * L.ease.out(L.clamp01(t / 1.0));
     return S.run.faucet * 1.6;
   };
-  function update(t, S, supply) {
+  function update(t, S, supply, cam) {
+    const near = cam.position.distanceTo(fc.position) < 5; bub.visible = spl.visible = inFlow.mesh.visible = jetF.mesh.visible = near;
     const open = S.run.faucet, has = supply > 0.5;
     const ang = knobAngle(t, S); stem.rotation.y = ang; stem.position.y = 0.0145 * open;
     // tampa: sai em 100,6–101,2 e volta em 106,9–107,5

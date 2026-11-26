@@ -107,7 +107,8 @@ export function buildTank(ctx, K, H) {
 
   const sinC = (YIN + PIV.y - (YMAX + 0.03)) / ARM, sinO = 0.72;
   const _d = new THREE.Object3D();
-  function update(t, S) {
+  function update(t, S, cam) {
+    const near = cam.position.distanceTo(tank.position) < 14;
     const P = S.present, k = P ? 1 : S.build.tank;
     plan.visible = !P && k < 0.02;
     const show = k > 0.001;
@@ -141,6 +142,7 @@ export function buildTank(ctx, K, H) {
     ring.visible = inflow > 0.01; ring.position.y = yw + 0.004; { const rk = (t * 2.2) % 1; ring.scale.setScalar(1 + rk * 3); ring.material.opacity = (1 - rk) * 0.6 * inflow; }
     for (let i = 0; i < splashN; i++) { const d = sd[i], u = (t * 2.4 + d.ph) % 1, on = inflow > 0.05; _d.position.set(SPX + Math.cos(d.a) * d.v * 0.12 * u, yw + d.up * 0.14 * u - 0.5 * u * u * 0.3, TZ - Math.abs(Math.sin(d.a)) * d.v * 0.12 * u); _d.scale.setScalar(on ? d.s * (1 - u) * inflow : 0); _d.updateMatrix(); splash.setMatrixAt(i, _d.matrix); }
     splash.instanceMatrix.needsUpdate = true;
+    splash.visible = jetFlow.mesh.visible = near && inflow > 0.01;
     return { k, inflow, yw };
   }
   return { root, update };

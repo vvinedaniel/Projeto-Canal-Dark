@@ -1,8 +1,8 @@
 // Linha do tempo do Ep. 03, alinhada às pausas da narração (audio/narracao.mp3, 113,40 s).
 // PH[n] = frase n: { a: início, b: fim, text }. Tudo na tela é ancorado em PH[n].a / PH[n].b.
 export const DUR = 115.0;          // narração + respiro no plano final
-export const END_AT = 113.6;       // cartela final entra aqui
-export const SOURCE = null;        // fontes aparecem dentro do cenário (laboratório)
+export const END_AT = 114.3;       // cartela final entra aqui (depois da vista do sistema inteiro)
+export const SOURCE = { a: 71.0, b: 74.5, text: 'Padrões de potabilidade: Portaria GM/MS nº 888/2021<br>(Ministério da Saúde)' }; // junto do laboratório
 
 const raw = [
   [0.00, 3.26, 'Você abre a torneira e a água simplesmente aparece.'],

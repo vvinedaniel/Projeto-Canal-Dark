@@ -59,7 +59,10 @@ export function buildMain(ctx, K, R) {
     L.lathe([[0.001, 0], [0.18, 0.02], [0.2, 0.16], [0.16, 0.3], [0.06, 0.36], [0.001, 0.37]], M('#2f6db0', { roughness: 0.4 }), 18).translateX(VX).translateY(VY + r + 0.33).translateZ(-80.4),
     cylA(0.04, 0.12, MAT.dark, VX, VY + r + 0.75, -80.4, 'y', 8), L.torus(0.12, 0.02, MAT.red, VX, VY + r + 0.15, -80.4 + 0.0).rotateX(Math.PI / 2)));
   g.add(vent);
-  const collar = bake(L.put(new THREE.Group(), boxC(PI_[0] - 0.9, PI_[0] + 0.9, 13.85, 14.25, -81.3, -79.5, MAT.concNew)));
+  const collar = bake(L.put(new THREE.Group(), boxC(PI_[0] - 0.9, PI_[0] + 0.9, 13.85, 14.25, -81.3, -79.5, MAT.concNew),
+    // redução 0,35 → 0,40 m e flange no encontro com o flange vertical do eta1 em P.rawIn
+    cylA(0.4, 0.45, MAT.rawPipeD, PI_[0], PI_[1] - 0.35, PI_[2], 'y', 22, r)));
+  K.flange(collar, PI_[0], PI_[1] - 0.08, PI_[2], 0.4, 'y', MAT.rawPipeD, 10);
   g.add(collar);
 
   /* ---------- janela em corte (metade de cima do tubo removida: vemos a água bruta correndo, de cima) ---------- */

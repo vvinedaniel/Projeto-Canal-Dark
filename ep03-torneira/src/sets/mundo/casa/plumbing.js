@@ -80,7 +80,7 @@ export function buildPlumbing(ctx, K, H, MT) {
     kit.add(G.cyl(0.015, 0.015, top - y - 0.06, 12), '#aab3ba', TM(KXF, (y + 0.06 + top) / 2, FZ)).add(G.cyl(0.02, 0.02, 0.025, 6), '#d2d8dd', TM(KXF, top, FZ)); }
   root.add(kit.mesh(vmat({ roughness: 0.25, metalness: 0.85 })));
   const fitMesh = fit.mesh(vmat({ roughness: 0.5 })); root.add(fitMesh);
-  L.shadows(root);
+  L.shadows(root, false, true);
 
   /* ---------------- setas (chevrons) por sistema ---------------- */
   const chev = [];
