@@ -37,6 +37,9 @@ export function buildFloc(env) {
     // escada da passarela (sobe de leste para oeste, atrás da fileira)
     K.stair(g, [F.x1 + 7.3, 14.0, -79.65], WY, [-1, 0], 0.9);
     K.railing(g, [[F.x1, WY, -79.2], [F.x1, WY, -78.95]], { toe: false });
+    // revestimento interno molhado (escurece o fundo e faz a cor da água aparecer)
+    const wet = K.M('#7f8a84', { roughness: 0.75, side: THREE.DoubleSide });
+    CH.forEach((c) => { g.add(L.mesh(new THREE.PlaneGeometry(c.x1 - c.x0, F.water - Y0), wet, (c.x0 + c.x1) / 2, (Y0 + F.water) / 2, ZB + 0.006, { cast: false })); const fl = L.mesh(new THREE.PlaneGeometry(c.x1 - c.x0, F.z1 - ZB), wet, (c.x0 + c.x1) / 2, Y0 + 0.006, (ZB + F.z1) / 2, { cast: false }); fl.rotation.x = -Math.PI / 2; g.add(fl); });
     wallsG.add(K.bake(g)); out.add(wallsG);
     // cortinas: x = 9 (passagem por baixo) e x = 3 (passagem por cima)
     const cg = new THREE.Group();
@@ -93,7 +96,7 @@ export function buildFloc(env) {
   const C1 = new THREE.Color(Lo.WATER.coag), C2 = new THREE.Color(Lo.WATER.floc);
   const waters = CH.map((c, i) => {
     const base = C1.clone().lerp(C2, [0.15, 0.55, 0.95][i]);
-    const m = K.waterBox(c.x0, c.x1, ZB, ZFR - 0.012, Y0, F.water - Y0, '#fff', 0.5, { nx: 8, ny: 6, col: (x, v) => base.clone().multiplyScalar(0.82 + 0.18 * v) });
+    const m = K.waterBox(c.x0, c.x1, ZB, ZFR - 0.012, Y0, F.water - Y0, '#fff', 0.64, { nx: 8, ny: 6, topA: 0.9, col: (x, v) => base.clone().multiplyScalar(0.62 + 0.2 * v) });
     out.add(m); return m;
   });
   const transW = K.waterBox(Lo.ETA.dec.x1, F.x0, notch.z0, notch.z1 - 0.012, 18.3, Lo.P.flocOut[1] - 18.3, Lo.WATER.floc, 0.8, { nx: 2, ny: 2 });

@@ -28,7 +28,7 @@ export function buildDam(ctx) {
   const grp = new THREE.Group(); grp.name = 'terreno.dam'; scene.add(grp);
   const sp = R.SPILL, D = R.DAMG, crest = D.crest;
   const cTex = concreteTex(); cTex.repeat.set(0.25, 0.25);
-  const conc = L.mat('#c9c6bd', { roughness: 0.85, map: null });
+  const conc = L.mat('#aaa79f', { roughness: 0.85, map: null });
   conc.onBeforeCompile = (sh) => {
     sh.uniforms.tCon = { value: cTex };
     sh.vertexShader = sh.vertexShader.replace('#include <common>', '#include <common>\nvarying vec3 vCWP; varying vec3 vCWN;').replace('#include <begin_vertex>', '#include <begin_vertex>\nvCWP = (modelMatrix * vec4(transformed, 1.0)).xyz; vCWN = normalize(mat3(modelMatrix) * objectNormal);');

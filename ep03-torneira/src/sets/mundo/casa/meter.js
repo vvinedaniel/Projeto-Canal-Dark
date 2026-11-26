@@ -17,7 +17,8 @@ export function buildMeter(ctx, K, H) {
   const plasticCut = L.mat('#3b5266', { roughness: 0.7, side: THREE.DoubleSide });
 
   /* ---------------- corpo (latão) ---------------- */
-  const meter = new THREE.Group(); meter.position.copy(O); root.add(meter);
+  const SC = 1.4;                                          // escala de leitura (o hidrômetro é exagerado ~3× no total)
+  const meter = new THREE.Group(); meter.position.copy(O); meter.scale.setScalar(SC); root.add(meter);
   const body = new THREE.Group(); meter.add(body);
   const AX = 0.16, AR = 0.036, BR = 0.022, CH = { r: 0.088, ri: 0.068, y0: -0.078, y1: 0.06, ci0: -0.055, ci1: 0.05, fl: 0.098, top: 0.072 };
   // superfícies (metade de trás)
@@ -150,12 +151,12 @@ export function buildMeter(ctx, K, H) {
 
   /* ---------------- cavalete: canos (corte), cotovelos, registro ---------------- */
   const PVC = L.mat('#2f6fc0', { roughness: 0.45, side: THREE.DoubleSide }), PVCcut = L.mat('#5d93d6', { roughness: 0.6, side: THREE.DoubleSide });
-  const NF = H.NICHE.y0, XIN = 2.48, XOUT = 3.40;
-  const pin = planePipe([[XIN, NF - 0.02, ZC], [XIN, MP.y, ZC], [MP.x - 0.235, MP.y, ZC]], { r: 0.03, mat: PVC, cutMat: PVCcut, water: '#3f9be0', plane: 'z', bend: 0.07 });
-  const pout = planePipe([[MP.x + 0.235, MP.y, ZC], [XOUT, MP.y, ZC], [XOUT, NF - 0.02, ZC]], { r: 0.03, mat: PVC, cutMat: PVCcut, water: '#3f9be0', plane: 'z', bend: 0.07 });
+  const NF = H.NICHE.y0, XIN = 2.40, XOUT = 3.50, TE = 0.235 * SC;
+  const pin = planePipe([[XIN, NF - 0.02, ZC], [XIN, MP.y, ZC], [MP.x - TE, MP.y, ZC]], { r: 0.03, mat: PVC, cutMat: PVCcut, water: '#3f9be0', plane: 'z', bend: 0.07 });
+  const pout = planePipe([[MP.x + TE, MP.y, ZC], [XOUT, MP.y, ZC], [XOUT, NF - 0.02, ZC]], { r: 0.03, mat: PVC, cutMat: PVCcut, water: '#3f9be0', plane: 'z', bend: 0.07 });
   const cav = new THREE.Group(); cav.add(pin.group, pout.group); root.add(cav);
   // registro de esfera (corpo + alavanca)
-  const valve = new THREE.Group(); valve.position.set(2.66, MP.y, ZC); cav.add(valve);
+  const valve = new THREE.Group(); valve.position.set(2.56, MP.y, ZC); cav.add(valve);
   { const vm = new Merge(); vm.add(G.cyl(0.04, 0.04, 0.06, 6), '#c99a3c', TM(0, 0, 0, 0, 0, Math.PI / 2)).add(G.cyl(0.036, 0.036, 0.03, 6), '#c99a3c', TM(-0.05, 0, 0, 0, 0, Math.PI / 2)).add(G.cyl(0.036, 0.036, 0.03, 6), '#c99a3c', TM(0.05, 0, 0, 0, 0, Math.PI / 2));
     vm.add(G.sph(0.042, 18, 12), '#c99a3c', TM(0, 0, 0, 0, 0, 0, 1, 0.9, 0.9)).add(G.cyl(0.012, 0.014, 0.05, 12), '#c99a3c', TM(0, 0.05, 0));
     valve.add(vm.mesh(vmat({ roughness: 0.3, metalness: 0.85 }))); }
@@ -196,11 +197,12 @@ export function buildMeter(ctx, K, H) {
 
   /* ---------------- planta (contorno) antes da instalação ---------------- */
   const gsrc = new THREE.Group();
-  { const b = L.mesh(revolve([[0, CH.y0], [CH.r, CH.y0], [CH.r, CH.y1], [CH.fl, CH.y1], [CH.fl, CH.top], [0, CH.top]], 16, 'full'), brass); b.position.copy(O); gsrc.add(b);
-    const r = L.mesh(G.cyl(RR, RR, RY1 - RY0 + 0.012, 16), brass, O.x, O.y + (RY0 + RY1) / 2, O.z); gsrc.add(r);
-    const arm = L.mesh(G.cyl(AR, AR, 2 * AX + 0.1, 12), brass, O.x, O.y, O.z); arm.rotation.z = Math.PI / 2; gsrc.add(arm);
+  { const gm = new THREE.Group(); gm.position.copy(O); gm.scale.setScalar(SC); gsrc.add(gm);
+    gm.add(L.mesh(revolve([[0, CH.y0], [CH.r, CH.y0], [CH.r, CH.y1], [CH.fl, CH.y1], [CH.fl, CH.top], [0, CH.top]], 16, 'full'), brass));
+    gm.add(L.mesh(G.cyl(RR, RR, RY1 - RY0 + 0.012, 16), brass, 0, (RY0 + RY1) / 2, 0));
+    const arm = L.mesh(G.cyl(AR, AR, 2 * AX + 0.1, 12), brass); arm.rotation.z = Math.PI / 2; gm.add(arm);
     const pp = (a, b2) => { const d = new THREE.Vector3(...b2).sub(new THREE.Vector3(...a)); const c = L.mesh(G.cyl(0.03, 0.03, d.length(), 10), brass); c.position.set((a[0] + b2[0]) / 2, (a[1] + b2[1]) / 2, (a[2] + b2[2]) / 2); c.quaternion.setFromUnitVectors(new THREE.Vector3(0, 1, 0), d.normalize()); gsrc.add(c); };
-    pp([XIN, NF, ZC], [XIN, MP.y, ZC]); pp([XIN, MP.y, ZC], [MP.x - 0.2, MP.y, ZC]); pp([MP.x + 0.2, MP.y, ZC], [XOUT, MP.y, ZC]); pp([XOUT, MP.y, ZC], [XOUT, NF, ZC]);
+    pp([XIN, NF, ZC], [XIN, MP.y, ZC]); pp([XIN, MP.y, ZC], [MP.x - TE, MP.y, ZC]); pp([MP.x + TE, MP.y, ZC], [XOUT, MP.y, ZC]); pp([XOUT, MP.y, ZC], [XOUT, NF, ZC]);
     const dd = L.mesh(G.box(N.x1 - N.x0, N.y1 - N.y0, 0.01), brass, (N.x0 + N.x1) / 2, (N.y0 + N.y1) / 2, N.z1); gsrc.add(dd); }
   const plan = ghost.of(gsrc, 25); root.add(plan);
 
@@ -224,7 +226,7 @@ export function buildMeter(ctx, K, H) {
     const e = (a, b) => L.ease.io(L.clamp01((built - a) / (b - a)));
     // cavalete e registro descem; hidrômetro chega em arco; porcas giram; lacres; alavanca abre; caixa
     const kc = e(0, 0.3); cav.position.y = 0.6 * (1 - kc); cav.visible = kc > 0.001;
-    const km = e(0.25, 0.6); meter.visible = km > 0.001; meter.position.set(O.x, O.y + 0.45 * (1 - km) * (1 - km) + 0.0, O.z + 0.7 * (1 - km)); meter.rotation.set(0, 0, 0.5 * (1 - km));
+    const km = e(0.25, 0.6); meter.visible = km > 0.001; meter.position.set(O.x, O.y + 0.45 * (1 - km) * (1 - km), O.z + 0.7 * (1 - km)); meter.rotation.set(0, 0, 0.5 * (1 - km));
     const kn = e(0.55, 0.72); nuts.forEach((n, i) => { n.rotation.x = (1 - kn) * 8 * (i ? 1 : -1); n.position.x = (i ? 1 : -1) * (0.178 + 0.03 * (1 - kn)); });
     const ks = L.ease.back(L.clamp01((built - 0.66) / 0.12)); seals.forEach((s) => { s.visible = ks > 0.01; s.scale.setScalar(Math.max(1e-3, ks)); });
     lever.rotation.y = -Math.PI / 2 * (1 - e(0.8, 0.92));

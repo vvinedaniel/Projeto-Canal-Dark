@@ -32,6 +32,8 @@ export function buildDec(env) {
     for (let x = D.x0 + 3; x < Lo.ETA.floc.x0; x += 6) K.lamp(g, x, WY, -80.2, 2.2, [0, 0.5]);
     // trilhos da ponte (sobre a parede de trás e a faixa da frente)
     [D.z0 + th / 2, D.z1 - th / 2].forEach((z) => { g.add(L.box(IX1 - IX0, 0.1, 0.09, MAT.steel, (IX0 + IX1) / 2, D.top + 0.05, z)); g.add(L.box(0.25, 0.3, 0.4, MAT.red, IX0 + 0.2, D.top + 0.15, z), L.box(0.25, 0.3, 0.4, MAT.red, IX1 - 0.2, D.top + 0.15, z)); });
+    const wet = K.M('#7f8a84', { roughness: 0.75, side: THREE.DoubleSide });
+    g.add(L.mesh(new THREE.PlaneGeometry(IX1 - IX0, D.water - FL), wet, (IX0 + IX1) / 2, (FL + D.water) / 2, ZB + 0.006, { cast: false }));
     wallsG.add(K.bake(g));
     // enchimento do fundo com o poço de lodo (calha em V em x = hopperX) — extrudado ao longo de z
     const sh = [[IX0, 14.3], [IX1, 14.3], [IX1, FL], [HX + 1.2, FL], [HX + 0.3, 14.45], [HX - 0.3, 14.45], [HX - 1.2, FL], [IX0, FL + 0.12]];
@@ -103,7 +105,7 @@ export function buildDec(env) {
     bridge.position.x = BR.xmin; out.add(bridge);
   }
   /* ---------------------------------------------------------------- saída: câmara + canal de água decantada sobre pilares */
-  const canalG = new THREE.Group(), CAN = { x0: Lo.P.filtIn[0] - 0.5, x1: Lo.P.filtIn[0] + 0.5, z0: ZF + 1.1, z1: Lo.P.filtIn[2], floor: 18.0, wall: 0.15, top: 19.5 };
+  const canalG = new THREE.Group(), CAN = { x0: Lo.P.filtIn[0] - 0.5, x1: Lo.P.filtIn[0] + 0.5, z0: ZF + 1.1, z1: -57.0, floor: 18.0, wall: 0.15, top: 19.5 };
   {
     const g = new THREE.Group(), C = MAT.concNew, ch = { x0: CAN.x0 - 0.15, x1: EC.x1 + EC.wall, z0: ZF, z1: ZF + 1.1 };
     // câmara de saída (encostada na frente, recebe o canal de coleta)
@@ -171,6 +173,11 @@ export function buildDec(env) {
     g.add(K.pipe([[T.x, T.floor + 0.25, T.z - 0.6], [T.x - T.r - 0.6, T.floor + 0.3, T.z - 0.6], [T.x - 6.4, T.floor + 0.3, T.z - 0.6]], 0.12, MAT.iron, { bend: 0.3 }));
     const sg = K.sign(['TRATAMENTO DO LODO', 'adensador → centrífuga'], 2.4, 0.62, { stripe: '#5d4a33' });
     sg.position.set(T.x - 1.4, T.top + 0.45, T.z + 0.05); g.add(sg);
+    // luva/flange de entrada da água de lavagem dos filtros (dreno do eta2 chega em WASH)
+    const WASH = [-31.84, 14.6, -71.84], wd = new THREE.Vector3(T.x - WASH[0], 0, T.z - WASH[2]).normalize();
+    g.add(K.rod(WASH, [WASH[0] + wd.x * 0.9, WASH[1], WASH[2] + wd.z * 0.9], 0.16, MAT.iron, 14));
+    { const fl = L.cyl(0.24, 0.24, 0.06, MAT.iron, 0, 0, 0, 16); fl.position.set(...WASH); fl.quaternion.setFromUnitVectors(new THREE.Vector3(0, 1, 0), wd); g.add(fl); }
+    g.add(L.box(0.5, 0.6, 0.5, MAT.concB, WASH[0] + wd.x * 0.35, 14.3, WASH[2] + wd.z * 0.35));
     tankG.add(K.bake(g)); out.add(tankG);
     // mecanismo de grade (eixo, braços raspadores, estacas) — gira devagar
     const mg = new THREE.Group();
@@ -215,7 +222,7 @@ export function buildDec(env) {
 
   /* ---------------------------------------------------------------- água do decantador (gradiente), manta de lodo, flocos */
   const CF = new THREE.Color(Lo.WATER.floc), CS = new THREE.Color(Lo.WATER.settled);
-  const decW = K.waterBox(IX0 + 0.01, IX1, ZB, ZF - 0.012, FL - 0.75, D.water - FL + 0.75, '#fff', 0.5, { nx: 40, ny: 8, col: (x, v) => {
+  const decW = K.waterBox(IX0 + 0.01, IX1, ZB, ZF - 0.012, FL - 0.75, D.water - FL + 0.75, '#fff', 0.55, { nx: 40, ny: 8, topA: 0.88, col: (x, v) => {
     const kx = ss(CUR * -1 - 1.0, -19, x), c = CF.clone().lerp(CS, L.clamp01(kx * 0.75 + v * kx * 0.5)); return c.multiplyScalar(0.85 + 0.15 * v);
   } });
   out.add(decW);
@@ -228,7 +235,7 @@ export function buildDec(env) {
     const n = (NB + 1) * 4, pos = new Float32Array(n * 3), idx = [];
     for (let i = 0; i < NB; i++) { const a = i * 4; idx.push(a, a + 4, a + 1, a + 1, a + 4, a + 5, a + 1, a + 5, a + 2, a + 2, a + 5, a + 6, a + 2, a + 6, a + 3, a + 3, a + 6, a + 7); }
     const g = new THREE.BufferGeometry(); g.setAttribute('position', new THREE.BufferAttribute(pos, 3)); g.setIndex(idx);
-    const m = L.mesh(g, L.mat('#5f4b34', { roughness: 1, side: THREE.DoubleSide }), 0, 0, 0, { cast: false }); m.frustumCulled = false; out.add(m);
+    const m = L.mesh(g, L.mat('#4a3826', { roughness: 1, side: THREE.DoubleSide }), 0, 0, 0, { cast: false }); m.frustumCulled = false; out.add(m);
     return { g, m, pos };
   })();
   // lodo no poço (calha em V), face no corte
@@ -279,7 +286,7 @@ export function buildDec(env) {
           else h *= 0.3 + 0.7 * br.k;
         }
         const y = FL + 0.02 + h;
-        const zs = [ZB + 0.02, (ZB + ZF) / 2, ZF - 0.03, ZF - 0.03], ys = [y, y + 0.015 * Math.sin(i * 1.3), y, FL + 0.01];
+        const zs = [ZB + 0.02, (ZB + ZF) / 2, ZF - 0.006, ZF - 0.006], ys = [y, y + 0.015 * Math.sin(i * 1.3), y, FL + 0.01];
         for (let j = 0; j < 4; j++) { const k = (i * 4 + j) * 3; pos[k] = x; pos[k + 1] = ys[j]; pos[k + 2] = zs[j]; }
       }
       blanket.g.attributes.position.needsUpdate = true; blanket.g.computeVertexNormals();

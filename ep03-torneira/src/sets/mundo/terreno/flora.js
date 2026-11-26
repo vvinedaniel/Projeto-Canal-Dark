@@ -142,7 +142,7 @@ export function buildFlora(ctx, gr) {
     const bank = (dIn(x, z) < R.RIN.hw + 3 || dOut(x, z) < R.ROUT.hw + 4) || (h > lake + 0.3 && h < lake + 1.2 && z < -96);
     if (!(front || gap || bank)) continue;
     if (gap) { if (!(x > 0 && x < 40)) continue; } else if (!free(x, z, -0.6)) continue;
-    if (inRect(R.ZONES.patio, x, z, 0.3) || inRect({ x0: -2.5, x1: 10.5, z0: -100.5, z1: -91.5 }, x, z)) continue;
+    if (inRect(R.ZONES.captacao, x, z, 1.5)) continue;
     push('tuft', Math.floor(rd() * 2), x, z, 1.5 + rd() * 1.1); nTuft++;
   }
   // taboas na beira rasa da represa (fora da captação e da barragem)

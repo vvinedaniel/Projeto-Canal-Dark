@@ -23,7 +23,7 @@ export async function create(ctx) {
   }
   // estatística para o relatório (triângulos e malhas do módulo)
   let tri = 0, calls = 0; root.traverse((o) => { if (o.isMesh) { calls++; const g = o.geometry, n = g.index ? g.index.count / 3 : g.attributes.position.count / 3; tri += n * (o.isInstancedMesh ? o.count : 1); } });
-  window.__eta2stats = { tri: Math.round(tri), meshes: calls };
+  window.__eta2stats = { tri: Math.round(tri), meshes: calls, parts: parts.map((p) => { let n = 0; const by = {}; p.root.traverse((o) => { if (o.isMesh) { n++; const k = (o.parent && o.parent.name) || o.geometry.type; by[k] = (by[k] || 0) + 1; } }); return { n, by }; }) };
   return {
     update(t, S, cam) { for (const p of parts) p.update(t, S, cam); }
   };

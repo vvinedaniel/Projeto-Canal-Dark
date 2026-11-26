@@ -4,6 +4,7 @@
 import * as L from '../../../lib.js';
 import { soilKit } from './soil.js';
 import * as R from './relief.js';
+import { FACE_HOLES } from '../cidade/faceholes.js';
 const { THREE, clamp01, lerp, sstep } = L;
 
 const C = (h) => new THREE.Color(h);
@@ -255,7 +256,14 @@ export function buildGround(ctx) {
     const shp = new THREE.Shape([new THREE.Vector2(X0, YB), new THREE.Vector2(X1, YB), ...outline.reverse()]);
     slots.forEach((s) => {
       const p = new THREE.Path();
-      p.moveTo(SX[0], s.y0); p.lineTo(SX[1], s.y0); p.lineTo(SX[1], s.y1); p.lineTo(SX[0], s.y1); p.closePath();
+      // furos extras da cidade (câmaras dos poços de visita) que encostam neste rasgo: unidos num só contorno
+      const ext = FACE_HOLES.map((h) => ({ x0: Math.min(...h.map((q) => q[0])), x1: Math.max(...h.map((q) => q[0])), y0: Math.min(...h.map((q) => q[1])), y1: Math.max(...h.map((q) => q[1])) }))
+        .filter((b) => b.y0 <= s.y1 && b.y1 >= s.y0).sort((a, b) => a.x0 - b.x0);
+      const bot = [[SX[0], s.y0]], topP = [[SX[0], s.y1]];
+      ext.forEach((b) => { bot.push([b.x0, s.y0], [b.x0, Math.min(s.y0, b.y0)], [b.x1, Math.min(s.y0, b.y0)], [b.x1, s.y0]); topP.push([b.x0, s.y1], [b.x0, Math.max(s.y1, b.y1)], [b.x1, Math.max(s.y1, b.y1)], [b.x1, s.y1]); });
+      bot.push([SX[1], s.y0]); topP.push([SX[1], s.y1]);
+      [...bot, ...topP.reverse()].forEach((q, i) => (i ? p.lineTo(q[0], q[1]) : p.moveTo(q[0], q[1]))); p.closePath();
+      s.ext = ext;
       shp.holes.push(p);
     });
     const fg = new THREE.ShapeGeometry(shp, 4); fg.translate(0, 0, ZF);
@@ -275,6 +283,15 @@ export function buildGround(ctx) {
       }
     });
   }
+
+  // cavidades atrás das câmaras dos poços de visita (a cidade desenha a câmara; o solo escavado fica atrás)
+  slots.forEach((s) => (s.ext || []).forEach((b) => {
+    const d = 1.0, cx = (b.x0 + b.x1) / 2, w = b.x1 - b.x0, y0 = Math.min(b.y0, s.y0), y1 = Math.max(b.y1, s.y1), hh = y1 - y0, cy = (y0 + y1) / 2;
+    const bk = new THREE.PlaneGeometry(w, hh); bk.translate(cx, cy, ZF - d); addFace(bk, cavMat);
+    const tp = new THREE.PlaneGeometry(w, d); tp.rotateX(Math.PI / 2); tp.translate(cx, y1, ZF - d / 2); addFace(tp, cavMat);
+    const bt = new THREE.PlaneGeometry(w, d); bt.rotateX(-Math.PI / 2); bt.translate(cx, y0, ZF - d / 2); addFace(bt, cavMat);
+    [b.x0, b.x1].forEach((x) => { const e = new THREE.PlaneGeometry(d, hh); e.rotateY(Math.PI / 2); e.translate(x, cy, ZF - d / 2); addFace(e, cavMat); });
+  }));
 
   /* ---------- atualização (raio-x e furos pedidos por outros módulos) ---------- */
   let holesN = 0;

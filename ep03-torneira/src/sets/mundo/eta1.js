@@ -39,7 +39,7 @@ export function create(ctx) {
   L.shadows(root, true, true);
   root.traverse((o) => { if (o.isMesh && (o.material.transparent || o.userData.noCast)) o.castShadow = false; });
   const st = K.stats(root);
-  console.log(`[eta1] ${st.tris} triângulos, ${st.calls} draw calls (máximo, tudo visível)`);
+  console.warn(`[eta1] ${st.tris} triângulos, ${st.calls} draw calls (máximo, tudo visível)`);
   shared.eta1 = { stats: st };
   return {
     update(t, S, cam) { for (const p of parts) p.update(t, S, cam, P); }

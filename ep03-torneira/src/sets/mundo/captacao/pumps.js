@@ -8,6 +8,8 @@
 export function buildPumps(ctx, K, R) {
   const { L, THREE, Lo } = ctx, { MAT, M, G, bake, boxC, cylA, flange } = K, I = Lo.INTAKE, HS = I.house;
   const u = (k, a, b) => L.clamp01((k - a) / (b - a)), E = L.ease, PI = Math.PI;
+  /** orienta uma malha: eixo local X → X, Y → Y (vetores do mundo) */
+  const orient = (m, X, Y) => { const x = new THREE.Vector3(...X), y = new THREE.Vector3(...Y); m.quaternion.setFromRotationMatrix(new THREE.Matrix4().makeBasis(x, y, x.clone().cross(y))); return m; };
   const g = new THREE.Group(); g.name = 'captacao.pumps'; R.root.add(g);
 
   /* ---------- geometria da voluta (plano XY local, origem no eixo) ---------- */
@@ -81,7 +83,7 @@ export function buildPumps(ctx, K, R) {
     const yC = yA + 0.22 + 0.36; cv.position.set(XD, yC, 0); dstat.add(cv);
     const yB = YH - 0.42;
     dstat.add(cylA(0.2, yB - (yC + 0.36), iron, XD, (yB + yC + 0.36) / 2, 0, 'y', 22));
-    dstat.add(L.mesh(new THREE.TorusGeometry(0.42, 0.2, 14, 16, PI / 2), iron, XD, yB, 0.42).rotateY(-PI / 2).rotateX(0)); // curva 90° (vertical → +z)
+    dstat.add(orient(L.mesh(new THREE.TorusGeometry(0.42, 0.2, 14, 16, PI / 2), iron, XD, yB, 0.42), [0, 0, -1], [0, 1, 0])); // curva 90° (vertical → +z)
     const gz = 1.35, gvLen = ZH - 0.42;
     dstat.add(cylA(0.2, gz - 0.25 - 0.42, iron, XD, YH, (0.42 + gz - 0.25) / 2, 'z', 22), cylA(0.2, ZH - (gz + 0.25) - 0.25, iron, XD, YH, (gz + 0.25 + ZH - 0.25) / 2, 'z', 22));
     { const gv = new THREE.Group(), r = 0.2, red = G('#d23a2a', { roughness: 0.35 }); gv.add(L.rbox(r * 2.4, r * 2.6, r * 1.9, r * 0.3, iron, 0, 0, 0)); flange(gv, 0, 0, -r * 1.05, r, 'z', iron, 8); flange(gv, 0, 0, r * 1.05, r, 'z', iron, 8);
@@ -94,7 +96,7 @@ export function buildPumps(ctx, K, R) {
     const front = new THREE.Group();
     front.add(cylA(0.16, SUC.z1 - DZ / 2 - 0.05, sucM, 0, H, (DZ / 2 + 0.05 + SUC.z1) / 2, 'z', 22)); flange(front, 0, H, SUC.z1, 0.16, 'z', sucM, 8);
     front.add(cylA(SUC.r, SUC.zr - SUC.z1, sucM, 0, H, (SUC.z1 + SUC.zr) / 2, 'z', 22, 0.16));
-    const elb = L.mesh(new THREE.TorusGeometry(SUC.rb, SUC.r, 14, 18, PI / 2), sucM, 0, H - SUC.rb, SUC.zr); elb.rotation.y = PI / 2; front.add(elb);
+    const elb = orient(L.mesh(new THREE.TorusGeometry(SUC.rb, SUC.r, 14, 18, PI / 2), sucM, 0, H - SUC.rb, SUC.zr), [0, 0, 1], [0, 1, 0]); front.add(elb);
     flange(front, 0, H - SUC.rb - 0.03, SUC.zr + SUC.rb, SUC.r, 'y', sucM, 8);
     // tubo vertical (até o piso, translúcido no corte) + trecho no poço (opaco) + crivo
     front.add(cylA(SUC.r, H - SUC.rb - 0.06, sucM, 0, (H - SUC.rb - 0.06) / 2, SUC.zr + SUC.rb, 'y', 22));
@@ -148,7 +150,7 @@ export function buildPumps(ctx, K, R) {
     // tê de saída → desce → curva → atravessa a parede (luva) → flange em rawOut
     const xo = PO[0], rb = 0.5;
     h.add(cylA(rO, yHd - (PO[1] + rb), ir, xo, (yHd + PO[1] + rb) / 2, zHd, 'y', 24, rO));
-    const el = L.mesh(new THREE.TorusGeometry(rb, rO, 14, 18, PI / 2), ir, xo, PO[1] + rb, zHd + rb); el.rotation.y = PI / 2; el.rotation.z = PI; h.add(el);
+    const el = orient(L.mesh(new THREE.TorusGeometry(rb, rO, 14, 18, PI / 2), ir, xo, PO[1] + rb, zHd + rb), [0, 0, -1], [0, -1, 0]); h.add(el);
     h.add(cylA(rO, PO[2] - (zHd + rb), ir, xo, PO[1], (PO[2] + zHd + rb) / 2, 'z', 24));
     flange(h, xo, PO[1], PO[2] - 0.08, rO, 'z', ir, 10);
     // suportes do barrilete no piso
