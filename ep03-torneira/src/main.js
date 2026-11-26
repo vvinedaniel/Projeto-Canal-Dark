@@ -175,6 +175,7 @@ function renderSet(set, t) {
     gtao.blendIntensity = ao.intensity ?? 0.85;
     renderer.toneMappingExposure = set.exposure ?? 1.0;
   }
+  renderer.info.reset();
   composer.render();
 }
 let xfFor = null; // corte cujo quadro de saída está guardado na camada #xfade
@@ -241,6 +242,9 @@ if (coverN) {
 // placas limpas para montar capas (?plate): só o 3D, sem legenda/marca/rótulos
 if (q.has('plate')) document.head.insertAdjacentHTML('beforeend', '<style>#cap,#hook,#brand,#source,#labels,#lens,#end,#meter{display:none!important}</style>');
 window.__frame = (t) => { now = t; frame(coverN ? window.__coverT : t); };
+// diagnóstico de desempenho: contagem do último quadro (draw calls, triângulos) e tempo por etapa (?prof)
+renderer.info.autoReset = false;
+window.__info = () => { const i = renderer.info; return { calls: i.render.calls, triangles: i.render.triangles, lines: i.render.lines, points: i.render.points, geometries: i.memory.geometries, textures: i.memory.textures, programs: i.programs?.length }; };
 window.__ready = true;
 frame(now);
 if (!RENDER) requestAnimationFrame(tick);
