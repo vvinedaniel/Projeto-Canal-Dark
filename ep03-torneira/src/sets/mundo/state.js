@@ -66,7 +66,7 @@ export function waters(st) {
     tower: lin(79.6, 83.6, st),           // nível subindo na taça da torre
     net: lin(84.8, 88.4, st),             // frente d'água na rede da cidade (a partir da torre, até as pontas)
     ramal: lin(92.9, 93.9, st),           // ramal → hidrômetro
-    direct: lin(96.0, 96.8, st),          // ramo direto até a cozinha
+    direct: lin(94.6, 95.6, st),          // ramo direto até a cozinha (o hidrômetro gira enquanto a água corre)
     up: lin(96.4, 97.0, st),              // subida até a boia
     tank: lin(96.9, 99.5, st),            // nível da caixa-d'água
     float: ss(99.2, 100.0, st)            // boia fecha a entrada (0 aberta → 1 fechada)
@@ -93,7 +93,7 @@ export function state(t) {
     chlorine: present ? 1 : ss(59.8, 60.4, st),
     finalDose: present ? 1 : ss(66.2, 66.8, st),
     lift: present ? 1 : ss(77.2, 77.8, st),            // bombas de água tratada
-    meter: t < REWIND[0] ? 1 : (t > 93.4 && t < 100.2 ? ss(93.4, 93.9, t) * (1 - ss(99.6, 100.2, t)) : 0) + ss(101.2, 101.8, t), // turbina do hidrômetro gira quando há consumo
+    meter: t < REWIND[0] ? 1 : (t > 94.4 && t < 100.2 ? ss(94.4, 94.9, t) * (1 - ss(99.6, 100.2, t)) : 0) + ss(101.2, 101.8, t), // turbina do hidrômetro gira quando há consumo
     faucet: keys([[0, 1], [6.9, 1], [7.0, 0], [100.7, 0], [101.6, 1]], t)  // abertura da torneira (volante girando)
   };
   // copo: no gancho já está enchendo; no fim um copo novo enche de novo

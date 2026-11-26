@@ -46,7 +46,7 @@ microR.toneMapping = THREE.ACESFilmicToneMapping; microR.shadowMap.enabled = tru
 microR.localClippingEnabled = true;
 function drawMicro(set) {
   const m = ui._micro;
-  if (!m || !set.micro) { microEl.style.opacity = 0; microStem.style.opacity = 0; return; }
+  if (!m || !set.micro) { microEl.style.opacity = 0; microStem.style.opacity = 0; $('#microSvg').style.opacity = 0; return; }
   const k = L.ease.back(L.clamp01(m.a));
   microEl.style.opacity = L.clamp01(m.a * 1.6);
   microEl.style.left = (m.cx - m.r) + 'px'; microEl.style.top = (m.cy - m.r) + 'px';
