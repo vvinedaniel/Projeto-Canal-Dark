@@ -1,0 +1,104 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Mundo por Dentro — Ep. 02</title>
+<style>
+@font-face { font-family: "Montserrat"; font-weight: 700; src: url("./node_modules/@fontsource/montserrat/files/montserrat-latin-700-normal.woff2") format("woff2"); }
+@font-face { font-family: "Montserrat"; font-weight: 800; src: url("./node_modules/@fontsource/montserrat/files/montserrat-latin-800-normal.woff2") format("woff2"); }
+@font-face { font-family: "Montserrat"; font-weight: 900; src: url("./node_modules/@fontsource/montserrat/files/montserrat-latin-900-normal.woff2") format("woff2"); }
+:root { --bg: #0d1c29; --ink: #ffffff; --accent: #ffd23f; --warn: #ff5a4e; --good: #3df0c2; --chip: rgba(9, 20, 30, .86); }
+* { box-sizing: border-box; }
+html, body { margin: 0; height: 100%; background: #05090d; overflow: hidden; font-family: "Montserrat", "Segoe UI", system-ui, sans-serif; }
+#stage { position: absolute; left: 0; top: 0; width: 1080px; height: 1920px; transform-origin: 0 0; overflow: hidden; background: var(--bg); color: var(--ink); }
+#gl { position: absolute; inset: 0; width: 1080px; height: 1920px; display: block; }
+.layer { position: absolute; inset: 0; pointer-events: none; }
+#xfade { position: absolute; inset: 0; width: 1080px; height: 1920px; display: block; opacity: 0; pointer-events: none; transform-origin: 50% 42%; }
+#gl { transform-origin: 50% 42%; }
+#lens { opacity: 0; background: radial-gradient(circle at 50% 40%, transparent 0 455px, rgba(230,248,255,.85) 458px 466px, rgba(4,14,22,.62) 470px); }
+#lensTag { position: absolute; left: 50%; top: 1180px; transform: translateX(-50%); font-weight: 800; font-size: 30px; letter-spacing: .22em; text-transform: uppercase; color: #e6f8ff; padding: 10px 22px; border: 3px solid rgba(230,248,255,.8); border-radius: 999px; background: rgba(4,14,22,.55); white-space: nowrap; }
+#micro { position: absolute; opacity: 0; border-radius: 50%; overflow: visible; transform-origin: 50% 50%; }
+#micro canvas { position: absolute; inset: 0; width: 100%; height: 100%; border-radius: 50%; box-shadow: 0 0 0 9px rgba(230,248,255,.92), 0 0 0 14px rgba(4,14,22,.6), 0 18px 50px rgba(0,0,0,.55); }
+#microTag { position: absolute; left: 50%; bottom: -30px; transform: translateX(-50%); font-weight: 800; font-size: 25px; letter-spacing: .12em; text-transform: uppercase; color: #07121b; padding: 8px 18px; border-radius: 999px; background: #e6f8ff; white-space: nowrap; }
+#microSvg { position: absolute; inset: 0; width: 1080px; height: 1920px; opacity: 0; pointer-events: none; }
+#source { position: absolute; left: 70px; right: 70px; top: 1500px; text-align: center; font-weight: 700; font-size: 27px; line-height: 1.35; color: #fff; opacity: 0; -webkit-text-stroke: 7px #07121b; paint-order: stroke fill; }
+#cover { display: flex; flex-direction: column; justify-content: flex-start; align-items: center; padding: 250px 60px 0; text-align: center; }
+#cover[hidden] { display: none; }
+#cover .kick { font-weight: 800; font-size: 34px; letter-spacing: .32em; text-transform: uppercase; color: #fff; margin-bottom: 28px; text-shadow: 0 3px 12px rgba(0,0,0,.7); }
+#cover .kick b { color: var(--accent); }
+#cover h1 { margin: 0; font-weight: 900; font-size: 128px; line-height: .95; text-transform: uppercase; letter-spacing: -.015em; color: #fff; -webkit-text-stroke: 18px #07121b; paint-order: stroke fill; text-shadow: 0 12px 0 rgba(0,0,0,.35); }
+#cover h1 em { font-style: normal; color: var(--accent); }
+#cover h1 em.warn { color: var(--warn); }
+#cover .tag { margin-top: 34px; font-weight: 900; font-size: 44px; padding: 14px 30px; border-radius: 16px; background: var(--accent); color: #111a22; text-transform: uppercase; }
+#grade { background: radial-gradient(120% 85% at 50% 42%, transparent 55%, rgba(3, 9, 15, .62) 100%); }
+
+#brand { position: absolute; top: 92px; left: 0; right: 0; text-align: center; font-weight: 800; font-size: 30px; letter-spacing: .32em; text-transform: uppercase; opacity: .92; text-shadow: 0 2px 10px rgba(0,0,0,.6); }
+#brand b { color: var(--accent); font-weight: 900; }
+
+#hook { position: absolute; top: 190px; left: 70px; right: 70px; text-align: center; font-weight: 900; font-size: 96px; line-height: 1.02; text-transform: uppercase; letter-spacing: -.01em; -webkit-text-stroke: 14px #07121b; paint-order: stroke fill; text-shadow: 0 10px 0 rgba(0,0,0,.35); }
+#hook span { display: block; }
+#hook em { font-style: normal; color: var(--accent); }
+
+#cap { position: absolute; top: 1258px; left: 60px; right: 60px; text-align: center; font-weight: 900; font-size: 82px; line-height: 1.08; text-transform: uppercase; letter-spacing: -.005em; -webkit-text-stroke: 16px #07121b; paint-order: stroke fill; text-shadow: 0 8px 0 rgba(0,0,0,.4); }
+#cap span { display: inline-block; margin: 0 .2em; }
+#cap span.on { color: var(--accent); transform: scale(1.08); }
+
+.lb { position: absolute; left: 0; top: 0; white-space: nowrap; font-weight: 800; font-size: 34px; line-height: 1; padding: 14px 20px 13px; border-radius: 12px; background: var(--chip); color: #fff; border: 3px solid rgba(255,255,255,.16); box-shadow: 0 8px 24px rgba(0,0,0,.4); }
+.lb.accent { background: var(--accent); color: #111a22; border-color: transparent; }
+.lb.warn { background: var(--warn); color: #fff; border-color: transparent; }
+.lb.good { background: var(--good); color: #06241c; border-color: transparent; }
+.lb.big { font-size: 58px; font-weight: 900; padding: 18px 28px; border-radius: 16px; }
+.lb.plain { background: none; border: 0; box-shadow: none; font-size: 44px; font-weight: 900; -webkit-text-stroke: 10px #07121b; paint-order: stroke fill; }
+.lb i { position: absolute; left: 50%; top: 100%; width: 4px; height: var(--stem, 46px); margin-left: -2px; background: #fff; opacity: .9; }
+.lb i::after { content: ""; position: absolute; left: 50%; top: 100%; width: 16px; height: 16px; margin: -8px 0 0 -8px; border-radius: 50%; background: var(--accent); border: 3px solid #fff; }
+
+#end { display: grid; place-content: center; text-align: center; gap: 26px; background: rgba(8, 18, 27, .0); }
+#end h1 { margin: 0; font-weight: 900; font-size: 104px; line-height: .98; text-transform: uppercase; letter-spacing: -.01em; -webkit-text-stroke: 14px #07121b; paint-order: stroke fill; }
+#end h1 b { color: var(--accent); }
+#end p { margin: 0; font-weight: 800; font-size: 36px; letter-spacing: .28em; text-transform: uppercase; }
+#veil { background: var(--bg); opacity: 0; }
+#split { position: absolute; inset: 0; width: 1080px; height: 1920px; display: block; opacity: 0; pointer-events: none; }
+#splitBar { position: absolute; top: 0; bottom: 0; width: 0; opacity: 0; pointer-events: none; }
+#splitBar::before { content: ""; position: absolute; top: 0; bottom: 0; left: -4px; width: 8px; background: #fff; box-shadow: 0 0 24px rgba(0,0,0,.6); }
+#splitBar span { position: absolute; top: 330px; font-weight: 900; font-size: 50px; text-transform: uppercase; padding: 12px 22px; border-radius: 14px; white-space: nowrap; opacity: var(--tk, 0); }
+#splitBar .l { right: 30px; background: var(--warn); color: #fff; }
+#splitBar .r { left: 30px; background: var(--good); color: #06241c; }
+#splitBar .n { top: 248px; left: 50%; transform: translateX(-50%); background: var(--chip); color: #fff; font-size: 36px; border: 3px solid rgba(255,255,255,.2); }
+#meter { position: absolute; left: 64px; top: 168px; width: 330px; opacity: 0; font-weight: 800; font-size: 26px; letter-spacing: .08em; text-transform: uppercase; color: #fff; text-shadow: 0 2px 8px rgba(0,0,0,.7); }
+#meter i { display: block; height: 18px; margin-top: 10px; border-radius: 9px; background: rgba(9,20,30,.75); border: 3px solid rgba(255,255,255,.75); overflow: hidden; }
+#meter b { display: block; height: 100%; background: linear-gradient(90deg, #62cbf2, #2f7fd6); transform-origin: 0 50%; }
+#meter.hi b { background: linear-gradient(90deg, #62cbf2, #2f7fd6 55%, #ff5a4e); }
+#meter em { font-style: normal; color: #9fd8f5; }
+#hud { position: fixed; right: 10px; bottom: 8px; font: 12px/1.3 ui-monospace, monospace; color: #9fb3c4; background: rgba(0,0,0,.5); padding: 6px 8px; border-radius: 6px; z-index: 5; }
+#hud input { width: 420px; vertical-align: middle; }
+html.render #hud { display: none; }
+</style>
+<script type="importmap">
+{ "imports": { "three": "./node_modules/three/build/three.module.js", "three/addons/": "./node_modules/three/examples/jsm/" } }
+</script>
+</head>
+<body>
+<div id="stage">
+  <canvas id="gl"></canvas>
+  <canvas id="xfade" width="1080" height="1920"></canvas>
+  <div class="layer" id="lens"><div id="lensTag">Ao microscópio</div></div>
+  <svg id="microSvg" viewBox="0 0 1080 1920"><line id="microStem" stroke="#e6f8ff" stroke-width="5" stroke-dasharray="14 10" stroke-linecap="round"/><circle id="microDot" r="12" fill="none" stroke="#e6f8ff" stroke-width="5"/></svg>
+  <div id="micro"><canvas id="microGl"></canvas><div id="microTag">Ampliação ilustrativa</div></div>
+  <canvas id="split" width="1080" height="1920"></canvas>
+  <div id="splitBar"><span class="l"></span><span class="r"></span><span class="n"></span></div>
+  <div class="layer" id="grade"></div>
+  <div class="layer" id="labels"></div>
+  <div id="brand">Mundo <b>por</b> Dentro</div>
+  <div id="hook"></div>
+  <div id="meter"><em>Chuva</em> · <span></span><i><b></b></i></div>
+  <div id="cap"></div>
+  <div id="source"></div>
+  <div class="layer" id="end"><h1>Mundo<br><b>por</b> Dentro</h1><p>Como o mundo funciona</p></div>
+  <div class="layer" id="veil"></div>
+  <div class="layer" id="cover" hidden></div>
+</div>
+<div id="hud"><button id="play">▶</button> <input id="scrub" type="range" min="0" max="115" step="0.01" value="0"> <span id="clock">0.00</span></div>
+<script type="module" src="./src/main.js"></script>
+</body>
+</html>

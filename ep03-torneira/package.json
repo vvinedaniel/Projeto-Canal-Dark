@@ -1,0 +1,14 @@
+{
+  "name": "mundo-por-dentro-ep01",
+  "private": true,
+  "type": "module",
+  "description": "Mundo por Dentro — Ep. 01: Para onde vai o cocô depois da descarga? (three.js, 1080x1920)",
+  "scripts": {
+    "stills": "node tools/render.cjs stills",
+    "frames": "node tools/render.cjs frames"
+  },
+  "dependencies": {
+    "@fontsource/montserrat": "^5.1.0",
+    "three": "0.170.0"
+  }
+}
