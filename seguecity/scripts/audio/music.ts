@@ -243,7 +243,8 @@ export const EP01_SECTIONS = [
   { t0: 68.0, t1: 75.0, name: 'finale/CTA', beats: 7, voice: [68.1, 74.6] },
 ] as const;
 export const EP01_VOICE: [number, number][] = EP01_SECTIONS.map((s) => [s.voice[0], s.voice[1]]);
-export const EP01_ACCENT_TARGETS = [35.5, 37.5, 39.5, 41.5, 43.5, 45.5];
+// uma batida por profissão falada (mesmos tempos de src/scenes/ep01/narration.ts)
+export const EP01_ACCENT_TARGETS = [37.1, 38.9, 40.7, 42.5, 44.3, 46.1];
 export const EP01_INFO: { accents: number[]; tempos: { t0: number; t1: number; bpm: number }[] } = { accents: [], tempos: [] };
 
 function ep01Intro(): Stereo {

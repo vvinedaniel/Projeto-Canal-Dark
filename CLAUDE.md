@@ -257,3 +257,20 @@ e `tools/bench-cap.cjs` (métodos de captura). Resultados em `out/bench.jsonl`.
   `npm run narration:fit` encaixa a voz real depois. Os eventos são ancorados em `W('palavra')`.
 - **Honestidade:** comentário de exemplo rotulado EXEMPLO/fictício; crescimento rotulado SIMULAÇÃO, sem
   números inventados. O episódio usa o estado gravado em `episodes.json`, não o estado vivo.
+- **Ortografia dos letreiros:** nomes mais largos que a fachada saíam cortados ("ERCADINH"), e o texto
+  pintado coluna a coluna numa face 2:1 deforma as letras ("BREVE" virava "EFFUE").
+  - As letras ficam em pé, com o degrau aplicado letra a letra (`TextMask.starts`).
+  - As lojas são geminadas e o nome vai na face que comporta.
+  - Se a frente estiver tapada, o letreiro vai numa placa no telhado.
+  - `npm run check:signs` falha se algo não couber.
+- **Identidade visual:** mar de nuvens e ilhotas com paralaxe (`backdrop.ts`), neon "SEGUECITY" num
+  prédio, varal de luzes na praça e vaga-lumes.
+- **Cara de jogo:**
+  - tilt-shift automático em planos gerais (`autoTilt`);
+  - cursor que clica e contorno de seleção do lote;
+  - minimapa;
+  - cortes cobertos por transição em ladrilhos (0,3 s) em vez de chicotes de câmera, porque panorâmicas
+    rápidas de pixel art "piscam".
+- **Ritmo dos planos:** planos de 1 s com transição somem. Mínimo de ~1,6 s por plano numa lista falada.
+- **Reuso:** `src/series/stage.ts` + `EpisodeShell.tsx`; o roteiro de um episódio novo está em
+  `docs/NOVO-EPISODIO.md`.

@@ -36,6 +36,8 @@ npm run validate -- out/seguecity-ep01.mp4 --dur 75
 - Trecho rápido para revisão: `npx tsx scripts/render.ts ep01 --frames 0-299`.
 - Quadros soltos: `npm run stills -- Ep01 0,8.5,28,72 --scale 0.5`, depois `scripts/sheet.sh out/stills 6`
   monta a folha de contato.
+- `npm run check:signs` confere se todos os letreiros da cidade cabem nas fachadas. Um letreiro cortado
+  pareceria erro de ortografia.
 
 ## Narração (pronta para receber a voz)
 
@@ -99,12 +101,17 @@ seguecity/
       ground.ts               chão pixel a pixel, canal do rio, laterais da ilha, cascata
       sprites/                buildings (genéricos e casas), civic (prefeitura, escola, hospital,
                               mercado, delegacia, oficina, terminal, obra com grua), props, vehicles, people
-      world.ts                monta a cidade a partir de data/ e espalha postes, árvores, bancos…
+      world.ts                monta a cidade a partir de data/ e espalha postes, árvores, bancos, varal de luzes…
+      backdrop.ts             mar de nuvens sob a ilha, ilhotas flutuantes, névoa da cascata
       dynamics.ts             trânsito, ônibus com paradas, pedestres, fonte, bandeiras, semáforos, grua
-      renderer.ts             quadro: chão + água animada + objetos ordenados, luz, emissão, bloom, ampliação
+      renderer.ts             quadro: fundo + chão + água + objetos ordenados, luz, emissão, bloom,
+                              ampliação nítida e tilt-shift
       sky.ts, lights.ts, sort.ts, palette.ts, color.ts, rng.ts, font.ts (fonte 3×5 das placas)
-    components/               CityCanvas, Captions, Sfx, hud/ (Hud, Logo, WorldLabel, Toast, Panels,
-                              PixelIcon, PixelPanel), fx/ (fogos, brilho, poeira, holofotes, marcadores)
+    series/                   reaproveitável em todo episódio: stage.ts (estado da cidade + câmera +
+                              projeções) e EpisodeShell.tsx (legendas, voz, trilha, ambiente, efeitos)
+    components/               CityCanvas, Captions, Sfx, hud/ (Hud, Logo, WorldLabel, Toast, Panels, Cursor,
+                              Minimap, PixelIcon, PixelPanel), fx/ (seleção, transição em ladrilhos, fogos,
+                              brilho, poeira, holofotes, marcadores)
     scenes/demo/CityDemo.tsx  Fase 1
     scenes/ep01/              Ep01.tsx (cenas), narration.ts (roteiro e tempos), narration-timing.json
     hooks/useFonts.ts, utils/ (câmera por quadros-chave, easing, áudio opcional), data/index.ts
@@ -117,8 +124,8 @@ seguecity/
   `apartamento`, `escritorio`) se adaptam ao lote. Os prédios principais acompanham a posição do JSON.
   A câmera olha do canto (31, 31): o que fica com i + j maior fica na frente, então prédios altos devem
   ir para o fundo para não tapar os principais.
-- **Novo episódio:** copie `src/scenes/ep01/` e registre a composição em `src/Root.tsx`. Depois troque o
-  roteiro (`narration.ts`), os quadros-chave de câmera (`KEYS`) e os eventos. Os estados da cidade são
+- **Novo episódio:** passo a passo em `docs/NOVO-EPISODIO.md`. Em resumo: copie `src/scenes/ep01/`, troque
+  o roteiro (`narration.ts`), os planos de câmera e os eventos ancorados nas palavras. Os estados da cidade são
   parâmetros por quadro: casas acesas (`homeFrac`), gente e trânsito (`people`/`traffic`), prédios
   revelados (`reveal`), hologramas (`overrides[id].ghost`) e luz individual (`overrides[id].lit`).
 - **Visual:** paleta em `engine/palette.ts`, luz noturna em `engine/sky.ts` (`ambientFor`), fontes e cores

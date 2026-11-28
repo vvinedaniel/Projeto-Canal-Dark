@@ -178,10 +178,11 @@ ficam nas pausas.
 | **68,0** | final / CTA | 7 tempos = 105 BPM (1 compasso + ¾) | Bbmaj7 · Csus4→C · **Fmaj9 em 72,0** | prato + groove completo (semicolcheias, chimbal aberto, arpejo, contracanto); 70,29–72,0 compasso de ¾ de subida (bumbo em todo tempo, rufo, tons); **prato ao contrário 70,5→72,0 e riser** | 68,1–74,6 |
 | **72,0** | cartela | — | Fmaj9 | **acorde de resolução + prato + grave + sinos F5-A5-C6-E6-G6 (C7, F7 depois)**, exatamente em 72,000 s; soa e decai; fade em cosseno 73,4 → 74,96; silêncio absoluto em 75,0 | (até 74,6) |
 
-**Acentos das profissões** (pedidos em 35,5 / 37,5 / 39,5 / 41,5 / 43,5 / 45,5 s, colocados na
-semicolcheia mais próxima da grade para soarem "no tempo"): **35,542 · 37,438 · 39,469 · 41,500 · 43,531 ·
-45,563 s** (diferença máxima 63 ms, < 2 quadros a 30 fps). Se a animação quiser sincronia exata ao quadro,
-use estes instantes.
+**Acentos das profissões:** uma batida por profissão falada, pedida nos mesmos tempos das palavras em
+`src/scenes/ep01/narration.ts` (37,1 / 38,9 / 40,7 / 42,5 / 44,3 / 46,1 s; `EP01_ACCENT_TARGETS` em
+`scripts/audio/music.ts`). Cada uma cai na semicolcheia mais próxima: **37,167 · 38,927 · 40,688 · 42,448 ·
+44,344 · 46,104 s**. Se a narração real mudar esses tempos, atualize `EP01_ACCENT_TARGETS` e rode
+`npm run audio:build`.
 
 **Energia medida (RMS por segundo, dBFS)** — confirma as mudanças de seção:
 0–8 s ≈ −23; queda no tape stop (8,5 s: −41; 9–10 s: −34); 10–14 s ≈ −30 (motivo solitário);

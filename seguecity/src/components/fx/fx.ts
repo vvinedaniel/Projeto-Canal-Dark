@@ -149,7 +149,7 @@ export function selection(c: Ctx, corners: { x: number; y: number }[], t: number
 }
 
 // --- transição de jogo: ladrilhos em diagonal cobrem a tela até o corte (tc) e descobrem depois
-export function tileWipe(c: Ctx, t: number, tc: number, half = 0.22, col = '#0b0d26', edge = '#7a4ee0') {
+export function tileWipe(c: Ctx, t: number, tc: number, half = 0.16, col = '#0b0d26', edge = '#7a4ee0') {
   const dt = t - tc;
   if (Math.abs(dt) > half) return;
   const S = 18;
