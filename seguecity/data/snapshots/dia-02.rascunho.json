@@ -1,8 +1,33 @@
 {
   "snapshot": "SegueCity — estado em RASCUNHO (aguardando aprovação) do Dia 02",
   "dia": 2,
-  "registradoEm": "2026-11-28T18:05:18.592Z",
-  "episodio": [],
+  "registradoEm": "2026-11-28T18:13:33.020Z",
+  "episodio": [
+    {
+      "id": "ep02",
+      "titulo": "EPISÓDIO 02 — OS PRIMEIROS MORADORES CHEGARAM!",
+      "estado": {
+        "moradores": 10,
+        "empregos": 48
+      },
+      "lista": {
+        "encerrada": true,
+        "moradores": [
+          "m0001",
+          "m0002",
+          "m0003",
+          "m0004",
+          "m0005",
+          "m0006",
+          "m0007",
+          "m0008",
+          "m0009",
+          "m0010"
+        ],
+        "encerradaEm": "2026-11-28"
+      }
+    }
+  ],
   "cidade": {
     "nome": "SegueCity",
     "slogan": "Você segue. Você mora. Você decide.",
@@ -953,12 +978,39 @@
       "ficticio": false
     }
   ],
+  "fila": {
+    "emEspera": 0,
+    "agendados": 0,
+    "aguardandoMoradia": 0,
+    "incorporados": 0,
+    "recusados": 0
+  },
+  "fundadores": {
+    "encerrado": true,
+    "ids": [
+      "m0001",
+      "m0002",
+      "m0003",
+      "m0004",
+      "m0005",
+      "m0006",
+      "m0007",
+      "m0008",
+      "m0009",
+      "m0010"
+    ],
+    "titulo": "MORADOR FUNDADOR",
+    "distintivo": "fundador-ouro",
+    "encerradoEm": "2026-11-28",
+    "observacao": "lista fechada: título e distintivo exclusivos e permanentes destes 10 moradores"
+  },
   "arquivos": {
-    "city-state.json": "b7583d613eaabfdcfec2f21f3e7e794e964548013bccacbdce3b3ed258ad3324",
+    "city-state.json": "9837a3b235241d4ca28b74fcc1a9c596dd8bf7e0a7142343b2caa0ce6d4f0edb",
     "buildings.json": "b5018fa7fe56f63088a7471bae61ae30fba3142ac8b3560b78a47bcc92159438",
     "jobs.json": "1a20a98400b0964490a71bf9faf224b7dce4bd2bf55f6087201649fc98792fee",
-    "residents.json": "496271258045fbdd9c93c0076569be6cdd6deb9845a7d5057fbb5163809695ef",
-    "episodes.json": "3d30a654b32f69f0877039ea3dd29cb1d4efcc72412aae9f6c9c8b6746af701f",
-    "mapa.json": "c48c6d7d4574e72c49f22bfa8fdfaf1b2f2602b3f11088d2ce31359f5d676a20"
+    "residents.json": "fdb024b5460bb597c5d4d1d93e813495687e94ac1f5f94976aa062edd00786ee",
+    "episodes.json": "de7f9353a6afc17ed939479a3ff5ef29f3e86999c4839080e08715aa5b669627",
+    "mapa.json": "c48c6d7d4574e72c49f22bfa8fdfaf1b2f2602b3f11088d2ce31359f5d676a20",
+    "pending-residents.json": "7c2e72b860e58b51dfd68c9d11dbb47ff34cde572d6635c9149f367d3adf2ffb"
   }
 }

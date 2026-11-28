@@ -49,9 +49,11 @@ a cada vez; o resto é reaproveitado.
 
 ## Cidade: o que muda entre episódios
 
-- **Moradores:** `npm run residents:add -- --nome "..." --profissao ...` acrescenta o morador e recalcula
-  os contadores. Para pôr um morador em cena, use `personObj(...)`. A aparência vem de
-  `jobs.json → roupa`; veja o Lucas no Ep. 01.
+- **Moradores:** comentários reais entram pela fila (`npm run fila:add`). Na produção do episódio, use
+  `npm run fila:incorporar -- --episodio epNN`: os moradores recebem casa, trabalho e aparência
+  persistente, e a lista do episódio é encerrada (`docs/FILA-DE-MORADORES.md`).
+  - Elenco do episódio: `elencoDo('epNN')` (`src/data`).
+  - Para pôr um morador em cena: `personObj(id, lookOf(r.aparencia), ...)`.
 - **Prédios novos:** acrescente o prédio em `buildings.json` com `status: "planejado"`. Para revelá-lo
   brotando do chão, use `reveal` + `overrides[id].dy`. Depois mude para `pronto`.
 - **Casas acesas:** `homeFrac` (0..1, pela ordem fixa `rank`). Para acender um prédio só, use

@@ -60,5 +60,24 @@
       "dia": 2,
       "data": "2026-11-28"
     }
-  ]
+  ],
+  "fundadores": {
+    "encerrado": true,
+    "ids": [
+      "m0001",
+      "m0002",
+      "m0003",
+      "m0004",
+      "m0005",
+      "m0006",
+      "m0007",
+      "m0008",
+      "m0009",
+      "m0010"
+    ],
+    "titulo": "MORADOR FUNDADOR",
+    "distintivo": "fundador-ouro",
+    "encerradoEm": "2026-11-28",
+    "observacao": "lista fechada: título e distintivo exclusivos e permanentes destes 10 moradores"
+  }
 }

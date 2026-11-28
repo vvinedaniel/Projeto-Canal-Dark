@@ -315,5 +315,20 @@ e `tools/bench-cap.cjs` (métodos de captura). Resultados em `out/bench.jsonl`.
 - **Estado oficial:**
   - `npm run city:snapshot` grava `data/snapshots/dia-NN.json`, com hash de cada arquivo e sem sobrescrever.
   - Moradores reais entram só por `residents:add`, a partir de comentários reais (`docs/DIA-02.md`).
+- **Fila de entrada de moradores** (`data/pending-residents.json`, `scripts/fila.ts`, regras em
+  `scripts/lib/cidade.ts`):
+  - comentários reais aguardam até um episódio incorporá-los;
+  - duplicados são barrados (comentário, nome + profissão sem acento e caixa; homônimo só com `--homonimo`);
+  - capacidade de 10 por episódio e só enquanto houver casa livre;
+  - episódio pré-produzido ou com lista encerrada fica travado;
+  - incorporar exige o snapshot oficial do dia anterior;
+  - os 10 fundadores formam uma lista fechada em `city-state.fundadores`, e o `sync` reaplica ou retira
+    o título;
+  - o episódio lê o elenco de `episodes.json → lista`, nunca "todos os moradores";
+  - testes rodam numa cópia com `SEGUECITY_DATA=<pasta>`.
+- **Fontes pixel não têm "º":** Jersey cai em "o" ("No 1") e Silkscreen mostra um asterisco. Use
+  `<Numero n={1} />` (`components/hud/Numero.tsx`).
+- **Episódio publicado lê o snapshot do dia dele**, não o estado vivo (o Ep. 01 passaria a mostrar 58
+  vagas depois das profissões novas).
 - **Desempenho V2:** ~17 quadros/s de render (só render, sem codificar), 4% mais lento que a V1 com todo o
   detalhe novo. A demo de 15 s fica pronta em ~70 s no total.

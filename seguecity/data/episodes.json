@@ -38,6 +38,22 @@
       "moradores": 10,
       "empregos": 48
     },
-    "snapshot": "data/snapshots/dia-02.rascunho.json"
+    "snapshot": "data/snapshots/dia-02.rascunho.json",
+    "lista": {
+      "encerrada": true,
+      "moradores": [
+        "m0001",
+        "m0002",
+        "m0003",
+        "m0004",
+        "m0005",
+        "m0006",
+        "m0007",
+        "m0008",
+        "m0009",
+        "m0010"
+      ],
+      "encerradaEm": "2026-11-28"
+    }
   }
 ]

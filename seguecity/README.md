@@ -44,6 +44,11 @@ npm run validate -- out/seguecity-ep01.mp4 --dur 75
   antes × depois em `out/comparativo/`. São elas: ilha em 4K (composição `Poster4K`), closes, personagem
   de exemplo, interiores (`Interiores`) e estados de luz e clima.
 - Relatório do upgrade gráfico V2: `docs/RELATORIO-V2.md`.
+- **Fila de entrada de moradores:** `npm run fila`, `fila:add`, `fila:recusar` e `fila:incorporar`.
+  - Os comentários reais aguardam em `data/pending-residents.json` até um episódio incorporá-los.
+  - A fila barra duplicados, respeita a capacidade, nunca altera episódio em produção e preserva os 10
+    fundadores.
+  - Detalhes em `docs/FILA-DE-MORADORES.md`.
 
 ## Narração do Ep. 01 (oficial)
 
@@ -75,7 +80,9 @@ soltos. Storyboard: `docs/STORYBOARD-EP01.md`. Próximo dia: `docs/DIA-02.md`.
 ```bash
 npm run city:status                                  # resumo
 npm run city:moradores -- 12                         # muda só o contador da HUD
-npm run residents:add -- --nome "Ana" --profissao medico --bairro "Vila Nova"
+npm run fila:add -- --nome "Lia" --profissao "Dentista" --data 2026-11-29   # comentário real → fila de entrada
+npm run fila:incorporar -- --episodio ep03            # os agendados do episódio viram moradores
+npm run residents:add -- --nome "Teste" --profissao medico --teste   # só personagem de TESTE
 npm run residents:seed -- 5                          # 5 personagens fictícios de teste
 npm run residents:clear-test                         # remove os de teste
 ```

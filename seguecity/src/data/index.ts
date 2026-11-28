@@ -5,6 +5,7 @@ import cityJson from '../../data/city-state.json';
 import residentsJson from '../../data/residents.json';
 import episodesJson from '../../data/episodes.json';
 import mapaJson from '../../data/mapa.json';
+import pendingJson from '../../data/pending-residents.json';
 
 export type Status = 'pronto' | 'planejado' | 'em_obra';
 export interface Building {
@@ -30,13 +31,24 @@ export interface CityState {
   seguidores?: { valor: number | null; fonte: string; atualizadoEm: string | null }; // contador do TikTok, separado dos moradores
   conquistas?: { id: string; nome: string; dia: number; data: string }[];
 }
-export interface Episode { episodio: number; id: string; titulo: string; duracao: number; data: string; resumo: string; status: string; estado: { moradores: number; empregos: number } }
+export interface Episode {
+  episodio: number; id: string; titulo: string; duracao: number; data: string | null; resumo: string; status: string; estado: { moradores: number; empregos: number };
+  lista?: { encerrada: boolean; moradores: string[]; encerradaEm: string }; // elenco fechado do episódio (não muda depois)
+}
+// fila de entrada (data/pending-residents.json): comentários reais aguardando virar moradores — ver scripts/fila.ts
+export interface PendingResident {
+  id: string; nome: string; profissao: string; profissaoId: string | null; dataSolicitacao: string;
+  status: 'pendente' | 'agendado' | 'aguardando-moradia' | 'incorporado' | 'recusado'; episodioPrevisto: string | null;
+  fonte: string; comentarioId?: string; homonimo?: boolean; registradoEm: string; motivo?: string; aviso?: string; moradorId?: string; incorporadoEm?: string;
+}
 
 export const buildings = buildingsJson as Building[];
 export const jobs = jobsJson as Job[];
 export const city = cityJson as CityState;
 export const residents = residentsJson as Resident[];
 export const episodes = episodesJson as Episode[];
+export const fila = pendingJson as { regras: { capacidadePorEpisodio: number; moradia: string; ordem: string }; proximoId: number; pendentes: PendingResident[] };
+export const elencoDo = (ep: string) => (episodes.find((e) => e.id === ep)?.lista?.moradores ?? []).map((id) => residents.find((r) => r.id === id)!).filter(Boolean);
 export const mapa = mapaJson as { linhas: string[]; legenda: Record<string, string> };
 
 export const buildingById = (id: string) => buildings.find((b) => b.id === id);

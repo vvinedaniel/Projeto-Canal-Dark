@@ -6,27 +6,28 @@ import { createHash } from 'node:crypto';
 import { existsSync, mkdirSync, readFileSync, writeFileSync } from 'node:fs';
 import path from 'node:path';
 import { ROOT } from './lib/env';
+import { DATA } from './lib/cidade';
 
-const D = (f: string) => path.join(ROOT, 'data', f);
+const D = (f: string) => path.join(DATA, f);
 const raw = (f: string) => readFileSync(D(f), 'utf8');
 const load = (f: string) => JSON.parse(raw(f));
 const city = load('city-state.json');
 const rascunho = process.argv.includes('--rascunho'); // rascunho pode ser regravado; o oficial nunca
 const dia = Number(process.argv.slice(2).find((a) => /^\d+$/.test(a)) ?? city.dia);
-const out = path.join(ROOT, 'data/snapshots', `dia-${String(dia).padStart(2, '0')}${rascunho ? '.rascunho' : ''}.json`);
+const out = path.join(DATA, 'snapshots', `dia-${String(dia).padStart(2, '0')}${rascunho ? '.rascunho' : ''}.json`);
 if (existsSync(out) && !rascunho) { console.log(`já existe: ${path.relative(ROOT, out)} (snapshots não são sobrescritos)`); process.exit(0); }
 
 const buildings: any[] = load('buildings.json');
 const jobs: any[] = load('jobs.json');
 const residents: any[] = load('residents.json');
 const episodes: any[] = load('episodes.json');
-const files = ['city-state.json', 'buildings.json', 'jobs.json', 'residents.json', 'episodes.json', 'mapa.json'];
+const files = ['city-state.json', 'buildings.json', 'jobs.json', 'residents.json', 'episodes.json', 'mapa.json', ...(existsSync(D('pending-residents.json')) ? ['pending-residents.json'] : [])];
 const count = (pred: (b: any) => boolean) => buildings.filter(pred).length;
 const snap = {
   snapshot: `SegueCity — estado ${rascunho ? 'em RASCUNHO (aguardando aprovação)' : 'oficial'} do Dia ${String(dia).padStart(2, '0')}`,
   dia,
   registradoEm: new Date().toISOString(),
-  episodio: episodes.filter((e) => e.episodio === dia).map((e) => ({ id: e.id, titulo: e.titulo, estado: e.estado })),
+  episodio: episodes.filter((e) => e.episodio === dia).map((e) => ({ id: e.id, titulo: e.titulo, estado: e.estado, lista: e.lista ?? null })),
   cidade: { nome: city.nome, slogan: city.slogan, status: city.status, evolucao: city.evolucao, moradores: city.moradores, seguidores: city.seguidores ?? null, casas: city.casas, empregos: city.empregos, metas: city.metas, conquistas: city.conquistas ?? [] },
   predios: {
     prontos: count((b) => b.status === 'pronto'),
@@ -37,6 +38,8 @@ const snap = {
   },
   profissoes: jobs.map((j) => ({ id: j.id, nome: j.nome, predio: j.predio, vagas: j.vagas, ocupadas: j.ocupadas ?? 0 })),
   moradores: residents.map((r) => ({ id: r.id, nome: r.nome, profissao: r.profissao, titulo: r.titulo ?? null, bairro: r.bairro, casa: r.casa, trabalho: r.trabalho ?? null, entrada: r.entrada ?? null, ordem: r.ordem ?? null, ordemConfirmada: !!r.ordemConfirmada, fundador: !!r.fundador, titulos: r.titulos ?? [], distintivo: r.distintivo ?? null, fonte: r.fonte ?? null, ficticio: !!r.ficticio })),
+  fila: existsSync(D('pending-residents.json')) ? (() => { const q = load('pending-residents.json'); const by = (st: string) => q.pendentes.filter((p: any) => p.status === st).length; return { emEspera: by('pendente') + by('agendado') + by('aguardando-moradia'), agendados: by('agendado'), aguardandoMoradia: by('aguardando-moradia'), incorporados: by('incorporado'), recusados: by('recusado') }; })() : null,
+  fundadores: city.fundadores ?? null,
   arquivos: Object.fromEntries(files.map((f) => [f, createHash('sha256').update(raw(f)).digest('hex')])),
 };
 mkdirSync(path.dirname(out), { recursive: true });

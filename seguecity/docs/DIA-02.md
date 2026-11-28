@@ -3,6 +3,9 @@
 O Dia 01 está registrado em `data/snapshots/dia-01.json` (0 moradores, 24 casas, 48 vagas). Esse arquivo
 não muda mais. Ele é a prova do estado mostrado no Ep. 01.
 
+Os 10 fundadores do Dia 02 já estão cadastrados e confirmados (lista do Ep. 02 encerrada). Os comentários
+novos vão para a **fila de entrada** e entram a partir do Ep. 03: veja `docs/FILA-DE-MORADORES.md`.
+
 ## 1. Cadastrar os moradores (a partir dos comentários reais)
 
 1. **Colete os comentários à mão** no TikTok: nome + profissão. Use só o que a pessoa escreveu e de forma
@@ -13,20 +16,21 @@ não muda mais. Ele é a prova do estado mostrado no Ep. 01.
    - O `prefeito` só existe depois da eleição (meta de 100). Não cadastre ninguém como prefeito antes disso.
    - Profissões que ainda não existem (ex.: empresário, dentista) precisam de uma entrada nova em
      `jobs.json`: prédio, vagas e roupa. Ou combine com a pessoa uma das existentes.
-3. **Cadastre em ordem de chegada.** O primeiro comentário válido é o Morador Nº 1:
+3. **Registre na fila de entrada** (`docs/FILA-DE-MORADORES.md`). Moradores reais não entram mais direto:
 
    ```bash
    cd seguecity
-   npm run residents:add -- --nome "Mari" --profissao professor
-   npm run residents:add -- --nome "Caio" --profissao mecanico --bairro "Vila Nova"
-   npm run city:status        # confere moradores, casas ocupadas e vagas
+   npm run fila:add -- --nome "Lia" --profissao "Dentista" --data 2026-11-29 --comentario <id do comentário>
+   npm run fila                 # mostra o episódio previsto de cada pedido e a capacidade
    ```
 
-   - O cadastro gera a **aparência persistente** de cada morador: rosto, cabelo, corpo e uniforme. Ela fica
-     gravada em `residents.json` e sai igual em todos os episódios.
-   - Os contadores (`moradores`, `casas.ocupadas`, `empregos.ocupados`, metas) são recalculados sozinhos.
+   - A fila barra duplicados e respeita a capacidade: 10 por episódio e as casas livres.
+   - Episódios em produção nunca são alterados.
+   - Os 10 fundadores do Dia 02 já estão confirmados e a lista do Ep. 02 está encerrada.
+   - Ao incorporar (`npm run fila:incorporar -- --episodio ep03`), cada morador recebe casa, trabalho e uma
+     **aparência persistente** (rosto, cabelo, corpo e uniforme, gravados em `residents.json`).
    - **Nunca** misture teste com cadastro real.
-     - Os personagens de teste (`npm run residents:seed`) ficam marcados com `"ficticio": true`.
+     - Personagens de teste (`npm run residents:seed`) ficam com `"ficticio": true`.
      - Antes de produzir o episódio, rode `npm run residents:clear-test`.
 4. **Moradores de exemplo** (Ana, Rafael, Júlia, Bruno, em `src/data/exemplos.ts`):
    - não são moradores e não entram na contagem;

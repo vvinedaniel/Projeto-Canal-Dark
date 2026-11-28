@@ -5,9 +5,10 @@
 import type { Obj } from '../../engine/types';
 import { personObj } from '../../engine/dynamics';
 import { lookOf, type Pose } from '../../engine/sprites/people';
-import { buildings, jobs, residents, type Resident } from '../../data';
+import { buildings, elencoDo, jobs, type Resident } from '../../data';
 
-export const FUNDADORES: Resident[] = residents.filter((r) => r.fundador && !r.ficticio).sort((a, b) => (a.ordem ?? 0) - (b.ordem ?? 0));
+// elenco FECHADO do Ep. 02 (episodes.json → ep02.lista): moradores que entrarem depois pela fila não aparecem aqui
+export const FUNDADORES: Resident[] = elencoDo('ep02');
 export const fundador = (nome: string) => FUNDADORES.find((r) => r.nome === nome)!;
 export const CASAS_OCUPADAS = new Set(FUNDADORES.map((r) => r.casa!));
 // serviços abertos = prédios com pelo menos um morador trabalhando e que já existem

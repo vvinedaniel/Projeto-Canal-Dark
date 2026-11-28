@@ -1,0 +1,9 @@
+{
+  "regras": {
+    "capacidadePorEpisodio": 10,
+    "moradia": "casas prontas e livres (apartamentos ainda sem unidades definidas em buildings.json)",
+    "ordem": "data do comentário; no empate, ordem de registro"
+  },
+  "proximoId": 1,
+  "pendentes": []
+}
