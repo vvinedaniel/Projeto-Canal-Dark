@@ -5,8 +5,8 @@ O V2 é um upgrade em cima do mesmo motor (`src/engine/`) e da mesma estrutura d
 
 ## Versão anterior preservada
 
-- Tag git **`seguecity-v1`** (commit `34f5306`): o código exato da V1. Para voltar:
-  `git checkout seguecity-v1 -- seguecity`.
+- Commit **`34f5306`** (no histórico do branch, também no GitHub) e a tag local `seguecity-v1`: o código
+  exato da V1. Para voltar: `git checkout 34f5306 -- seguecity`.
 - Vídeos da V1 guardados em `out/v1/` (demo e Ep. 01).
 - Imagens "antes" com as mesmas câmeras do "depois" em `out/comparativo/antes/`.
 
