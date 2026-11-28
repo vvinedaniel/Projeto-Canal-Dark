@@ -95,7 +95,7 @@ export function getWorld(): World {
       if (d === 'i' && !isRoad(ti, tj - 1) && tileAt(ti, tj - 1) !== 'river') {
         const back = tileAt(ti, tj - 1);
         if (ti % 2 === 0 && back !== 'forest') objects.push(lamp(ti + 0.5, tj - 0.07, 'street', 'j'));
-        else if (back !== 'forest' && back !== 'promenade' && hash2(ti, tj, 5) > 0.35) objects.push(tree(pickTree(ti, tj), ti + 0.5, tj - 0.07, ti * 97 + tj));
+        else if (back !== 'forest' && back !== 'promenade' && hash2(ti, tj, 5) > 0.35 && !(tj === 28 && ti >= 8 && ti <= 11)) objects.push(tree(pickTree(ti, tj), ti + 0.5, tj - 0.07, ti * 97 + tj));
       }
       if (d === 'j' && !isRoad(ti - 1, tj) && tileAt(ti - 1, tj) !== 'river') {
         const back = tileAt(ti - 1, tj);

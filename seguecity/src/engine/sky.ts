@@ -140,7 +140,7 @@ export function ambientFor(night: number): [number, number, number] {
   // multiplicador de luz ambiente (0..1) por canal
   const day: [number, number, number] = [1, 1, 1];
   const dusk: [number, number, number] = [0.86, 0.66, 0.72];
-  const nightC: [number, number, number] = [0.3, 0.34, 0.6];
+  const nightC: [number, number, number] = [0.36, 0.4, 0.66];
   const lerp = (a: number[], b: number[], t: number) => a.map((v, k) => v + (b[k] - v) * t) as [number, number, number];
   return night < 0.5 ? lerp(day, dusk, night * 2) : lerp(dusk, nightC, (night - 0.5) * 2);
 }

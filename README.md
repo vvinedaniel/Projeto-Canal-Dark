@@ -28,3 +28,14 @@ tools/encode.sh                                         # junta quadros + narra�
 
 Para ver no navegador, sirva a pasta do episódio com qualquer servidor estático e abra `index.html`
 (`?only=casa` carrega só um cenário, `?t=12` começa num instante, `?ao=0` desliga a oclusão ambiente).
+
+## SegueCity (série nova)
+
+Cidade virtual em pixel art isométrica onde cada seguidor vira morador. Feita em Remotion + TypeScript +
+Canvas 2D, toda gerada por código. Fica na pasta `seguecity/`; o `seguecity/README.md` explica como
+rodar, renderizar e editar.
+
+| # | Título | Composição |
+|---|--------|------------|
+| Demo | A cidade (15 s) | `CityDemo` |
+| 01 | DIA 01 — Construí uma cidade inteira, mas ninguém mora nela (75 s) | `Ep01` |

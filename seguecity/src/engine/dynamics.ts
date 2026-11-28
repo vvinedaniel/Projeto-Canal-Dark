@@ -123,6 +123,12 @@ const WALKERS: Walker[] = [];
   }
 }
 
+// posição em um circuito retangular (usado para moradores cadastrados passeando na praça)
+export function rectWalk(i0: number, j0: number, i1: number, j1: number, s: number, rev = false) {
+  const q = at(rectLoop(i0, j0, i1, j1, rev), s);
+  return { i: q.i, j: q.j, dir: dirOf(q.hd) };
+}
+
 const dirOf = (hd: string) => (hd === '+i' ? 0 : hd === '+j' ? 1 : hd === '-i' ? 2 : 3);
 
 let oid = 0;
@@ -163,7 +169,8 @@ export function dynamics(world: World, p: DynParams): { objs: Obj[]; refl: Refle
   }
   // ---- estacionados (com giroflex)
   objs.push(vehicleObj('amb', 'ambulance', 2, 18.9, 9.5, '-i', t, true));
-  objs.push(vehicleObj('pol', 'police', 2, 5.3, 21.05, '+i', t, true));
+  // viatura parada em frente à delegacia só quando a rua está vazia (sem trânsito circulando)
+  if (p.traffic < 0.05) objs.push(vehicleObj('pol', 'police', 2, 5.6, 24.68, '+i', t, true));
   objs.push(vehicleObj('bus2', 'bus', 0, 13.0, 22.0, '+j', t));
   objs.push(vehicleObj('bus3', 'bus', 0, 13.9, 22.4, '-j', t));
   // ---- pedestres
@@ -216,9 +223,23 @@ function vehicleObj(id: string, kind: VKind, colorIdx: number, i: number, j: num
   return mkDyn(id, 'veiculo', [i - hl[0], j - hl[1], i + hl[0], j + hl[1]], v.spr, dx, dy, lights, 'street');
 }
 
-export function personObj(id: string, look: Look, key: string, i: number, j: number, dir: number, frame: number, scaleUp = 1): Obj {
-  const spr = personSprite(look, dir, frame, key, scaleUp);
-  return mkDyn(id, 'pessoa', [i - 0.04, j - 0.04, i + 0.04, j + 0.04], spr, Math.round(sx(i, j)), Math.round(sy(i, j)), [], 'none');
+export function personObj(id: string, look: Look, key: string, i: number, j: number, dir: number, frame: number, scaleUp = 1, lit = 0): Obj {
+  let spr = personSprite(look, dir, frame, key, scaleUp);
+  if (lit > 0) spr = selfLit(spr);
+  const lights: Light[] = lit > 0 ? [{ x: sx(i, j), y: sy(i, j), r: 1.3, color: hex('#ffe2b0'), a: lit, kind: 'pool' }, { x: sx(i, j), y: sy(i, j, 14 * scaleUp), r: 0.5, color: hex('#ffe9c8'), a: lit * 0.35, kind: 'halo' }] : [];
+  return mkDyn(id, 'pessoa', [i - 0.04, j - 0.04, i + 0.04, j + 0.04], spr, Math.round(sx(i, j)), Math.round(sy(i, j)), lights, lit > 0 ? 'civic' : 'none');
+}
+
+// personagem em destaque: brilho próprio (lido mesmo à noite)
+const litCache = new WeakMap<OffscreenCanvas, Sprite>();
+function selfLit(s: Sprite): Sprite {
+  const hit = litCache.get(s.img);
+  if (hit) return hit;
+  const g = new OffscreenCanvas(s.w, s.h), c = g.getContext('2d')!;
+  c.globalAlpha = 0.75; c.drawImage(s.img, 0, 0);
+  const out = { ...s, glow: g };
+  litCache.set(s.img, out);
+  return out;
 }
 
 function fountainJets(world: World, t: number): Obj {

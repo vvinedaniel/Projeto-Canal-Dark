@@ -1,6 +1,6 @@
 // Renderiza uma composição em MP4 pronto para TikTok/Reels/Shorts:
 //   1080x1920, 30 fps, H.264 (High), yuv420p, AAC 48 kHz, moov no início (faststart), loudness -14 LUFS / -1 dBTP.
-// Uso: npx tsx scripts/render.ts demo|ep01 [--frames 0-89] [--concurrency 4] [--scale 1]   (CRF=18 por padrão)
+// Uso: npx tsx scripts/render.ts demo|ep01 [--frames 0-89] [--concurrency 4] [--scale 1]   (CRF=20 por padrão)
 import { bundle } from '@remotion/bundler';
 import { renderMedia, selectComposition } from '@remotion/renderer';
 import { execFileSync, spawnSync } from 'node:child_process';
@@ -53,7 +53,7 @@ const scale = Number(opt('--scale', '1'));
   const dur = ((frames ? Number(frames.split('-')[1]) - Number(frames.split('-')[0]) + 1 : composition.durationInFrames) / composition.fps).toFixed(4);
   // vídeo final: x264 (High, yuv420p em faixa limitada BT.709), áudio AAC 48 kHz normalizado
   execFileSync('ffmpeg', ['-hide_banner', '-loglevel', 'error', '-y', '-i', raw, '-map', '0:v:0', '-map', '0:a:0', '-t', dur,
-    '-vf', 'scale=in_range=pc:out_range=tv,format=yuv420p', '-c:v', 'libx264', '-preset', 'slow', '-crf', process.env.CRF ?? '18', '-tune', 'animation',
+    '-vf', 'scale=in_range=pc:out_range=tv,format=yuv420p', '-c:v', 'libx264', '-preset', 'slow', '-crf', process.env.CRF ?? '20', '-tune', 'animation',
     '-profile:v', 'high', '-level', '4.2', '-g', '60', '-color_range', 'tv', '-colorspace', 'bt709', '-color_primaries', 'bt709', '-color_trc', 'bt709',
     '-af', af, '-c:a', 'aac', '-b:a', '192k', '-ar', '48000', '-movflags', '+faststart', tmp], { stdio: 'inherit' });
   renameSync(tmp, final);

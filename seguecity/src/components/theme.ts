@@ -14,6 +14,6 @@ export const C = {
   dim: '#a9b0d8',
 };
 export const F = {
-  pixel: "'Jersey', 'Pixelify', monospace",
-  hud: "'Silkscreen', 'Pixelify', monospace",
+  pixel: "'Jersey', monospace",
+  hud: "'Silkscreen', monospace",
 };

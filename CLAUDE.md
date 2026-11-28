@@ -227,3 +227,33 @@ e `tools/bench-cap.cjs` (métodos de captura). Resultados em `out/bench.jsonl`.
   render, mantenha um vigia em segundo plano (loop com `out/resume.sh`, 2 h por vez) e checagens agendadas; `resume.sh`
   descarta JPEG truncado e retoma do primeiro quadro que falta.
 - **Entrega**: MP4 original de ~300 MB não baixa no app; enviar também versão leve (~70 MB, 2 passes x264) e ZIP.
+
+## SegueCity (série nova, pasta `seguecity/`): o que aprendemos
+
+- **Stack:** Remotion 4 + React + TS. A cidade é desenhada em Canvas 2D por um motor próprio
+  (`src/engine/`), sem imagens prontas. Cada quadro é função pura de `t`. Render a ~10 quadros/s neste
+  container (episódio de 75 s ≈ 5 min com `--concurrency 4`; o headless shell em `/opt/pw-browsers` serve).
+- **Pixel art isométrica nítida com câmera suave:** o mundo é desenhado em resolução de pixel de mundo,
+  ampliado por inteiro com vizinho mais próximo e o resto com bilinear ("sharp-bilinear",
+  `renderer.ts`). Os objetos andam presos à grade de pixels; a câmera anda em sub-pixel.
+- **Sólidos por raio de pixel + z-buffer** (`model.ts`): caixas, telhados de duas águas, cilindros,
+  cúpulas e polígonos. Os shaders recebem coordenadas da face (coluna, altura), e janelas e letreiros
+  saem inclinados 2:1 sozinhos. Rampas de cor com pontilhado de Bayer dão o visual 16-bit.
+- **Luz noturna correta com oclusão:** albedo × (ambiente + poças) + emissão. As poças e as janelas de
+  quem está atrás são apagadas pela máscara (`destination-out`) do objeto da frente, na ordem de
+  profundidade.
+- **Ordem isométrica:** ordenação topológica por pegada em tiles, só entre objetos que se sobrepõem na
+  tela (`sort.ts`). Pegadas pequenas e sem se cruzar: pedestres a 0,17 tile do meio-fio, postes e
+  árvores a 0,07.
+- **Oclusão na isometria:** o que tem i + j maior tapa o que está atrás. Prédios altos vão para o fundo
+  do mapa e os principais ficam com coisas baixas na frente. Na 1ª versão, a torre e a grua tapavam a
+  prefeitura e a praça.
+- **Fonte:** o "C" maiúsculo da Pixelify Sans vira "O" com contorno ("SEGUEOITY"). Use Jersey 10 para
+  legendas, títulos e logo, e Silkscreen para rótulos pequenos.
+- **Saída:** o JPEG do Remotion vira `yuvj420p`. `scripts/render.ts` recodifica com x264 em yuv420p de
+  faixa limitada, normaliza o áudio para −14 LUFS em 2 passes e grava faststart. `scripts/validate.ts`
+  confere tudo. Também gere uma versão `-leve.mp4` (CRF 25, ~33 MB) para baixar no app.
+- **Sem voz final:** marcações provisórias por frase e palavra (por sílaba) em `narration.ts`;
+  `npm run narration:fit` encaixa a voz real depois. Os eventos são ancorados em `W('palavra')`.
+- **Honestidade:** comentário de exemplo rotulado EXEMPLO/fictício; crescimento rotulado SIMULAÇÃO, sem
+  números inventados. O episódio usa o estado gravado em `episodes.json`, não o estado vivo.

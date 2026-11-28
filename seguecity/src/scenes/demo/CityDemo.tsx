@@ -12,7 +12,10 @@ import { cameraAt, toScreen, type Key } from '../../utils/camera';
 import { clamp, smooth, win, easeOut } from '../../utils/easing';
 import { asset } from '../../utils/audio';
 import { getWorld } from '../../engine/world';
-import { dynamics } from '../../engine/dynamics';
+import { dynamics, personObj, rectWalk } from '../../engine/dynamics';
+import { hex } from '../../engine/color';
+import { jobs } from '../../data';
+import { sx, sy } from '../../engine/iso';
 import { city, residents } from '../../data';
 
 export const DEMO_SECONDS = 15;
@@ -36,6 +39,15 @@ export const CityDemo: React.FC = () => {
   const cam = cameraAt(KEYS, t, 0.8);
   const night = interpolate(t, [0, 3.2], [0.56, 1], { extrapolateLeft: 'clamp', extrapolateRight: 'clamp' });
   const d = dynamics(world, { t: t + 20, traffic: 1, people: 1 });
+  // moradores cadastrados (data/residents.json) passeiam pela praça com plaquinha de nome
+  const tags: { x: number; y: number; nome: string; prof: string; teste?: boolean }[] = [];
+  residents.slice(0, 6).forEach((r, k) => {
+    const job = jobs.find((j) => j.id === r.profissao);
+    const look = { skin: hex(['#f2c9a0', '#d9a273', '#b0774c', '#8a5634'][k % 4]), hair: hex('#2a1d18'), shirt: hex(job?.roupa.camisa ?? '#e25a4a'), pants: hex(job?.roupa.calca ?? '#2a3a6a'), shoes: hex('#1a1a20'), hat: null, long: k % 2 === 1 };
+    const w = rectWalk(10.95, 11.95, 14.05, 15.05, k * 2.07 + t * 0.4, k % 2 === 1);
+    d.objs.push(personObj(`res-${r.id}`, look, `res-${r.id}`, w.i, w.j, w.dir, Math.floor(t * 4 + k) % 4, 1, 0.6));
+    tags.push({ ...toScreen(cam, sx(w.i, w.j), sy(w.i, w.j, 18)), nome: r.nome, prof: job?.nome ?? r.profissao, teste: r.ficticio });
+  });
   const anchor = (id: string) => { const o = world.byId.get(id)!; return toScreen(cam, o.anchor!.x, o.anchor!.y); };
   const fountain = toScreen(cam, world.fountainJet.x, world.fountainJet.y);
   const pref = anchor('prefeitura');
@@ -51,13 +63,18 @@ export const CityDemo: React.FC = () => {
       <WorldLabel x={fountain.x} y={fountain.y} title="PRAÇA CENTRAL" sub="FONTE · BANCOS · PIPOCA" icon="star" a={win(t, 4.3, 7.0, 0.35, 0.3)} stem={140} />
       <WorldLabel x={pref.x} y={pref.y} title="PREFEITURA" sub="CORAÇÃO DA CIDADE" icon="crown" a={win(t, 9.9, 12.4, 0.35, 0.3)} stem={40} />
       <WorldLabel x={hosp.x} y={hosp.y} title="HOSPITAL" sub="8 VAGAS" icon="cross" a={win(t, 10.6, 12.4, 0.35, 0.3)} stem={30} color={C.red} align="right" />
+      {cam.zoom > 2.6 && tags.map((g, k) => (
+        <div key={k} style={{ position: 'absolute', left: g.x, top: g.y, transform: 'translate(-50%, -100%)', fontFamily: F.hud, fontSize: 18, color: C.white, background: 'rgba(12,14,40,0.85)', padding: '3px 8px', boxShadow: `inset 0 0 0 3px ${g.teste ? C.yellow : C.cyan}`, whiteSpace: 'nowrap' }}>
+          {g.nome.toUpperCase()} · {g.prof.toUpperCase()}
+        </div>
+      ))}
       {/* título de abertura */}
       <AbsoluteFill style={{ alignItems: 'center', justifyContent: 'flex-start', paddingTop: 430, opacity: title, transform: `translateY(${(1 - easeOut(clamp(t / 0.8))) * 40}px)` }}>
         <Logo size={118} />
         <div style={{ marginTop: 26, fontFamily: F.hud, fontSize: 30, color: C.white, letterSpacing: 3, textShadow: '0 4px 0 #000' }}>VOCÊ SEGUE. VOCÊ MORA. VOCÊ DECIDE.</div>
       </AbsoluteFill>
       {/* HUD */}
-      <Hud moradores={city.moradores + residents.length * 0} empregos={city.empregos.total - city.empregos.ocupados} dia={city.dia} hora={clock(t)} show={smooth((t - 2.6) / 0.6)} pulseMoradores={win(t, 13.2, 14.3, 0.2, 0.4)} />
+      <Hud moradores={city.moradores} empregos={city.empregos.total - city.empregos.ocupados} dia={city.dia} hora={clock(t)} show={smooth((t - 2.6) / 0.6)} pulseMoradores={win(t, 13.2, 14.3, 0.2, 0.4)} />
       {/* fecho */}
       <AbsoluteFill style={{ alignItems: 'center', justifyContent: 'flex-end', paddingBottom: 430, opacity: endA }}>
         <div style={{ fontFamily: F.pixel, fontWeight: 400, fontSize: 92, color: C.white, textAlign: 'center', lineHeight: 0.95, textShadow: `0 6px 0 ${C.purpleDark}, 4px 8px 0 #000` }}>

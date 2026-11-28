@@ -20,7 +20,8 @@ export interface FrameParams {
   dyn?: Obj[];
   refl?: { x: number; y: number; len: number; color: number }[];
   hidden?: Set<string>;
-  overrides?: Record<string, { dy?: number; alpha?: number; ghost?: number; glow?: number }>;
+  overrides?: Record<string, { dy?: number; alpha?: number; ghost?: number; glow?: number; lit?: number }>;
+  reveal?: Set<string>; // mostra objetos escondidos por padrão (lotes planejados)
   bloom?: number;
   vignette?: number;
 }
@@ -88,7 +89,7 @@ export class Renderer {
     }
     const placed0: Placed[] = [], placed1: Placed[] = [];
     const addObj = (o: Obj) => {
-      if (o.hidden || p.hidden?.has(o.id)) return;
+      if ((o.hidden && !p.reveal?.has(o.id)) || p.hidden?.has(o.id)) return;
       const s = o.sprite;
       const ov = p.overrides?.[o.id];
       const dx = o.dx ?? 0, dy = (o.dy ?? 0) + (ov?.dy ?? 0);
@@ -108,15 +109,22 @@ export class Renderer {
       const alpha = ov?.alpha ?? 1;
       const clip = o.dy || ov?.dy ? this.clipFor(o, rx, ry) : null;
       if (clip) for (const c of [alb, lig, emi]) { c.save(); c.beginPath(); clip(c); c.clip(); }
+      if (ov?.ghost) {
+        // holograma: silhueta tingida de ciano, translúcida e brilhante
+        const g = ghostOf(s);
+        alb.globalAlpha = alpha * 0.55; alb.drawImage(g, X, Y); alb.globalAlpha = 1;
+        emi.globalCompositeOperation = 'lighter'; emi.globalAlpha = Math.min(1, ov.ghost * 0.7); emi.drawImage(g, X, Y); emi.globalAlpha = 1;
+        if (clip) for (const c of [alb, lig, emi]) c.restore();
+        continue;
+      }
       alb.globalAlpha = alpha;
       alb.drawImage(s.img, X, Y);
       alb.globalAlpha = 1;
-      if (ov?.ghost) { alb.globalAlpha = ov.ghost; alb.globalCompositeOperation = 'source-atop'; alb.fillStyle = '#56d8ff'; alb.fillRect(X, Y, s.w, s.h); alb.globalAlpha = 1; alb.globalCompositeOperation = 'source-over'; }
       if (alpha > 0.5) {
         lig.globalCompositeOperation = 'destination-out'; lig.drawImage(s.mask, X, Y);
         emi.globalCompositeOperation = 'destination-out'; emi.drawImage(s.mask, X, Y);
       }
-      let lv = this.level(o, p) * (ov?.glow ?? 1);
+      let lv = (ov?.lit ?? this.level(o, p)) * (ov?.glow ?? 1);
       if (s.glow && lv > 0.01 && alpha > 0.5) {
         emi.globalCompositeOperation = 'lighter'; emi.globalAlpha = Math.min(1, lv * (0.25 + 0.75 * lampOn));
         emi.drawImage(s.glow, X, Y); emi.globalAlpha = 1;
@@ -275,6 +283,21 @@ function blit(c: C2D, src: OffscreenCanvas, rx: number, ry: number, rw: number, 
   const sx1 = Math.min(WORLD_W, rx + rw), sy1 = Math.min(WORLD_H, ry + rh);
   if (sx1 <= sx0 || sy1 <= sy0) return;
   c.drawImage(src, sx0, sy0, sx1 - sx0, sy1 - sy0, sx0 - rx, sy0 - ry, sx1 - sx0, sy1 - sy0);
+}
+
+const ghostCache = new WeakMap<OffscreenCanvas, OffscreenCanvas>();
+function ghostOf(s: { img: OffscreenCanvas; w: number; h: number }) {
+  const hit = ghostCache.get(s.img);
+  if (hit) return hit;
+  const c = new OffscreenCanvas(s.w, s.h), x = c.getContext('2d')!;
+  x.drawImage(s.img, 0, 0);
+  x.globalCompositeOperation = 'source-atop';
+  x.fillStyle = 'rgba(90,230,255,0.82)'; x.fillRect(0, 0, s.w, s.h);
+  // linhas de varredura do holograma
+  x.fillStyle = 'rgba(10,40,80,0.35)';
+  for (let y = 0; y < s.h; y += 2) x.fillRect(0, y, s.w, 1);
+  ghostCache.set(s.img, c);
+  return c;
 }
 
 export const smooth = (x: number) => { const t = Math.max(0, Math.min(1, x)); return t * t * (3 - 2 * t); };

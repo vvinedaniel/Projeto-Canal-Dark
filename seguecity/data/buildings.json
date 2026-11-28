@@ -169,7 +169,7 @@
     "tipo": "delegacia",
     "posicao": {
       "i": 4,
-      "j": 18
+      "j": 21
     },
     "tamanho": {
       "w": 3,
@@ -185,7 +185,7 @@
     "tipo": "oficina",
     "posicao": {
       "i": 7,
-      "j": 18
+      "j": 21
     },
     "tamanho": {
       "w": 2,
@@ -200,7 +200,7 @@
     "tipo": "apartamento",
     "posicao": {
       "i": 4,
-      "j": 21
+      "j": 18
     },
     "tamanho": {
       "w": 2,
@@ -216,7 +216,7 @@
     "tipo": "apartamento",
     "posicao": {
       "i": 6,
-      "j": 21
+      "j": 18
     },
     "tamanho": {
       "w": 3,
