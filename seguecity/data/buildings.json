@@ -129,7 +129,8 @@
       "d": 3
     },
     "status": "pronto",
-    "andares": 6
+    "andares": 6,
+    "letreiro": true
   },
   {
     "id": "apto-4",
@@ -235,7 +236,7 @@
       "j": 18
     },
     "tamanho": {
-      "w": 2,
+      "w": 3,
       "d": 3
     },
     "status": "pronto",
@@ -249,7 +250,7 @@
     "nome": "Café",
     "tipo": "loja",
     "posicao": {
-      "i": 12,
+      "i": 13,
       "j": 18
     },
     "tamanho": {
@@ -780,7 +781,7 @@
     },
     "status": "planejado",
     "andares": 2,
-    "placa": "LOJA NOVA",
+    "placa": "LOJA",
     "cor": "yellow",
     "toldo": "blue"
   },

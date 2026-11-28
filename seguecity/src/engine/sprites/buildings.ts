@@ -4,7 +4,9 @@ import { pick, hex, scale, mix, type Ramp, type U32 } from '../color';
 import { hash2, strSeed, mulberry32 } from '../rng';
 import { E, P } from '../palette';
 import { sx, sy } from '../iso';
-import { col, lum, row, roofShader, solid, tileRoof, wallShader, winAt, windowPixel, signPixel, type Grid, type Sign } from './kit';
+import { col, lum, row, roofShader, solid, tileRoof, wallShader, winAt, windowPixel, signPixel, signFits, type Grid, type Sign } from './kit';
+import { buildings } from '../../data';
+import { isRoad as isRoadTile } from '../map';
 import type { Building } from '../../data';
 import type { Obj, Light } from '../types';
 
@@ -110,9 +112,25 @@ export function apartment(b: Building, office = false): Obj {
   }
   rooftop(m, i0, j0, i1, j1, H, seed, { tank: !office, ac: 2 + Math.floor(rnd() * 3), machine: floors > 4 });
   if (office) m.add(new Cyl(i0 + 0.3, j0 + 0.3, 0.03, H, H + 22, solid(P.metal, 0.1)));
+  if (b.letreiro) {
+    // letreiro neon da marca no topo, virado para a frente (+j)
+    const bi0 = i0 + 0.06, bi1 = i1 - 0.06, bcols = Math.round((bi1 - bi0) * 16);
+    const seg: Sign = { text: 'SEGUE', face: 'L', x0: Math.floor((bcols - 35) / 2), vTop: 11, fg: hex('#ffffff'), bg: null, glow: hex('#f2ecff') };
+    const cty: Sign = { text: 'CITY', face: 'L', x0: Math.floor((bcols - 35) / 2) + 20, vTop: 11, fg: hex('#ffd84a'), bg: null, glow: hex('#ffd84a') };
+    for (const a of [bi0 + 0.3, bi1 - 0.3]) m.box(a - 0.03, j1 - 0.42, H, a + 0.03, j1 - 0.36, H + 6, solid(P.metal, 0.15));
+    m.box(bi0, j1 - 0.36, H + 5, bi1, j1 - 0.3, H + 21, (h, px, py, o) => {
+      if (h.face === 'T') { o.c = pick(P.metal, 0.5, px, py); return; }
+      if (signPixel(o, h, px, py, seg, bcols) || signPixel(o, h, px, py, cty, bcols)) return;
+      const r = row(h), c = col(h);
+      const edge = r === 0 || r === 15 || c === 0 || c === bcols - 1;
+      if (edge) { const on = (c + r) % 3 === 0; o.c = on ? hex('#c89cff') : hex('#4a2a80'); if (on) o.e = hex('#b07cff'); return; }
+      o.c = pick(P.purple, 0.25, px, py); o.e = scale(hex('#7a4ee0'), 0.18);
+    });
+  }
   const lights: Light[] = [pool((i0 + i1) / 2, j1 + 0.15, 1.0, E.warm, 0.5)];
+  if (b.letreiro) lights.push(halo((i0 + i1) / 2, j1 - 0.33, H + 13, 1.5, hex('#8a5cff'), 0.45));
   if (office) lights.push(halo(i0 + 0.3, j0 + 0.3, H + 22, 0.25, E.red, 0.9));
-  const o = obj(b, m, [i0, j0, i1, j1 + 0.13], office ? 'shop' : 'home', lights, H + 6);
+  const o = obj(b, m, [i0, j0, i1, j1 + 0.13], office ? 'shop' : 'home', lights, H + (b.letreiro ? 24 : 6));
   return o;
 }
 
@@ -199,9 +217,13 @@ export function house(b: Building): Obj {
 }
 
 // ---------- loja (térreo comercial + toldo + letreiro) ----------
+// Lojas vizinhas no mesmo quarteirão ficam geminadas (parede colada). O letreiro vai na face que comporta o
+// nome inteiro: fachada +j se couber; senão a lateral +i; se a frente estiver tapada, numa placa no telhado.
 export function shop(b: Building): Obj {
   const seed = strSeed(b.id);
-  const i0 = b.posicao.i + INSET, j0 = b.posicao.j + INSET, i1 = b.posicao.i + b.tamanho.w - INSET, j1 = b.posicao.j + b.tamanho.d - INSET;
+  const I = b.posicao.i, J = b.posicao.j, w = b.tamanho.w, d = b.tamanho.d;
+  const neighbor = (di: number) => buildings.some((o) => o.tipo === 'loja' && o.status === b.status && o.posicao.j === J && o.tamanho.d === d && (di < 0 ? o.posicao.i + o.tamanho.w === I : o.posicao.i === I + w));
+  const i0 = I + (neighbor(-1) ? 0 : INSET), i1 = I + w - (neighbor(1) ? 0 : INSET), j0 = J + INSET, j1 = J + d - INSET;
   const floors = b.andares ?? 2;
   const gH = 15, fH = 12, H = gH + fH * (floors - 1);
   const wall = rampOf(b.cor, P.cream);
@@ -210,13 +232,25 @@ export function shop(b: Building): Obj {
   const grid: Grid = { z0: gH, floorH: fH, floors: floors - 1, ww: 4, wh: 6, cell: 8, sill: 3, margin: 3 };
   const text = b.placa ?? b.nome.toUpperCase();
   const neon = [E.neonPink, E.neonCyan, E.warm, E.neonGreen][seed % 4];
-  const signs: Sign[] = [
-    { text, face: 'L', vTop: gH - 1, fg: hex('#fff6e0'), bg: P.black, glow: neon, pad: 2 },
-  ];
-  if (colsR >= 26) signs.push({ text, face: 'R', vTop: gH - 1, fg: hex('#fff6e0'), bg: P.black, glow: neon, pad: 2 });
+  const frontOpen = isRoadTile(I, J + d); // a frente dá para a rua?
+  const roofBoard = !frontOpen;
+  const signs: Sign[] = [];
+  const pharmacy = /FARM/.test(text);
+  if (!roofBoard) {
+    if (signFits(text, colsL)) signs.push({ text, face: 'L', vTop: gH - 1, fg: hex('#fff6e0'), bg: P.black, glow: neon, pad: 2 });
+    if (signFits(text, colsR) && (!signFits(text, colsL) || colsR >= 30)) signs.push({ text, face: 'R', vTop: gH - 1, fg: hex('#fff6e0'), bg: P.black, glow: neon, pad: 2 });
+  }
+  const GREEN = hex('#3ad06a');
   const ws = wallShader({
     wall, trim: P.white, glass: P.glass, grid, seed, lit: 0.7, bands: true, baseH: 1, colsL, colsR, signs,
     extra: (o, h, px, py, c, r) => {
+      // cruz verde de farmácia na fachada sem nome
+      if (pharmacy && h.face === 'L' && !signs.some((sg) => sg.face === 'L')) {
+        const cx = colsL / 2 - 0.5, cy = gH - 4;
+        const dx = Math.abs(c - cx), dy = Math.abs(r - cy);
+        if ((dx < 1.6 && dy < 4.6) || (dx < 4.6 && dy < 1.6)) { o.c = GREEN; o.e = hex('#5dff8a'); return true; }
+        if (dy < 5.6 && dx < 5.6) { o.c = pick(P.black, 0.4, px, py); return true; }
+      }
       if (r < 1 || r >= gH - 6) return false;
       const cols = h.face === 'L' ? colsL : colsR;
       if (c < 2 || c >= cols - 2) return false;
@@ -229,26 +263,32 @@ export function shop(b: Building): Obj {
   });
   const m = new Model();
   m.box(i0, j0, 0, i1, j1, H, ws);
-  // toldo listrado (inclinado) na frente +j e +i
-  const awS: Shader = (h, px, py, o) => {
-    const stripe = Math.floor(h.u * 16 / 3) % 2 === 0;
-    o.c = stripe ? pick(aw, lum(h) + 0.05, px, py) : pick(P.white, lum(h), px, py);
-    if (h.face === 'L' || h.face === 'R') o.c = scale(o.c, 0.85);
-  };
+  // toldo listrado (inclinado) na frente +j
   const za = gH - 6;
-  m.add(new Poly([[i0, j1, za + 4], [i1, j1, za + 4], [i1, j1 + 0.28, za], [i0, j1 + 0.28, za]], (h, px, py, o) => {
+  m.add(new Poly([[i0, j1, za + 4], [i1, j1, za + 4], [i1, j1 + 0.22, za], [i0, j1 + 0.22, za]], (h, px, py, o) => {
     const u = (h.i - i0) * 16; const stripe = Math.floor(u / 3) % 2 === 0;
     o.c = stripe ? pick(aw, lum(h) + 0.1, px, py) : pick(P.white, lum(h) + 0.05, px, py);
   }));
-  m.box(i0, j1 + 0.26, za - 2, i1, j1 + 0.28, za, awS, 'L');
-  if (colsR >= 26) {
-    m.add(new Poly([[i1, j0, za + 4], [i1, j1, za + 4], [i1 + 0.28, j1, za], [i1 + 0.28, j0, za]], (h, px, py, o) => {
-      const u = (j1 - h.j) * 16; const stripe = Math.floor(u / 3) % 2 === 0;
-      o.c = stripe ? pick(aw, lum(h) + 0.0, px, py) : pick(P.white, lum(h) - 0.05, px, py);
-    }));
+  m.box(i0, j1 + 0.2, za - 2, i1, j1 + 0.22, za, (h, px, py, o) => {
+    const stripe = Math.floor(h.u * 16 / 3) % 2 === 0;
+    o.c = scale(stripe ? pick(aw, lum(h) + 0.05, px, py) : pick(P.white, lum(h), px, py), 0.85);
+  }, 'L');
+  if (roofBoard) {
+    // placa no telhado, virada para a frente
+    const bi0 = i0 + 0.05, bi1 = i1 - 0.05;
+    const bcols = Math.round((bi1 - bi0) * 16);
+    const sg: Sign = { text, face: 'L', vTop: 8, fg: hex('#fff6e0'), bg: null, glow: neon };
+    m.box(bi0, j1 - 0.12, H, bi1, j1 - 0.06, H + 11, (h, px, py, o) => {
+      if (h.face === 'T') { o.c = pick(P.metal, 0.5, px, py); return; }
+      if (signPixel(o, h, px, py, sg, bcols)) return;
+      const r = row(h), c = col(h);
+      o.c = r === 0 || r === 10 || c === 0 || c === bcols - 1 ? pick(aw, lum(h), px, py) : pick(P.black, 0.45, px, py);
+    });
+    for (const a of [bi0 + 0.15, bi1 - 0.15]) m.add(new Cyl(a, j1 - 0.2, 0.02, H, H + 2, solid(P.metal, 0.2)));
   }
-  rooftop(m, i0, j0, i1, j1, H, seed, { tank: true, ac: 1 });
-  const lights: Light[] = [pool((i0 + i1) / 2, j1 + 0.45, 1.1, E.warm, 0.85)];
-  const o = obj(b, m, [i0, j0, i1 + 0.28, j1 + 0.28], 'shop', lights, H + 6);
+  rooftop(m, i0, j0, i1, j1, H, seed, { tank: !roofBoard, ac: 1 });
+  const lights: Light[] = [pool((i0 + i1) / 2, j1 + 0.4, 1.1, E.warm, 0.85)];
+  if (roofBoard) lights.push(halo((i0 + i1) / 2, j1 - 0.1, H + 6, 0.9, neon, 0.35));
+  const o = obj(b, m, [i0, j0, i1, j1], 'shop', lights, H + (roofBoard ? 14 : 6));
   return o;
 }

@@ -73,9 +73,10 @@ export function vehicleSprite(kind: VKind, color: Ramp, axis: 'i' | 'j', front: 
       if (h.face !== 'T' && r >= 5 && r <= 7) { o.c = pick(P.glass, lum(h) + 0.1, px, py); return; }
       bodyS(h, px, py, o);
     });
-    const sg: Sign = { text: 'MERCADO', face: sideFace, vTop: 9, fg: hex('#e2483a'), bg: null };
+    const fruit = [hex('#e2483a'), hex('#f4c440'), hex('#6cc04a')];
     box(front ? a0 : a0 + cab + 0.02, front ? a1 - cab - 0.02 : a1, b0 - 0.01, b1 + 0.01, 2, topH, (h, px, py, o) => {
-      if (h.face !== 'T' && signPixel(o, h, px, py, sg, Math.round((L - cab) * 16))) return;
+      // logotipo de frutas na lateral (sem texto)
+      if (h.face === sideFace) { const c = col(h), r = row(h); const k = Math.floor(c / 4); if (r >= 6 && r <= 8 && c % 4 !== 3 && c > 1 && k < 3) { o.c = fruit[k]; return; } }
       o.c = pick(P.white, lum(h) + 0.1 + (row(h) <= 0 ? -0.2 : 0), px, py);
       if (h.face === endFace && !front && row(h) === 2 && (col(h) <= 1 || col(h) >= Math.round(W * 16) - 2)) { o.c = hex('#ff3b46'); o.e = E.tail; }
     });

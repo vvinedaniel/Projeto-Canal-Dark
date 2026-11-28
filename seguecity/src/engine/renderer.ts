@@ -9,6 +9,7 @@ import { P } from './palette';
 import { hash2 } from './rng';
 import type { Obj } from './types';
 import type { World } from './world';
+import { backdrop, bgPos } from './backdrop';
 
 export interface Cam { x: number; y: number; zoom: number }
 export interface FrameParams {
@@ -20,10 +21,12 @@ export interface FrameParams {
   dyn?: Obj[];
   refl?: { x: number; y: number; len: number; color: number }[];
   hidden?: Set<string>;
+  fireflies?: { x: number; y: number; a: number }[];
   overrides?: Record<string, { dy?: number; alpha?: number; ghost?: number; glow?: number; lit?: number }>;
   reveal?: Set<string>; // mostra objetos escondidos por padrão (lotes planejados)
   bloom?: number;
   vignette?: number;
+  tilt?: number; // 0..1: desfoque de maquete (tilt-shift) no alto e embaixo do quadro
 }
 
 type C2D = OffscreenCanvasRenderingContext2D;
@@ -66,6 +69,22 @@ export class Renderer {
     // 1) albedo: chão
     for (const c of [alb, lig, emi, tmp]) { c.globalCompositeOperation = 'source-over'; c.globalAlpha = 1; c.clearRect(0, 0, rw, rh); }
     const g = this.world.ground;
+    // fundo: mar de nuvens e ilhotas flutuantes (paralaxe), atrás da ilha
+    const bd = backdrop();
+    const lampOn0 = smooth((p.night - 0.45) / 0.35);
+    for (const s of [...bd.back, ...bd.islets]) {
+      const q = bgPos(s, p.cam.x, p.cam.y, p.t);
+      const X = Math.round(q.x - rx), Y = Math.round(q.y - ry);
+      if (X > rw || Y > rh || X + s.img.width < 0 || Y + s.img.height < 0) continue;
+      alb.drawImage(s.img, X, Y);
+      if (s.lights && lampOn0 > 0) for (const L of s.lights) {
+        const spr = lightSprite('halo', L.r, L.color);
+        emi.globalCompositeOperation = 'lighter'; emi.globalAlpha = lampOn0;
+        emi.drawImage(spr, Math.round(L.x + (q.x - s.x) - rx - spr.width / 2), Math.round(L.y + (q.y - s.y) - ry - spr.height / 2));
+        emi.globalAlpha = 1; emi.globalCompositeOperation = 'source-over';
+        emi.fillStyle = '#ffe2a0'; emi.fillRect(Math.round(L.x + (q.x - s.x) - rx) - 1, Math.round(L.y + (q.y - s.y) - ry) - 1, 3, 3);
+      }
+    }
     blit(alb, g.canvas, rx, ry, rw, rh);
     // 2) água e cascata animadas
     this.drawWater(p.t, rx, ry, rw, rh);
@@ -143,6 +162,29 @@ export class Renderer {
       }
     }
     for (const c of [alb, lig, emi]) c.globalCompositeOperation = 'source-over';
+    // nuvens na frente da base rochosa da ilha e névoa da cascata
+    for (const s of bd.front) {
+      const q = bgPos(s, p.cam.x, p.cam.y, p.t);
+      const X = Math.round(q.x - rx), Y = Math.round(q.y - ry);
+      if (X > rw || Y > rh || X + s.img.width < 0 || Y + s.img.height < 0) continue;
+      alb.globalAlpha = 0.92; alb.drawImage(s.img, X, Y); alb.globalAlpha = 1;
+      emi.globalCompositeOperation = 'destination-out'; emi.globalAlpha = 0.9; emi.drawImage(s.img, X, Y); emi.globalAlpha = 1; emi.globalCompositeOperation = 'source-over';
+    }
+    const mf = this.world.fallBottom;
+    for (let k = 0; k < 7; k++) {
+      const m = bd.mist[k % 3];
+      const ph = (p.t * 0.35 + k / 7) % 1;
+      const X = Math.round(mf.x + (k - 3) * 9 + Math.sin(p.t * 0.7 + k) * 6 - m.width / 2 - rx);
+      const Y = Math.round(mf.y - 18 - ph * 26 - ry);
+      alb.globalAlpha = 0.75 * Math.sin(Math.PI * ph); alb.drawImage(m, X, Y); alb.globalAlpha = 1;
+    }
+    // vaga-lumes (depois dos objetos: são pequenos demais para precisar de oclusão)
+    if (p.fireflies && lampOn > 0) for (const f of p.fireflies) {
+      const X = Math.round(f.x - rx), Y = Math.round(f.y - ry);
+      if (X < 0 || Y < 0 || X >= rw || Y >= rh || f.a <= 0.02) continue;
+      emi.fillStyle = `rgba(214,255,120,${(f.a * lampOn).toFixed(3)})`; emi.fillRect(X, Y, 1, 1);
+      emi.fillStyle = `rgba(160,255,90,${(f.a * lampOn * 0.35).toFixed(3)})`; emi.fillRect(X - 1, Y, 3, 1); emi.fillRect(X, Y - 1, 1, 3);
+    }
 
     // 4) luz: ambiente + poças; albedo × luz (preservando alfa)
     const amb = ambientFor(p.night);
@@ -194,6 +236,23 @@ export class Renderer {
       if (z < 1) out.imageSmoothingQuality = 'high';
       out.drawImage(this.cv.alb, x0 - rx, y0 - ry, vw, vh, 0, 0, W, H);
     }
+    // tilt-shift: cópia desfocada (meia resolução) mascarada por degradê no alto e embaixo
+    const tilt = p.tilt ?? 0;
+    if (tilt > 0.01) {
+      const tw = W / 2, th = H / 2;
+      const ts = this.ts(tw, th);
+      ts.ctx.globalCompositeOperation = 'source-over';
+      ts.ctx.clearRect(0, 0, tw, th);
+      ts.ctx.filter = `blur(${(2.5 + 3.5 * tilt).toFixed(1)}px)`;
+      ts.ctx.drawImage(out.canvas, 0, 0, W, H, 0, 0, tw, th);
+      ts.ctx.filter = 'none';
+      const gr = ts.ctx.createLinearGradient(0, 0, 0, th);
+      gr.addColorStop(0, `rgba(0,0,0,${tilt})`); gr.addColorStop(0.3, 'rgba(0,0,0,0)'); gr.addColorStop(0.64, 'rgba(0,0,0,0)'); gr.addColorStop(1, `rgba(0,0,0,${tilt})`);
+      ts.ctx.globalCompositeOperation = 'destination-in';
+      ts.ctx.fillStyle = gr; ts.ctx.fillRect(0, 0, tw, th);
+      out.imageSmoothingEnabled = true;
+      out.drawImage(ts.cv, 0, 0, tw, th, 0, 0, W, H);
+    }
     // vinheta
     const vg = p.vignette ?? 0.35;
     if (vg > 0) {
@@ -204,6 +263,11 @@ export class Renderer {
     out.restore();
   }
 
+  private _ts: { cv: OffscreenCanvas; ctx: C2D } | null = null;
+  ts(w: number, h: number) {
+    if (!this._ts) { const [cv, ctx] = mk(w, h); this._ts = { cv, ctx }; }
+    return this._ts;
+  }
   private _inter: { cv: OffscreenCanvas; ctx: C2D } | null = null;
   inter(w: number, h: number) {
     if (!this._inter || this._inter.cv.width < w || this._inter.cv.height < h) {

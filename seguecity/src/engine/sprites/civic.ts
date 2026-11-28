@@ -54,10 +54,10 @@ export function prefeitura(b: Building): Obj {
   m.box(i0, j0, H, i1, j0 + 0.08, H + 4, bal); m.box(i0, j0, H, i0 + 0.08, j1, H + 4, bal);
   m.box(i0, j1 - 0.08, H, i1, j1, H + 4, bal); m.box(i1 - 0.08, j0, H, i1, j1, H + 4, bal);
   // pórtico com colunas e frontão
-  const pi0 = 11.5, pi1 = 13.5, pj0 = j1, pj1 = 9.12;
+  const pi0 = 11.15, pi1 = 13.85, pj0 = j1, pj1 = 9.12;
   m.box(pi0 - 0.15, pj0, 0, pi1 + 0.15, pj1 + 0.12, 2, solid(P.stone, 0.15));
   m.box(pi0 - 0.3, pj1 + 0.12, 0, pi1 + 0.3, pj1 + 0.26, 1, solid(P.stone, 0.12));
-  for (const ci of [11.7, 12.2, 12.8, 13.3]) m.add(new Cyl(ci, pj1 - 0.1, 0.075, 2, 31, (h, px, py, o) => { o.c = pick(P.white, lum(h) + 0.12 + ((Math.round(h.u * 8) & 1) ? 0 : -0.04), px, py); }));
+  for (const ci of [11.4, 12.1, 12.9, 13.6]) m.add(new Cyl(ci, pj1 - 0.1, 0.075, 2, 31, (h, px, py, o) => { o.c = pick(P.white, lum(h) + 0.12 + ((Math.round(h.u * 8) & 1) ? 0 : -0.04), px, py); }));
   const ent: Sign = { text: 'PREFEITURA', face: 'L', vTop: 4.5, fg: hex('#3a2d4a'), bg: null };
   m.box(pi0, pj0, 31, pi1, pj1, 36, (h, px, py, o) => {
     if (h.face === 'T') { o.c = pick(P.white, 0.85, px, py); return; }
@@ -158,7 +158,7 @@ export function hospital(b: Building): Obj {
   const RED = hex('#e8343c');
   const signs: Sign[] = [
     { text: 'HOSPITAL', face: 'L', vTop: H - 2, fg: hex('#ffffff'), bg: P.red, glow: hex('#ff5a5a') },
-    { text: 'EMERGÊNCIA', face: 'R', vTop: 15.5, fg: hex('#ffffff'), bg: P.red, glow: hex('#ff4a4a') },
+    { text: 'EMERGÊNCIA', face: 'R', vTop: 25, fg: hex('#ffffff'), bg: P.red, glow: hex('#ff4a4a') },
   ];
   const ws = wallShader({
     wall: P.white, trim: P.teal, glass: P.glass, frame: P.white, grid, seed, lit: 0.85, colsL, colsR, baseH: 2, signs, bands: true,
@@ -240,7 +240,7 @@ export function mercado(b: Building): Obj {
   // marquise vermelha sobre a calçada
   m.box(i1, j0 + 0.1, 12, i1 + 0.22, j1 - 0.1, 14, (h, px, py, o) => { o.c = pick(P.red, lum(h) + 0.05, px, py); if (h.face === 'R') o.e = scale(hex('#ff6a4a'), 0.35); });
   // letreiro grande no topo
-  const sg: Sign = { text: 'MERCADINHO', face: 'R', vTop: 7, fg: hex('#ffffff'), bg: P.red, glow: hex('#ffd0c8') };
+  const sg: Sign = { text: 'MERCADO', face: 'R', vTop: 7, fg: hex('#ffffff'), bg: P.red, glow: hex('#ffd0c8') };
   m.box(i1 - 0.18, j0 + 0.2, H, i1 - 0.08, j1 - 0.2, H + 10, (h, px, py, o) => {
     if (h.face === 'T') { o.c = pick(P.red, 0.6, px, py); return; }
     if (signPixel(o, h, px, py, sg, Math.round((j1 - j0 - 0.4) * 16))) return;
@@ -390,15 +390,15 @@ export function obra(b: Building): { site: Obj; crane: Obj } {
   m.box(19.69, 18.3, 0, 19.75, 23.7, 8, fence);
   // contêiner do escritório da obra
   const sg: Sign = { text: 'ENGENHARIA', face: 'L', vTop: 11, fg: hex('#ffffff'), bg: null };
-  m.box(16.4, 22.5, 0, 18.1, 23.3, 12, (h, px, py, o) => {
+  m.box(16.3, 22.5, 0, 19.1, 23.3, 12, (h, px, py, o) => {
     if (h.face === 'T') { o.c = pick(P.blue, 0.7, px, py); return; }
-    if (signPixel(o, h, px, py, sg, 27)) return;
+    if (signPixel(o, h, px, py, sg, 45)) return;
     const c = col(h), r = row(h);
-    if (h.face === 'L' && c > 18 && c < 24 && r > 3 && r < 8) { o.c = pick(P.glass, 0.6, px, py); o.e = E.warm; return; }
+    if (h.face === 'L' && ((c > 3 && c < 9) || (c > 36 && c < 42)) && r > 2 && r < 7) { o.c = pick(P.glass, 0.6, px, py); o.e = E.warm; return; }
     o.c = pick(P.blue, lum(h) + ((c % 3) === 0 ? -0.08 : 0.04), px, py);
   });
   // areia e tijolos
-  m.add(new Dome(18.8, 23.0, -2, 0.45, (h, px, py, o) => { o.c = pick(P.sand, lum(h) + (hash2(px, py) - 0.5) * 0.15, px, py); }, 0));
+  m.add(new Dome(19.3, 22.35, -2, 0.32, (h, px, py, o) => { o.c = pick(P.sand, lum(h) + (hash2(px, py) - 0.5) * 0.15, px, py); }, 0));
   m.box(16.4, 18.3, 0, 16.9, 18.6, 4, (h, px, py, o) => { o.c = pick(P.brick, lum(h) + (((col(h) + (row(h) & 1) * 2) % 4) === 0 ? -0.15 : 0), px, py); });
   const siteLights: Light[] = [pool(17.8, 22.4, 1.6, hex('#e8f0ff'), 0.8), halo(17.6, 23.3, 9, 0.4, E.warm, 0.5)];
   const site = finish(b, m, [16.25, 18.3, 19.75, 23.72], siteLights, 50);

@@ -138,7 +138,20 @@ const mkDyn = (id: string, kind: string, fp: [number, number, number, number], s
 export interface DynParams { t: number; traffic: number; people: number; beacons?: boolean }
 export interface Reflection { x: number; y: number; len: number; color: U32 }
 
-export function dynamics(world: World, p: DynParams): { objs: Obj[]; refl: Reflection[] } {
+// vaga-lumes sobre a mata e os jardins
+import { tiles } from './map';
+import { N } from './iso';
+const FLIES = (() => {
+  const r = mulberry32(4242);
+  const spots: { i: number; j: number; ph: number; sp: number }[] = [];
+  for (let k = 0; k < tiles.length && spots.length < 90; k++) {
+    const t = tiles[k];
+    if ((t === 'forest' || t === 'garden') && r() < 0.32) spots.push({ i: (k % N) + r(), j: Math.floor(k / N) + r(), ph: r() * 6.28, sp: 0.6 + r() * 0.9 });
+  }
+  return spots;
+})()
+
+export function dynamics(world: World, p: DynParams): { objs: Obj[]; refl: Reflection[]; flies: { x: number; y: number; a: number }[] } {
   const objs: Obj[] = [];
   const t = p.t;
   // ---- carros
@@ -195,7 +208,13 @@ export function dynamics(world: World, p: DynParams): { objs: Obj[]; refl: Refle
     const x = sx(li, bj + 0.96), y = sy(li, bj + 0.96, -8) + 3;
     refl.push({ x, y, len: 12 + Math.round(3 * Math.sin(t * 2 + li)), color: E.lampWarm });
   }
-  return { objs, refl };
+  const flies = FLIES.map((f) => {
+    const i = f.i + Math.sin(t * 0.35 * f.sp + f.ph) * 0.35, j = f.j + Math.cos(t * 0.29 * f.sp + f.ph * 2) * 0.35;
+    const z = 8 + Math.sin(t * 0.8 * f.sp + f.ph) * 4;
+    const a = Math.pow(Math.max(0, Math.sin(t * 1.7 * f.sp + f.ph)), 3);
+    return { x: sx(i, j), y: sy(i, j, z), a };
+  });
+  return { objs, refl, flies };
 }
 
 function vehicleObj(id: string, kind: VKind, colorIdx: number, i: number, j: number, hd: string, t: number, parked = false): Obj {

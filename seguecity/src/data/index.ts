@@ -11,7 +11,7 @@ export interface Building {
   id: string; nome: string; tipo: string;
   posicao: { i: number; j: number }; tamanho: { w: number; d: number };
   status: Status; andares?: number; destaque?: boolean; placa?: string; cor?: string; toldo?: string;
-  frente?: 'i+' | 'j+' | 'i-' | 'j-'; bairro?: string; moradores?: number;
+  frente?: 'i+' | 'j+' | 'i-' | 'j-'; bairro?: string; moradores?: number; letreiro?: boolean;
 }
 export interface Job { id: string; nome: string; predio: string; vagas: number; ocupadas: number; roupa: { camisa: string; calca: string; extra?: string; eleicao?: boolean } }
 export interface Resident { id: string; nome: string; profissao: string; bairro: string; casa?: string; entrada: string; ficticio?: boolean; episodio?: number }

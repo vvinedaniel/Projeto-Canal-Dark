@@ -30,14 +30,17 @@ function times(s: string): number[] {
   const serveUrl = await bundle({ entryPoint: path.join(ROOT, 'src/index.ts') });
   const be = browserExecutable();
   const browser = await openBrowser('chrome', { browserExecutable: be, chromiumOptions: { gl: 'swangle' } });
+  const problems = new Set<string>();
+  const onBrowserLog = (l: { type: string; text: string }) => { if (l.text.includes('[placa]') && !problems.has(l.text)) { problems.add(l.text); console.warn(l.text); } };
   const composition = await selectComposition({ serveUrl, id, inputProps, puppeteerInstance: browser, browserExecutable: be });
   console.log(`bundle+select ${((Date.now() - t0) / 1000).toFixed(1)}s`);
   for (const t of times(spec)) {
     const frame = Math.min(composition.durationInFrames - 1, Math.round(t * composition.fps));
     const output = path.join(outDir, `${id}-${t.toFixed(2).padStart(6, '0')}.png`);
     const t1 = Date.now();
-    await renderStill({ composition, serveUrl, output, frame, inputProps, scale, imageFormat: 'png', puppeteerInstance: browser, browserExecutable: be });
+    await renderStill({ composition, serveUrl, output, frame, inputProps, scale, imageFormat: 'png', puppeteerInstance: browser, browserExecutable: be, onBrowserLog });
     console.log(`${output}  (${((Date.now() - t1) / 1000).toFixed(1)}s)`);
   }
   await browser.close({ silent: true });
+  if (args.includes('--strict') && problems.size) { console.error(`${problems.size} placa(s) não cabem`); process.exit(3); }
 })().catch((e) => { console.error(e); process.exit(1); });

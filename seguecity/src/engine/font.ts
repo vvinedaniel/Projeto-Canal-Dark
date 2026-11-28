@@ -23,7 +23,7 @@ const ACC: Record<string, [string, string]> = {
 };
 const MARK: Record<string, string[]> = { acute: ['..#', '.#.'], grave: ['#..', '.#.'], circ: ['.#.', '#.#'], tilde: ['.##', '##.'] };
 
-export interface TextMask { w: number; h: number; bits: Uint8Array; base: number }
+export interface TextMask { w: number; h: number; bits: Uint8Array; base: number; starts: Int16Array } // starts[col] = 1ª coluna da letra
 
 // Máscara do texto: h = 8 linhas (0-1 acentos, 2-6 letra, 7 cedilha); base = 2.
 export function textMask(text: string, spacing = 1): TextMask {
@@ -36,9 +36,11 @@ export function textMask(text: string, spacing = 1): TextMask {
   const w = glyphs.reduce((s, x) => s + x.g[0].length + spacing, 0) - spacing;
   const h = 8;
   const bits = new Uint8Array(Math.max(1, w * h));
+  const starts = new Int16Array(Math.max(1, w + 1));
   let x = 0;
   for (const { g, mark } of glyphs) {
     const gw = g[0].length;
+    for (let c = 0; c < gw + spacing && x + c < starts.length; c++) starts[x + c] = x;
     for (let r = 0; r < 5; r++) for (let c = 0; c < gw; c++) if (g[r][c] === '#') bits[(r + 2) * w + x + c] = 1;
     if (mark === 'ced') bits[7 * w + x + 1] = 1;
     else if (mark) {
@@ -48,7 +50,7 @@ export function textMask(text: string, spacing = 1): TextMask {
     }
     x += gw + spacing;
   }
-  return { w, h, bits, base: 2 };
+  return { w, h, bits, base: 2, starts };
 }
 
 export const maskAt = (m: TextMask, x: number, y: number) => (x >= 0 && y >= 0 && x < m.w && y < m.h ? m.bits[y * m.w + x] : 0);

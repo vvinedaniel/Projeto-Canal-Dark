@@ -129,3 +129,38 @@ export function glitch(c: Ctx, t: number, t0: number, dur = 0.25) {
   }
 }
 void smooth;
+
+// --- seleção de lote: contorno isométrico pulsante (cantos em px da camada)
+export function selection(c: Ctx, corners: { x: number; y: number }[], t: number, a: number, col = '#ffd84a') {
+  if (a <= 0.01) return;
+  c.globalAlpha = Math.min(1, a) * (0.75 + 0.25 * Math.sin(t * 10));
+  c.fillStyle = col;
+  for (let k = 0; k < 4; k++) {
+    const p = corners[k], q = corners[(k + 1) % 4];
+    const n = Math.max(1, Math.round(Math.hypot(q.x - p.x, q.y - p.y)));
+    for (let s = 0; s <= n; s++) {
+      if (((s + Math.floor(t * 12)) % 4) === 3) continue; // tracejado correndo
+      c.fillRect(Math.round(p.x + ((q.x - p.x) * s) / n), Math.round(p.y + ((q.y - p.y) * s) / n), 1, 1);
+    }
+  }
+  // cantos em destaque
+  for (const p of corners) c.fillRect(Math.round(p.x) - 1, Math.round(p.y) - 1, 3, 3);
+  c.globalAlpha = 1;
+}
+
+// --- transição de jogo: ladrilhos em diagonal cobrem a tela até o corte (tc) e descobrem depois
+export function tileWipe(c: Ctx, t: number, tc: number, half = 0.22, col = '#0b0d26', edge = '#7a4ee0') {
+  const dt = t - tc;
+  if (Math.abs(dt) > half) return;
+  const S = 18;
+  for (let y = 0; y < 480; y += S)
+    for (let x = 0; x < 270; x += S) {
+      const d = (x / 270 + y / 480) / 2; // 0..1 na diagonal
+      const f = dt < 0 ? clamp((dt + half) / half * 1.6 - d * 0.6) : 1 - clamp(dt / half * 1.6 - d * 0.6);
+      if (f <= 0) continue;
+      const s = Math.round(S * f);
+      const ox = x + (S - s) / 2, oy = y + (S - s) / 2;
+      c.fillStyle = col; c.fillRect(Math.round(ox), Math.round(oy), s, s);
+      if (s > 3) { c.fillStyle = edge; c.fillRect(Math.round(ox), Math.round(oy), s, 1); c.fillRect(Math.round(ox), Math.round(oy), 1, s); }
+    }
+}

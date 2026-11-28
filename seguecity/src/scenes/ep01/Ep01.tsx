@@ -185,7 +185,7 @@ export const Ep01: React.FC = () => {
 
   const night = 1;
   const civic = 1;
-  const params = { t, cam, night, levels: { civic, home: 1, shop: 1, street: 1 }, homeFrac, dyn, refl: d.refl, overrides, reveal, hidden, bloom: 0.8 };
+  const params = { t, cam, night, levels: { civic, home: 1, shop: 1, street: 1 }, homeFrac, dyn, refl: d.refl, fireflies: d.flies, overrides, reveal, hidden, bloom: 0.8 };
 
   // ---------------- âncoras na tela ----------------
   const pEsc = anchorOf('escola'), pHosp = anchorOf('hospital'), pPref = anchorOf('prefeitura');

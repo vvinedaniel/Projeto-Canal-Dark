@@ -263,17 +263,18 @@ export function popcorn(i: number, j: number): Obj {
 // --- placa "EM BREVE" em lote planejado ---
 export function lotSign(i: number, j: number): Obj {
   const m = new Model();
-  m.add(new Cyl(i - 0.36, j, 0.025, 0, 12, solid(P.wood, 0.1)));
-  m.add(new Cyl(i + 0.36, j, 0.025, 0, 12, solid(P.wood, 0.1)));
+  const hw = 0.7, bcols = Math.round(hw * 2 * 16);
+  m.add(new Cyl(i - hw + 0.12, j, 0.025, 0, 12, solid(P.wood, 0.1)));
+  m.add(new Cyl(i + hw - 0.12, j, 0.025, 0, 12, solid(P.wood, 0.1)));
   const l1: Sign = { text: 'EM', face: 'L', vTop: 15.5, fg: hex('#1b1b24'), bg: null };
   const l2: Sign = { text: 'BREVE', face: 'L', vTop: 8.5, fg: hex('#1b1b24'), bg: null };
-  m.box(i - 0.48, j - 0.01, 10, i + 0.48, j + 0.03, 27, (h, px, py, o) => {
+  m.box(i - hw, j - 0.01, 10, i + hw, j + 0.03, 27, (h, px, py, o) => {
     if (h.face === 'T') { o.c = pick(P.white, 0.8, px, py); return; }
-    if (signPixel(o, h, px, py, l1, 15) || signPixel(o, h, px, py, l2, 15)) return;
+    if (signPixel(o, h, px, py, l1, bcols) || signPixel(o, h, px, py, l2, bcols)) return;
     const r = row(h), c = col(h);
-    o.c = r === 0 || r === 16 || c === 0 || c === 14 ? pick(P.orange, lum(h), px, py) : pick(P.yellow, lum(h) + 0.18, px, py);
+    o.c = r === 0 || r === 16 || c === 0 || c === bcols - 1 ? pick(P.orange, lum(h), px, py) : pick(P.yellow, lum(h) + 0.18, px, py);
   });
-  return mkObj('placa', [i - 0.48, j - 0.02, i + 0.48, j + 0.04], m.render(), [pool(i, j + 0.3, 0.7, E.warm, 0.5)]);
+  return mkObj('placa', [i - hw, j - 0.02, i + hw, j + 0.04], m.render(), [pool(i, j + 0.3, 0.7, E.warm, 0.5)]);
 }
 
 // --- mastro (bandeira é dinâmica) ---
@@ -285,3 +286,29 @@ export function flagpole(i: number, j: number, H = 40): Obj {
 }
 
 void Poly; void mix; void E;
+
+// --- varal de lâmpadas coloridas da praça: fios saindo dos postes até um mastro sobre a fonte
+export function festoon(ci: number, cj: number, posts: [number, number][], postZ: number, topZ: number): Obj {
+  const pts: { x: number; y: number; k: number }[] = [];
+  const wires: { x: number; y: number }[] = [];
+  posts.forEach(([pi, pj], w) => {
+    const steps = 60;
+    for (let s = 0; s <= steps; s++) {
+      const u = s / steps;
+      const i = pi + (ci - pi) * u, j = pj + (cj - pj) * u;
+      const z = postZ + (topZ - postZ) * u - 9 * 4 * u * (1 - u);
+      const x = Math.round(sx(i, j)), y = Math.round(sy(i, j, z));
+      wires.push({ x, y });
+      if (s % 5 === 2) pts.push({ x, y: y + 1, k: (s + w * 3) % 4 });
+    }
+  });
+  const xs = wires.map((p) => p.x), ys = wires.map((p) => p.y);
+  const x0 = Math.min(...xs) - 2, y0 = Math.min(...ys) - 2, x1 = Math.max(...xs) + 3, y1 = Math.max(...ys) + 4;
+  const alb = new PB(x1 - x0, y1 - y0, x0, y0), emi = new PB(x1 - x0, y1 - y0, x0, y0);
+  const wire = hex('#1a1622');
+  for (const p of wires) alb.set(p.x, p.y, wire);
+  const COLS = [hex('#ffd34a'), hex('#ff6aa8'), hex('#5af2ff'), hex('#7dff8a')];
+  for (const p of pts) { alb.set(p.x, p.y, COLS[p.k]); emi.set(p.x, p.y, COLS[p.k]); alb.set(p.x, p.y + 1, scale(COLS[p.k], 0.6)); emi.set(p.x, p.y + 1, scale(COLS[p.k], 0.5)); }
+  const lights: Light[] = [halo(ci, cj, topZ - 6, 1.6, hex('#ffcf8a'), 0.22)];
+  return mkObj('varal', [ci + 2.38, cj + 2.38, ci + 2.42, cj + 2.42], toSprite(alb, emi), lights, 'civic');
+}

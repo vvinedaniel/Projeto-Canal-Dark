@@ -6,7 +6,7 @@ import { tileAt, isRoad } from './map';
 import { hash2, mulberry32 } from './rng';
 import { apartment, house, shop } from './sprites/buildings';
 import { prefeitura, escola, hospital, mercado, delegacia, oficina, terminal, obra } from './sprites/civic';
-import { tree, lamp, bench, fountain, bridge, trafficLight, busStop, newsstand, popcorn, lotSign, flagpole, type TreeKind } from './sprites/props';
+import { tree, lamp, bench, fountain, bridge, trafficLight, busStop, newsstand, popcorn, lotSign, flagpole, festoon, type TreeKind } from './sprites/props';
 import type { Obj } from './types';
 
 export interface World {
@@ -20,6 +20,7 @@ export interface World {
   flags: { x: number; y: number; big: boolean; i: number; j: number }[];
   craneTop: { x: number; y: number };
   craneMast: { i: number; j: number };
+  fallBottom: { x: number; y: number };
   buildTimeMs: number;
 }
 
@@ -134,6 +135,7 @@ export function getWorld(): World {
   for (const [di, dj, al] of [[0, -1.7, 'i'], [0, 1.7, 'i'], [-1.7, 0, 'j'], [1.7, 0, 'j']] as const) objects.push(bench(FOUNTAIN.i + di, FOUNTAIN.j + dj, al));
   for (const [ci, cj, kd] of [[10.6, 11.6, 'ipeY'], [14.4, 11.6, 'ipeP'], [10.6, 16.4, 'ipeP'], [14.4, 16.4, 'ipeY']] as const) objects.push(tree(kd, ci, cj, Math.round(ci * 100 + cj)));
   for (const [ci, cj] of [[11.3, 12.3], [13.7, 12.3], [11.3, 14.7], [13.7, 14.7], [12.5, 11.45], [12.5, 15.6]]) objects.push(lamp(ci, cj, 'plaza'));
+  objects.push(festoon(FOUNTAIN.i, FOUNTAIN.j, [[11.3, 12.3], [13.7, 12.3], [11.3, 14.7], [13.7, 14.7], [12.5, 11.45], [12.5, 15.6]], 20, 27));
   objects.push(popcorn(14.1, 15.3));
   objects.push(newsstand(10.7, 15.35));
   // jardins da prefeitura
@@ -162,7 +164,10 @@ export function getWorld(): World {
     { x: sx(10.85, 9.05), y: sy(10.85, 9.05, 44), big: false, i: 10.85, j: 9.05 },
     { x: sx(14.15, 9.05), y: sy(14.15, 9.05, 44), big: false, i: 14.15, j: 9.05 },
   ];
-  cached = { OX, OY, ground, water, waterRows, fall: ground.fall, objects, byId, fountainJet: f.jetBase, signals, flags, craneTop, craneMast, buildTimeMs: performance.now() - t0 };
+  let fx = 0, fy = 0, fn = 0;
+  for (let q = 0; q < ground.fall.length; q += 3) { fx += ground.fall[q]; fy = Math.max(fy, ground.fall[q + 1]); fn++; }
+  const fallBottom = { x: fn ? fx / fn : 0, y: fy };
+  cached = { OX, OY, ground, water, waterRows, fall: ground.fall, objects, byId, fountainJet: f.jetBase, signals, flags, craneTop, craneMast, fallBottom, buildTimeMs: performance.now() - t0 };
   return cached;
 }
 

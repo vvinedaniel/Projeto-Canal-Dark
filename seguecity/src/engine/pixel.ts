@@ -4,7 +4,8 @@ import type { U32 } from './color';
 export class PB {
   data: Uint32Array;
   constructor(public w: number, public h: number, public ox = 0, public oy = 0) {
-    this.data = new Uint32Array(Math.max(1, w * h));
+    this.w = Math.max(1, Math.round(w)); this.h = Math.max(1, Math.round(h));
+    this.data = new Uint32Array(this.w * this.h);
   }
   inside(x: number, y: number) {
     const lx = x - this.ox, ly = y - this.oy;

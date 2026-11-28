@@ -34,3 +34,11 @@ export function cameraAt(keys: Key[], t: number, drift = 1): Cam {
 
 // mundo (px) -> tela (px de saída)
 export const toScreen = (cam: Cam, wx: number, wy: number, W = 1080, H = 1920) => ({ x: (wx - cam.x) * cam.zoom + W / 2, y: (wy - cam.y) * cam.zoom + H / 2 });
+
+// Planos com cortes: cada plano é uma lista de quadros-chave; o corte acontece no início do plano seguinte.
+export function cameraCuts(shots: Key[][], t: number, drift = 1): Cam {
+  let k = 0;
+  while (k < shots.length - 1 && t >= shots[k + 1][0].t) k++;
+  return cameraAt(shots[k], t, drift);
+}
+export const cutTimes = (shots: Key[][]) => shots.slice(1).map((s) => s[0].t);

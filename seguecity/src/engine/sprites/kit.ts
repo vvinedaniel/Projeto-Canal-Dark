@@ -60,13 +60,25 @@ export function windowPixel(o: { c: U32; e: U32 }, h: Hit, px: number, py: numbe
 
 // Letreiro em uma face: retorna true se pintou o pixel.
 export interface Sign { text: string; face: string; x0?: number; vTop: number; fg: U32; bg?: Ramp | null; glow?: U32 | null; pad?: number; mask?: TextMask }
+// Placas que não cabem na face apareceriam cortadas (erro de ortografia na tela): avisamos no console
+// (scripts/stills.ts mostra) e a checagem `npm run check:signs` falha.
+export const signProblems = new Set<string>();
+export function signFits(text: string, cols: number) { return textMask(text).w <= cols; }
 export function signPixel(o: { c: U32; e: U32 }, h: Hit, px: number, py: number, s: Sign, cols: number): boolean {
   if (h.face !== s.face) return false;
   const m = (s.mask ??= textMask(s.text));
   const pad = s.pad ?? 2;
   const x0 = s.x0 ?? Math.floor((cols - m.w) / 2);
+  if ((x0 < 0 || x0 + m.w > cols) && !signProblems.has(s.text)) {
+    signProblems.add(s.text);
+    console.warn(`[placa] "${s.text}" não cabe: ${m.w}px de texto em ${cols}px de fachada`);
+  }
   const c = col(h) - x0;
-  const r = Math.floor(s.vTop - h.v);
+  // faces laterais são inclinadas 2:1; para a letra não deformar, cada letra fica em pé e o degrau
+  // da isometria é aplicado letra a letra (meia linha por coluna desde o início da letra)
+  const slope = h.face === 'L' || (h.face === 'GE' && h.ny > 0.5) ? 0.5 : h.face === 'R' || h.face === 'GE' ? -0.5 : 0;
+  const gx = c >= 0 && c < m.w ? m.starts[c] : c;
+  const r = Math.floor(s.vTop - (h.v - (c - gx) * slope));
   if (c < -pad || c >= m.w + pad || r < -1 || r >= m.h) return false;
   if (maskAt(m, c, r)) { o.c = s.fg; if (s.glow) o.e = s.glow; return true; }
   if (s.bg) { o.c = pick(s.bg, lum(h) - 0.1, px, py); return true; }
