@@ -8,8 +8,10 @@ import type { Appearance, HairStyle } from '../characters';
 
 export interface Look {
   skin: U32; hair: U32; shirt: U32; pants: U32; shoes: U32;
-  hat?: 'capacete' | 'bone' | 'quepe' | 'touca' | 'chef' | null; coat?: U32 | null; long?: boolean;
+  hat?: 'capacete' | 'bone' | 'quepe' | 'touca' | 'chef' | 'chapeu' | null; coat?: U32 | null; long?: boolean;
   hairStyle?: HairStyle; broad?: boolean; beard?: boolean; glasses?: boolean; vest?: U32 | null; apron?: U32 | null; tool?: U32 | null;
+  tie?: boolean; // terno com gravata (advocacia, empresários)
+  badge?: boolean; // distintivo dourado de morador fundador
 }
 export type Pose = 'walk' | 'idle' | 'wave' | 'work';
 
@@ -28,13 +30,14 @@ export function randomLook(r: () => number): Look {
 // aparência persistente (residents.json) → visual do sprite
 export function lookOf(a: Appearance): Look {
   const ex = a.roupa.extra ?? '';
-  const hat = ({ capacete: 'capacete', quepe: 'quepe', touca: 'touca', bone: 'bone', 'chapeu-chef': 'chef' } as Record<string, Look['hat']>)[ex] ?? null;
+  const hat = ({ capacete: 'capacete', quepe: 'quepe', touca: 'touca', bone: 'bone', 'chapeu-chef': 'chef', chapeu: 'chapeu' } as Record<string, Look['hat']>)[ex] ?? null;
   return {
     skin: hex(a.pele), hair: hex(a.cabelo.cor.slice(0, 7)), shirt: hex(a.roupa.camisa), pants: hex(a.roupa.calca), shoes: hex(a.roupa.sapato),
     hat, coat: ex === 'jaleco' ? hex('#f2f4f7') : null, long: a.cabelo.estilo === 'longo', hairStyle: a.cabelo.estilo,
     broad: a.corpo === 'forte', beard: a.barba, glasses: a.oculos,
     vest: ex === 'capacete' ? hex('#ff8a1a') : null, apron: ex === 'avental' ? hex('#f4efe6') : null,
     tool: ex === 'macacao' ? hex('#cfd6e6') : ex === 'livro' ? hex('#c4553f') : null,
+    tie: ex === 'gravata', badge: a.insignia === 'fundador',
   };
 }
 
@@ -71,6 +74,8 @@ export function personSprite(look: Look, dir: number, frame: number, key: string
   if (look.coat) { set(0, py(5), look.shirt); set(0, py(6), look.shirt); }
   if (look.coat && look.long) { set(-1, py(9), look.coat); set(1, py(9), shade(look.coat)); }
   if (look.vest) { set(-1, py(6), look.vest); set(1, py(6), shade(look.vest)); set(-1, py(7), hex('#f2f2a0')); set(1, py(7), hex('#d8d890')); set(-1, py(8), look.vest); }
+  if (look.tie && !back) { set(0, py(5), hex('#f2f2f2')); set(0, py(6), hex('#c8303a')); set(0, py(7), hex('#a82830')); }
+  if (look.badge && !back) set(x0, py(6), hex('#ffd84a')); // distintivo dourado no peito
   if (look.apron && !back) { set(0, py(6), look.apron); set(0, py(7), look.apron); set(0, py(8), look.apron); set(-1, py(8), look.apron); }
   // braços: caminhada balança; aceno levanta um braço; trabalho alterna o braço com ferramenta
   const armX = x0 - 1;
@@ -118,6 +123,7 @@ export function personSprite(look: Look, dir: number, frame: number, key: string
   if (look.hat === 'bone') { for (let x = -1; x <= 2; x++) set(x, py(0), hex('#2a5ad2')); set(back ? -2 : 2, py(1), hex('#2a5ad2')); }
   if (look.hat === 'quepe') { for (let x = -2; x <= 2; x++) set(x, py(0), hex('#1e2a4a')); set(0, py(-1), hex('#1e2a4a')); set(0, py(0), hex('#f2c84a')); }
   if (look.hat === 'touca') { for (let x = -1; x <= 1; x++) { set(x, py(0), hex('#5fc2b5')); set(x, py(-1), hex('#5fc2b5')); } }
+  if (look.hat === 'chapeu') { for (let x = -3; x <= 3; x++) set(x, py(0), hex('#b8894a')); for (let x = -1; x <= 1; x++) set(x, py(-1), hex('#d8b070')); }
   if (look.hat === 'chef') { for (let x = -1; x <= 1; x++) { set(x, py(0), hex('#ffffff')); set(x, py(-1), hex('#ffffff')); set(x, py(-2), hex('#f2f2f2')); } }
   let spr = toSprite(pb, null);
   if (scaleUp > 1) spr = upscale(spr, scaleUp);

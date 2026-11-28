@@ -1,1 +1,372 @@
-[]
+[
+  {
+    "id": "m0001",
+    "nome": "Mateus",
+    "profissao": "medico",
+    "titulo": "Médico",
+    "trabalho": "hospital",
+    "bairro": "Vila Nova",
+    "casa": "casa-01",
+    "entrada": "2026-11-28",
+    "episodio": 2,
+    "fonte": "comentário no TikTok",
+    "ordemConfirmada": true,
+    "aparencia": {
+      "pele": "#c08457",
+      "cabelo": {
+        "estilo": "curto",
+        "cor": "#2e1d16"
+      },
+      "corpo": "medio",
+      "barba": true,
+      "oculos": false,
+      "olhos": "#3a5a2a",
+      "roupa": {
+        "camisa": "#f2f4f7",
+        "calca": "#4f7fb8",
+        "sapato": "#e8e8f0",
+        "extra": "jaleco"
+      },
+      "insignia": "fundador"
+    },
+    "ordem": 1,
+    "fundador": true,
+    "titulos": [
+      "MORADOR FUNDADOR"
+    ],
+    "distintivo": "fundador-ouro"
+  },
+  {
+    "id": "m0002",
+    "nome": "Davi",
+    "profissao": "policial",
+    "titulo": "Policial",
+    "trabalho": "delegacia",
+    "bairro": "Vila Nova",
+    "casa": "casa-02",
+    "entrada": "2026-11-28",
+    "episodio": 2,
+    "fonte": "comentário no TikTok",
+    "ordemConfirmada": false,
+    "aparencia": {
+      "pele": "#eebd94",
+      "cabelo": {
+        "estilo": "curto",
+        "cor": "#4a2d1c"
+      },
+      "corpo": "forte",
+      "barba": false,
+      "oculos": false,
+      "olhos": "#3a2a1a",
+      "roupa": {
+        "camisa": "#2c4c88",
+        "calca": "#1e2a4a",
+        "sapato": "#1a1a20",
+        "extra": "quepe"
+      },
+      "insignia": "fundador"
+    },
+    "ordem": 2,
+    "fundador": true,
+    "titulos": [
+      "MORADOR FUNDADOR"
+    ],
+    "distintivo": "fundador-ouro"
+  },
+  {
+    "id": "m0003",
+    "nome": "Gabriel",
+    "profissao": "mecanico",
+    "titulo": "Mecânico",
+    "trabalho": "oficina",
+    "bairro": "Vila Nova",
+    "casa": "casa-03",
+    "entrada": "2026-11-28",
+    "episodio": 2,
+    "fonte": "comentário no TikTok",
+    "ordemConfirmada": false,
+    "aparencia": {
+      "pele": "#f6d3b3",
+      "cabelo": {
+        "estilo": "franja",
+        "cor": "#b04a2a"
+      },
+      "corpo": "medio",
+      "barba": false,
+      "oculos": false,
+      "olhos": "#3a5a2a",
+      "roupa": {
+        "camisa": "#3a5ea8",
+        "calca": "#3a5ea8",
+        "sapato": "#1a1a20",
+        "extra": "macacao"
+      },
+      "insignia": "fundador"
+    },
+    "ordem": 3,
+    "fundador": true,
+    "titulos": [
+      "MORADOR FUNDADOR"
+    ],
+    "distintivo": "fundador-ouro"
+  },
+  {
+    "id": "m0004",
+    "nome": "Juan",
+    "profissao": "mecanico",
+    "titulo": "Mecânico",
+    "trabalho": "oficina",
+    "bairro": "Vila Nova",
+    "casa": "casa-04",
+    "entrada": "2026-11-28",
+    "episodio": 2,
+    "fonte": "comentário no TikTok",
+    "ordemConfirmada": false,
+    "aparencia": {
+      "pele": "#9c6440",
+      "cabelo": {
+        "estilo": "careca",
+        "cor": "#00000000"
+      },
+      "corpo": "forte",
+      "barba": true,
+      "oculos": false,
+      "olhos": "#2a4a6a",
+      "roupa": {
+        "camisa": "#3a5ea8",
+        "calca": "#3a5ea8",
+        "sapato": "#4a2a1a",
+        "extra": "macacao"
+      },
+      "insignia": "fundador"
+    },
+    "ordem": 4,
+    "fundador": true,
+    "titulos": [
+      "MORADOR FUNDADOR"
+    ],
+    "distintivo": "fundador-ouro"
+  },
+  {
+    "id": "m0005",
+    "nome": "Mari",
+    "profissao": "neurocirurgiao",
+    "titulo": "Neurocirurgiã",
+    "trabalho": "hospital",
+    "bairro": "Vila Nova",
+    "casa": "casa-05",
+    "entrada": "2026-11-28",
+    "episodio": 2,
+    "fonte": "comentário no TikTok",
+    "ordemConfirmada": false,
+    "aparencia": {
+      "pele": "#7a4a2e",
+      "cabelo": {
+        "estilo": "longo",
+        "cor": "#1d1416"
+      },
+      "corpo": "magro",
+      "barba": false,
+      "oculos": true,
+      "olhos": "#2a4a6a",
+      "roupa": {
+        "camisa": "#2f7f9a",
+        "calca": "#2f7f9a",
+        "sapato": "#1a1a20",
+        "extra": "touca"
+      },
+      "insignia": "fundador"
+    },
+    "ordem": 5,
+    "fundador": true,
+    "titulos": [
+      "MORADOR FUNDADOR"
+    ],
+    "distintivo": "fundador-ouro"
+  },
+  {
+    "id": "m0006",
+    "nome": "Roberto",
+    "profissao": "coveiro",
+    "titulo": "Coveiro",
+    "trabalho": "cemiterio",
+    "bairro": "Vila Nova",
+    "casa": "casa-06",
+    "entrada": "2026-11-28",
+    "episodio": 2,
+    "fonte": "comentário no TikTok",
+    "ordemConfirmada": false,
+    "aparencia": {
+      "pele": "#d9a273",
+      "cabelo": {
+        "estilo": "curto",
+        "cor": "#8a8a92"
+      },
+      "corpo": "magro",
+      "barba": true,
+      "oculos": false,
+      "olhos": "#3a2a1a",
+      "roupa": {
+        "camisa": "#5b5f6b",
+        "calca": "#3a3326",
+        "sapato": "#e8e8f0",
+        "extra": "chapeu"
+      },
+      "insignia": "fundador"
+    },
+    "ordem": 6,
+    "fundador": true,
+    "titulos": [
+      "MORADOR FUNDADOR"
+    ],
+    "distintivo": "fundador-ouro"
+  },
+  {
+    "id": "m0007",
+    "nome": "Alicia",
+    "profissao": "empresario",
+    "titulo": "Empresária",
+    "trabalho": "escritorio-1",
+    "bairro": "Vila Nova",
+    "casa": "casa-07",
+    "entrada": "2026-11-28",
+    "episodio": 2,
+    "fonte": "comentário no TikTok",
+    "ordemConfirmada": false,
+    "aparencia": {
+      "pele": "#c08457",
+      "cabelo": {
+        "estilo": "black",
+        "cor": "#2e1d16"
+      },
+      "corpo": "medio",
+      "barba": false,
+      "oculos": false,
+      "olhos": "#3a5a2a",
+      "roupa": {
+        "camisa": "#3b2f4a",
+        "calca": "#2a2433",
+        "sapato": "#4a2a1a",
+        "extra": "gravata"
+      },
+      "insignia": "fundador"
+    },
+    "ordem": 7,
+    "fundador": true,
+    "titulos": [
+      "MORADOR FUNDADOR"
+    ],
+    "distintivo": "fundador-ouro"
+  },
+  {
+    "id": "m0008",
+    "nome": "Gabrielly",
+    "profissao": "advogado",
+    "titulo": "Advogada",
+    "trabalho": "futuro-3",
+    "bairro": "Vila Nova",
+    "casa": "casa-08",
+    "entrada": "2026-11-28",
+    "episodio": 2,
+    "fonte": "comentário no TikTok",
+    "ordemConfirmada": false,
+    "aparencia": {
+      "pele": "#eebd94",
+      "cabelo": {
+        "estilo": "rabo",
+        "cor": "#d8b25a"
+      },
+      "corpo": "magro",
+      "barba": false,
+      "oculos": false,
+      "olhos": "#3a5a2a",
+      "roupa": {
+        "camisa": "#1f2a44",
+        "calca": "#1f2a44",
+        "sapato": "#1a1a20",
+        "extra": "gravata"
+      },
+      "insignia": "fundador"
+    },
+    "ordem": 8,
+    "fundador": true,
+    "titulos": [
+      "MORADOR FUNDADOR"
+    ],
+    "distintivo": "fundador-ouro"
+  },
+  {
+    "id": "m0009",
+    "nome": "Jorge",
+    "profissao": "comerciante",
+    "titulo": "Comerciante",
+    "trabalho": "mercado",
+    "bairro": "Vila Nova",
+    "casa": "casa-09",
+    "entrada": "2026-11-28",
+    "episodio": 2,
+    "fonte": "comentário no TikTok",
+    "ordemConfirmada": false,
+    "aparencia": {
+      "pele": "#5b3420",
+      "cabelo": {
+        "estilo": "cacheado",
+        "cor": "#1d1416"
+      },
+      "corpo": "forte",
+      "barba": true,
+      "oculos": false,
+      "olhos": "#2a1c14",
+      "roupa": {
+        "camisa": "#e8b13a",
+        "calca": "#3c3f52",
+        "sapato": "#1a1a20",
+        "extra": "avental"
+      },
+      "insignia": "fundador"
+    },
+    "ordem": 9,
+    "fundador": true,
+    "titulos": [
+      "MORADOR FUNDADOR"
+    ],
+    "distintivo": "fundador-ouro"
+  },
+  {
+    "id": "m0010",
+    "nome": "Muri",
+    "profissao": "empresario",
+    "titulo": "Empresário",
+    "trabalho": "escritorio-1",
+    "bairro": "Vila Nova",
+    "casa": "casa-10",
+    "entrada": "2026-11-28",
+    "episodio": 2,
+    "fonte": "comentário no TikTok",
+    "ordemConfirmada": false,
+    "aparencia": {
+      "pele": "#f6d3b3",
+      "cabelo": {
+        "estilo": "cacheado",
+        "cor": "#6b3f22"
+      },
+      "corpo": "medio",
+      "barba": false,
+      "oculos": true,
+      "olhos": "#3a5a2a",
+      "roupa": {
+        "camisa": "#3b2f4a",
+        "calca": "#2a2433",
+        "sapato": "#e8e8f0",
+        "extra": "gravata"
+      },
+      "insignia": "fundador"
+    },
+    "ordem": 10,
+    "fundador": true,
+    "titulos": [
+      "MORADOR FUNDADOR"
+    ],
+    "distintivo": "fundador-ouro"
+  }
+]

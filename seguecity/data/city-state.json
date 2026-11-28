@@ -1,17 +1,17 @@
 {
   "nome": "SegueCity",
   "slogan": "Você segue. Você mora. Você decide.",
-  "dia": 1,
-  "moradores": 0,
+  "dia": 2,
+  "moradores": 10,
   "empregos": {
-    "total": 48,
-    "ocupados": 0
+    "total": 58,
+    "ocupados": 10
   },
   "casas": {
     "total": 24,
-    "ocupadas": 0
+    "ocupadas": 10
   },
-  "status": "cidade_pronta_aguardando_moradores",
+  "status": "cidade_com_moradores",
   "evolucao": {
     "nivel": 1,
     "nome": "Vila recém-construída",
@@ -22,26 +22,43 @@
       "id": "primeiro-morador",
       "nome": "Primeiro morador",
       "alvo": 1,
-      "concluida": false
+      "concluida": true,
+      "base": "moradores"
     },
     {
       "id": "fundadores",
       "nome": "Fundadores da cidade",
       "alvo": 10,
-      "concluida": false
+      "concluida": true,
+      "base": "moradores"
     },
     {
       "id": "novo-bairro",
       "nome": "Novo bairro",
       "alvo": 50,
-      "concluida": false
+      "concluida": false,
+      "base": "moradores"
     },
     {
       "id": "eleicao",
       "nome": "Eleição para prefeito",
       "alvo": 100,
-      "concluida": false
+      "concluida": false,
+      "base": "seguidores"
     }
   ],
-  "atualizadoEm": "2026-11-28"
+  "atualizadoEm": "2026-11-28",
+  "seguidores": {
+    "valor": null,
+    "fonte": "TikTok (número informado pelo dono do canal)",
+    "atualizadoEm": null
+  },
+  "conquistas": [
+    {
+      "id": "primeiros-10-moradores",
+      "nome": "Os 10 Moradores Fundadores",
+      "dia": 2,
+      "data": "2026-11-28"
+    }
+  ]
 }

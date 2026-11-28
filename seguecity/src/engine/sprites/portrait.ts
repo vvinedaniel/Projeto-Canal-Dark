@@ -51,6 +51,11 @@ export function portraitCanvas(a: Appearance, key: string, blink = false): Offsc
   if (ex === 'quepe' || ex === 'cracha') { set(26, 40, hex('#f2c84a')); set(27, 40, hex('#f2c84a')); set(26, 41, hex('#f2c84a')); set(27, 41, hex('#d8a83a')); }
   if (ex === 'gravata' || ex === 'faixa') { for (let y = 35; y < H; y++) { set(19, y, hex('#c8303a')); set(20, y, hex('#a82830')); } }
   if (ex === 'livro') { for (let y = 40; y < H; y++) for (let x = 27; x < 35; x++) set(x, y, x === 27 ? hex('#f2f2f2') : hex('#c4553f')); }
+  // distintivo dourado de MORADOR FUNDADOR: estrela no peito (lado esquerdo da imagem)
+  if (a.insignia === 'fundador') {
+    const g = hex('#ffd84a'), gd = hex('#c8901a'), gl = hex('#fff3a0');
+    for (const [x, y, c] of [[12, 39, g], [11, 40, g], [12, 40, gl], [13, 40, g], [12, 41, gd], [10, 40, gd], [14, 40, gd], [11, 42, gd], [13, 42, gd]] as [number, number, U32][]) set(x, y, c);
+  }
   // cabeça
   ell(20, 20, 9, 11, (x, y, dx) => set(x, y, dx > 0.45 ? skinD : dx < -0.5 ? skinL : skin));
   // orelhas

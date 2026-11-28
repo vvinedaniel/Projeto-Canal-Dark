@@ -1,0 +1,964 @@
+{
+  "snapshot": "SegueCity — estado em RASCUNHO (aguardando aprovação) do Dia 02",
+  "dia": 2,
+  "registradoEm": "2026-11-28T18:05:18.592Z",
+  "episodio": [],
+  "cidade": {
+    "nome": "SegueCity",
+    "slogan": "Você segue. Você mora. Você decide.",
+    "status": "cidade_com_moradores",
+    "evolucao": {
+      "nivel": 1,
+      "nome": "Vila recém-construída",
+      "proximaMeta": "Primeiro morador"
+    },
+    "moradores": 10,
+    "seguidores": {
+      "valor": null,
+      "fonte": "TikTok (número informado pelo dono do canal)",
+      "atualizadoEm": null
+    },
+    "casas": {
+      "total": 24,
+      "ocupadas": 10
+    },
+    "empregos": {
+      "total": 58,
+      "ocupados": 10
+    },
+    "metas": [
+      {
+        "id": "primeiro-morador",
+        "nome": "Primeiro morador",
+        "alvo": 1,
+        "concluida": true,
+        "base": "moradores"
+      },
+      {
+        "id": "fundadores",
+        "nome": "Fundadores da cidade",
+        "alvo": 10,
+        "concluida": true,
+        "base": "moradores"
+      },
+      {
+        "id": "novo-bairro",
+        "nome": "Novo bairro",
+        "alvo": 50,
+        "concluida": false,
+        "base": "moradores"
+      },
+      {
+        "id": "eleicao",
+        "nome": "Eleição para prefeito",
+        "alvo": 100,
+        "concluida": false,
+        "base": "seguidores"
+      }
+    ],
+    "conquistas": [
+      {
+        "id": "primeiros-10-moradores",
+        "nome": "Os 10 Moradores Fundadores",
+        "dia": 2,
+        "data": "2026-11-28"
+      }
+    ]
+  },
+  "predios": {
+    "prontos": 41,
+    "emObra": 1,
+    "planejados": 5,
+    "porTipo": {
+      "prefeitura": 1,
+      "escola": 1,
+      "hospital": 1,
+      "mercado": 1,
+      "loja": 5,
+      "apartamento": 7,
+      "escritorio": 1,
+      "delegacia": 1,
+      "oficina": 1,
+      "terminal": 1,
+      "obra": 1,
+      "casa": 24,
+      "advocacia": 1,
+      "cemiterio": 1
+    },
+    "lista": [
+      {
+        "id": "prefeitura",
+        "tipo": "prefeitura",
+        "nome": "Prefeitura",
+        "status": "pronto",
+        "posicao": {
+          "i": 10,
+          "j": 5
+        },
+        "moradores": 0
+      },
+      {
+        "id": "escola",
+        "tipo": "escola",
+        "nome": "Escola Municipal",
+        "status": "pronto",
+        "posicao": {
+          "i": 4,
+          "j": 4
+        },
+        "moradores": 0
+      },
+      {
+        "id": "hospital",
+        "tipo": "hospital",
+        "nome": "Hospital",
+        "status": "pronto",
+        "posicao": {
+          "i": 16,
+          "j": 4
+        },
+        "moradores": 0
+      },
+      {
+        "id": "mercado",
+        "tipo": "mercado",
+        "nome": "Mercadinho",
+        "status": "pronto",
+        "posicao": {
+          "i": 16,
+          "j": 11
+        },
+        "moradores": 0
+      },
+      {
+        "id": "padaria",
+        "tipo": "loja",
+        "nome": "Padaria",
+        "status": "pronto",
+        "posicao": {
+          "i": 16,
+          "j": 14
+        },
+        "moradores": 0
+      },
+      {
+        "id": "farmacia",
+        "tipo": "loja",
+        "nome": "Farmácia",
+        "status": "pronto",
+        "posicao": {
+          "i": 18,
+          "j": 14
+        },
+        "moradores": 0
+      },
+      {
+        "id": "torre-1",
+        "tipo": "apartamento",
+        "nome": "Torre Ipê",
+        "status": "pronto",
+        "posicao": {
+          "i": 4,
+          "j": 11
+        },
+        "moradores": 0
+      },
+      {
+        "id": "escritorio-1",
+        "tipo": "escritorio",
+        "nome": "Centro Empresarial",
+        "status": "pronto",
+        "posicao": {
+          "i": 6,
+          "j": 11
+        },
+        "moradores": 0
+      },
+      {
+        "id": "apto-4",
+        "tipo": "apartamento",
+        "nome": "Residencial Jardim",
+        "status": "pronto",
+        "posicao": {
+          "i": 4,
+          "j": 14
+        },
+        "moradores": 0
+      },
+      {
+        "id": "apto-3",
+        "tipo": "apartamento",
+        "nome": "Edifício Horizonte",
+        "status": "pronto",
+        "posicao": {
+          "i": 7,
+          "j": 14
+        },
+        "moradores": 0
+      },
+      {
+        "id": "delegacia",
+        "tipo": "delegacia",
+        "nome": "Delegacia",
+        "status": "pronto",
+        "posicao": {
+          "i": 4,
+          "j": 21
+        },
+        "moradores": 0
+      },
+      {
+        "id": "oficina",
+        "tipo": "oficina",
+        "nome": "Oficina Mecânica",
+        "status": "pronto",
+        "posicao": {
+          "i": 7,
+          "j": 21
+        },
+        "moradores": 0
+      },
+      {
+        "id": "apto-1",
+        "tipo": "apartamento",
+        "nome": "Edifício Aurora",
+        "status": "pronto",
+        "posicao": {
+          "i": 4,
+          "j": 18
+        },
+        "moradores": 0
+      },
+      {
+        "id": "apto-2",
+        "tipo": "apartamento",
+        "nome": "Residencial Primavera",
+        "status": "pronto",
+        "posicao": {
+          "i": 6,
+          "j": 18
+        },
+        "moradores": 0
+      },
+      {
+        "id": "sorveteria",
+        "tipo": "loja",
+        "nome": "Sorveteria",
+        "status": "pronto",
+        "posicao": {
+          "i": 10,
+          "j": 18
+        },
+        "moradores": 0
+      },
+      {
+        "id": "cafe",
+        "tipo": "loja",
+        "nome": "Café",
+        "status": "pronto",
+        "posicao": {
+          "i": 13,
+          "j": 18
+        },
+        "moradores": 0
+      },
+      {
+        "id": "terminal",
+        "tipo": "terminal",
+        "nome": "Terminal de Ônibus",
+        "status": "pronto",
+        "posicao": {
+          "i": 10,
+          "j": 21
+        },
+        "moradores": 0
+      },
+      {
+        "id": "obra",
+        "tipo": "obra",
+        "nome": "Canteiro de Obras",
+        "status": "em_obra",
+        "posicao": {
+          "i": 26,
+          "j": 4
+        },
+        "moradores": 0
+      },
+      {
+        "id": "casa-01",
+        "tipo": "casa",
+        "nome": "Casa 1",
+        "status": "pronto",
+        "posicao": {
+          "i": 4,
+          "j": 25
+        },
+        "moradores": 1
+      },
+      {
+        "id": "casa-02",
+        "tipo": "casa",
+        "nome": "Casa 2",
+        "status": "pronto",
+        "posicao": {
+          "i": 6,
+          "j": 25
+        },
+        "moradores": 1
+      },
+      {
+        "id": "casa-03",
+        "tipo": "casa",
+        "nome": "Casa 3",
+        "status": "pronto",
+        "posicao": {
+          "i": 8,
+          "j": 25
+        },
+        "moradores": 1
+      },
+      {
+        "id": "casa-04",
+        "tipo": "casa",
+        "nome": "Casa 4",
+        "status": "pronto",
+        "posicao": {
+          "i": 10,
+          "j": 25
+        },
+        "moradores": 1
+      },
+      {
+        "id": "casa-05",
+        "tipo": "casa",
+        "nome": "Casa 5",
+        "status": "pronto",
+        "posicao": {
+          "i": 12,
+          "j": 25
+        },
+        "moradores": 1
+      },
+      {
+        "id": "casa-06",
+        "tipo": "casa",
+        "nome": "Casa 6",
+        "status": "pronto",
+        "posicao": {
+          "i": 14,
+          "j": 25
+        },
+        "moradores": 1
+      },
+      {
+        "id": "casa-07",
+        "tipo": "casa",
+        "nome": "Casa 7",
+        "status": "pronto",
+        "posicao": {
+          "i": 16,
+          "j": 25
+        },
+        "moradores": 1
+      },
+      {
+        "id": "casa-08",
+        "tipo": "casa",
+        "nome": "Casa 8",
+        "status": "pronto",
+        "posicao": {
+          "i": 18,
+          "j": 25
+        },
+        "moradores": 1
+      },
+      {
+        "id": "casa-09",
+        "tipo": "casa",
+        "nome": "Casa 9",
+        "status": "pronto",
+        "posicao": {
+          "i": 4,
+          "j": 29
+        },
+        "moradores": 1
+      },
+      {
+        "id": "casa-10",
+        "tipo": "casa",
+        "nome": "Casa 10",
+        "status": "pronto",
+        "posicao": {
+          "i": 6,
+          "j": 29
+        },
+        "moradores": 1
+      },
+      {
+        "id": "casa-11",
+        "tipo": "casa",
+        "nome": "Casa 11",
+        "status": "pronto",
+        "posicao": {
+          "i": 8,
+          "j": 29
+        },
+        "moradores": 0
+      },
+      {
+        "id": "casa-12",
+        "tipo": "casa",
+        "nome": "Casa 12",
+        "status": "pronto",
+        "posicao": {
+          "i": 10,
+          "j": 29
+        },
+        "moradores": 0
+      },
+      {
+        "id": "casa-13",
+        "tipo": "casa",
+        "nome": "Casa 13",
+        "status": "pronto",
+        "posicao": {
+          "i": 12,
+          "j": 29
+        },
+        "moradores": 0
+      },
+      {
+        "id": "casa-14",
+        "tipo": "casa",
+        "nome": "Casa 14",
+        "status": "pronto",
+        "posicao": {
+          "i": 14,
+          "j": 29
+        },
+        "moradores": 0
+      },
+      {
+        "id": "casa-15",
+        "tipo": "casa",
+        "nome": "Casa 15",
+        "status": "pronto",
+        "posicao": {
+          "i": 16,
+          "j": 29
+        },
+        "moradores": 0
+      },
+      {
+        "id": "casa-16",
+        "tipo": "casa",
+        "nome": "Casa 16",
+        "status": "pronto",
+        "posicao": {
+          "i": 18,
+          "j": 29
+        },
+        "moradores": 0
+      },
+      {
+        "id": "casa-17",
+        "tipo": "casa",
+        "nome": "Casa 17",
+        "status": "pronto",
+        "posicao": {
+          "i": 27,
+          "j": 11
+        },
+        "moradores": 0
+      },
+      {
+        "id": "casa-18",
+        "tipo": "casa",
+        "nome": "Casa 18",
+        "status": "pronto",
+        "posicao": {
+          "i": 27,
+          "j": 13
+        },
+        "moradores": 0
+      },
+      {
+        "id": "casa-19",
+        "tipo": "casa",
+        "nome": "Casa 19",
+        "status": "pronto",
+        "posicao": {
+          "i": 27,
+          "j": 15
+        },
+        "moradores": 0
+      },
+      {
+        "id": "casa-20",
+        "tipo": "casa",
+        "nome": "Casa 20",
+        "status": "pronto",
+        "posicao": {
+          "i": 27,
+          "j": 17
+        },
+        "moradores": 0
+      },
+      {
+        "id": "casa-21",
+        "tipo": "casa",
+        "nome": "Casa 21",
+        "status": "pronto",
+        "posicao": {
+          "i": 27,
+          "j": 19
+        },
+        "moradores": 0
+      },
+      {
+        "id": "casa-22",
+        "tipo": "casa",
+        "nome": "Casa 22",
+        "status": "pronto",
+        "posicao": {
+          "i": 27,
+          "j": 21
+        },
+        "moradores": 0
+      },
+      {
+        "id": "casa-23",
+        "tipo": "casa",
+        "nome": "Casa 23",
+        "status": "pronto",
+        "posicao": {
+          "i": 27,
+          "j": 25
+        },
+        "moradores": 0
+      },
+      {
+        "id": "casa-24",
+        "tipo": "casa",
+        "nome": "Casa 24",
+        "status": "pronto",
+        "posicao": {
+          "i": 27,
+          "j": 27
+        },
+        "moradores": 0
+      },
+      {
+        "id": "futuro-1",
+        "tipo": "apartamento",
+        "nome": "Lote 1 (futuro)",
+        "status": "planejado",
+        "posicao": {
+          "i": 16,
+          "j": 18
+        },
+        "moradores": 0
+      },
+      {
+        "id": "futuro-2",
+        "tipo": "loja",
+        "nome": "Lote 2 (futuro)",
+        "status": "planejado",
+        "posicao": {
+          "i": 18,
+          "j": 18
+        },
+        "moradores": 0
+      },
+      {
+        "id": "futuro-3",
+        "tipo": "advocacia",
+        "nome": "Escritório de Advocacia",
+        "status": "planejado",
+        "posicao": {
+          "i": 16,
+          "j": 21
+        },
+        "moradores": 0
+      },
+      {
+        "id": "futuro-4",
+        "tipo": "apartamento",
+        "nome": "Lote 4 (futuro)",
+        "status": "planejado",
+        "posicao": {
+          "i": 18,
+          "j": 21
+        },
+        "moradores": 0
+      },
+      {
+        "id": "cemiterio",
+        "tipo": "cemiterio",
+        "nome": "Cemitério da SegueCity",
+        "status": "planejado",
+        "posicao": {
+          "i": 26,
+          "j": 29
+        },
+        "moradores": 0
+      }
+    ]
+  },
+  "profissoes": [
+    {
+      "id": "medico",
+      "nome": "Médico(a)",
+      "predio": "hospital",
+      "vagas": 4,
+      "ocupadas": 1
+    },
+    {
+      "id": "enfermeiro",
+      "nome": "Enfermeiro(a)",
+      "predio": "hospital",
+      "vagas": 4,
+      "ocupadas": 0
+    },
+    {
+      "id": "professor",
+      "nome": "Professor(a)",
+      "predio": "escola",
+      "vagas": 6,
+      "ocupadas": 0
+    },
+    {
+      "id": "diretor",
+      "nome": "Diretor(a) escolar",
+      "predio": "escola",
+      "vagas": 1,
+      "ocupadas": 0
+    },
+    {
+      "id": "prefeito",
+      "nome": "Prefeito(a)",
+      "predio": "prefeitura",
+      "vagas": 1,
+      "ocupadas": 0
+    },
+    {
+      "id": "servidor",
+      "nome": "Servidor(a) público",
+      "predio": "prefeitura",
+      "vagas": 3,
+      "ocupadas": 0
+    },
+    {
+      "id": "jardineiro",
+      "nome": "Jardineiro(a)",
+      "predio": "prefeitura",
+      "vagas": 1,
+      "ocupadas": 0
+    },
+    {
+      "id": "comerciante",
+      "nome": "Comerciante",
+      "predio": "mercado",
+      "vagas": 3,
+      "ocupadas": 1
+    },
+    {
+      "id": "padeiro",
+      "nome": "Padeiro(a)",
+      "predio": "padaria",
+      "vagas": 2,
+      "ocupadas": 0
+    },
+    {
+      "id": "farmaceutico",
+      "nome": "Farmacêutico(a)",
+      "predio": "farmacia",
+      "vagas": 2,
+      "ocupadas": 0
+    },
+    {
+      "id": "barista",
+      "nome": "Barista",
+      "predio": "cafe",
+      "vagas": 1,
+      "ocupadas": 0
+    },
+    {
+      "id": "sorveteiro",
+      "nome": "Sorveteiro(a)",
+      "predio": "sorveteria",
+      "vagas": 1,
+      "ocupadas": 0
+    },
+    {
+      "id": "policial",
+      "nome": "Policial",
+      "predio": "delegacia",
+      "vagas": 4,
+      "ocupadas": 1
+    },
+    {
+      "id": "mecanico",
+      "nome": "Mecânico(a)",
+      "predio": "oficina",
+      "vagas": 2,
+      "ocupadas": 2
+    },
+    {
+      "id": "motorista",
+      "nome": "Motorista",
+      "predio": "terminal",
+      "vagas": 4,
+      "ocupadas": 0
+    },
+    {
+      "id": "engenheiro",
+      "nome": "Engenheiro(a)",
+      "predio": "obra",
+      "vagas": 2,
+      "ocupadas": 0
+    },
+    {
+      "id": "pedreiro",
+      "nome": "Pedreiro(a)",
+      "predio": "obra",
+      "vagas": 4,
+      "ocupadas": 0
+    },
+    {
+      "id": "analista",
+      "nome": "Programador(a)",
+      "predio": "escritorio-1",
+      "vagas": 3,
+      "ocupadas": 0
+    },
+    {
+      "id": "neurocirurgiao",
+      "nome": "Neurocirurgião(ã)",
+      "predio": "hospital",
+      "vagas": 1,
+      "ocupadas": 1
+    },
+    {
+      "id": "coveiro",
+      "nome": "Coveiro(a)",
+      "predio": "cemiterio",
+      "vagas": 2,
+      "ocupadas": 1
+    },
+    {
+      "id": "advogado",
+      "nome": "Advogado(a)",
+      "predio": "futuro-3",
+      "vagas": 3,
+      "ocupadas": 1
+    },
+    {
+      "id": "empresario",
+      "nome": "Empresário(a)",
+      "predio": "escritorio-1",
+      "vagas": 4,
+      "ocupadas": 2
+    }
+  ],
+  "moradores": [
+    {
+      "id": "m0001",
+      "nome": "Mateus",
+      "profissao": "medico",
+      "titulo": "Médico",
+      "bairro": "Vila Nova",
+      "casa": "casa-01",
+      "trabalho": "hospital",
+      "entrada": "2026-11-28",
+      "ordem": 1,
+      "ordemConfirmada": true,
+      "fundador": true,
+      "titulos": [
+        "MORADOR FUNDADOR"
+      ],
+      "distintivo": "fundador-ouro",
+      "fonte": "comentário no TikTok",
+      "ficticio": false
+    },
+    {
+      "id": "m0002",
+      "nome": "Davi",
+      "profissao": "policial",
+      "titulo": "Policial",
+      "bairro": "Vila Nova",
+      "casa": "casa-02",
+      "trabalho": "delegacia",
+      "entrada": "2026-11-28",
+      "ordem": 2,
+      "ordemConfirmada": false,
+      "fundador": true,
+      "titulos": [
+        "MORADOR FUNDADOR"
+      ],
+      "distintivo": "fundador-ouro",
+      "fonte": "comentário no TikTok",
+      "ficticio": false
+    },
+    {
+      "id": "m0003",
+      "nome": "Gabriel",
+      "profissao": "mecanico",
+      "titulo": "Mecânico",
+      "bairro": "Vila Nova",
+      "casa": "casa-03",
+      "trabalho": "oficina",
+      "entrada": "2026-11-28",
+      "ordem": 3,
+      "ordemConfirmada": false,
+      "fundador": true,
+      "titulos": [
+        "MORADOR FUNDADOR"
+      ],
+      "distintivo": "fundador-ouro",
+      "fonte": "comentário no TikTok",
+      "ficticio": false
+    },
+    {
+      "id": "m0004",
+      "nome": "Juan",
+      "profissao": "mecanico",
+      "titulo": "Mecânico",
+      "bairro": "Vila Nova",
+      "casa": "casa-04",
+      "trabalho": "oficina",
+      "entrada": "2026-11-28",
+      "ordem": 4,
+      "ordemConfirmada": false,
+      "fundador": true,
+      "titulos": [
+        "MORADOR FUNDADOR"
+      ],
+      "distintivo": "fundador-ouro",
+      "fonte": "comentário no TikTok",
+      "ficticio": false
+    },
+    {
+      "id": "m0005",
+      "nome": "Mari",
+      "profissao": "neurocirurgiao",
+      "titulo": "Neurocirurgiã",
+      "bairro": "Vila Nova",
+      "casa": "casa-05",
+      "trabalho": "hospital",
+      "entrada": "2026-11-28",
+      "ordem": 5,
+      "ordemConfirmada": false,
+      "fundador": true,
+      "titulos": [
+        "MORADOR FUNDADOR"
+      ],
+      "distintivo": "fundador-ouro",
+      "fonte": "comentário no TikTok",
+      "ficticio": false
+    },
+    {
+      "id": "m0006",
+      "nome": "Roberto",
+      "profissao": "coveiro",
+      "titulo": "Coveiro",
+      "bairro": "Vila Nova",
+      "casa": "casa-06",
+      "trabalho": "cemiterio",
+      "entrada": "2026-11-28",
+      "ordem": 6,
+      "ordemConfirmada": false,
+      "fundador": true,
+      "titulos": [
+        "MORADOR FUNDADOR"
+      ],
+      "distintivo": "fundador-ouro",
+      "fonte": "comentário no TikTok",
+      "ficticio": false
+    },
+    {
+      "id": "m0007",
+      "nome": "Alicia",
+      "profissao": "empresario",
+      "titulo": "Empresária",
+      "bairro": "Vila Nova",
+      "casa": "casa-07",
+      "trabalho": "escritorio-1",
+      "entrada": "2026-11-28",
+      "ordem": 7,
+      "ordemConfirmada": false,
+      "fundador": true,
+      "titulos": [
+        "MORADOR FUNDADOR"
+      ],
+      "distintivo": "fundador-ouro",
+      "fonte": "comentário no TikTok",
+      "ficticio": false
+    },
+    {
+      "id": "m0008",
+      "nome": "Gabrielly",
+      "profissao": "advogado",
+      "titulo": "Advogada",
+      "bairro": "Vila Nova",
+      "casa": "casa-08",
+      "trabalho": "futuro-3",
+      "entrada": "2026-11-28",
+      "ordem": 8,
+      "ordemConfirmada": false,
+      "fundador": true,
+      "titulos": [
+        "MORADOR FUNDADOR"
+      ],
+      "distintivo": "fundador-ouro",
+      "fonte": "comentário no TikTok",
+      "ficticio": false
+    },
+    {
+      "id": "m0009",
+      "nome": "Jorge",
+      "profissao": "comerciante",
+      "titulo": "Comerciante",
+      "bairro": "Vila Nova",
+      "casa": "casa-09",
+      "trabalho": "mercado",
+      "entrada": "2026-11-28",
+      "ordem": 9,
+      "ordemConfirmada": false,
+      "fundador": true,
+      "titulos": [
+        "MORADOR FUNDADOR"
+      ],
+      "distintivo": "fundador-ouro",
+      "fonte": "comentário no TikTok",
+      "ficticio": false
+    },
+    {
+      "id": "m0010",
+      "nome": "Muri",
+      "profissao": "empresario",
+      "titulo": "Empresário",
+      "bairro": "Vila Nova",
+      "casa": "casa-10",
+      "trabalho": "escritorio-1",
+      "entrada": "2026-11-28",
+      "ordem": 10,
+      "ordemConfirmada": false,
+      "fundador": true,
+      "titulos": [
+        "MORADOR FUNDADOR"
+      ],
+      "distintivo": "fundador-ouro",
+      "fonte": "comentário no TikTok",
+      "ficticio": false
+    }
+  ],
+  "arquivos": {
+    "city-state.json": "b7583d613eaabfdcfec2f21f3e7e794e964548013bccacbdce3b3ed258ad3324",
+    "buildings.json": "b5018fa7fe56f63088a7471bae61ae30fba3142ac8b3560b78a47bcc92159438",
+    "jobs.json": "1a20a98400b0964490a71bf9faf224b7dce4bd2bf55f6087201649fc98792fee",
+    "residents.json": "496271258045fbdd9c93c0076569be6cdd6deb9845a7d5057fbb5163809695ef",
+    "episodes.json": "3d30a654b32f69f0877039ea3dd29cb1d4efcc72412aae9f6c9c8b6746af701f",
+    "mapa.json": "c48c6d7d4574e72c49f22bfa8fdfaf1b2f2602b3f11088d2ce31359f5d676a20"
+  }
+}

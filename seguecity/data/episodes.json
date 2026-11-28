@@ -25,5 +25,19 @@
       "empregos": 48
     },
     "narracao": "public/audio/ep01/narracao-original.mp3 (Cidade.mp3, 62 s de voz, sem aceleração)"
+  },
+  {
+    "episodio": 2,
+    "id": "ep02",
+    "titulo": "EPISÓDIO 02 — OS PRIMEIROS MORADORES CHEGARAM!",
+    "duracao": 75,
+    "data": null,
+    "resumo": "Os 10 primeiros pedidos reais viram moradores fundadores (Mateus, o 1º comentário, é o Morador Nº 1). A cidade acende, ganha os primeiros carros e serviços; Roberto, coveiro, gera o pedido de um cemitério e Gabrielly, advogada, o de um escritório de advocacia — as duas obras entram no mapa.",
+    "status": "pré-produção (roteiro, storyboard e fichas aguardando aprovação)",
+    "estado": {
+      "moradores": 10,
+      "empregos": 48
+    },
+    "snapshot": "data/snapshots/dia-02.rascunho.json"
   }
 ]

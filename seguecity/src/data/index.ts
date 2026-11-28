@@ -15,12 +15,20 @@ export interface Building {
 }
 export interface Job { id: string; nome: string; predio: string; vagas: number; ocupadas: number; roupa: { camisa: string; calca: string; extra?: string; eleicao?: boolean } }
 import type { Appearance } from '../engine/characters';
-export interface Resident { id: string; nome: string; profissao: string; bairro: string; casa?: string; entrada: string; ficticio?: boolean; episodio?: number; aparencia?: Appearance }
+export interface Resident {
+  id: string; nome: string; profissao: string; bairro: string; casa?: string; entrada: string; ficticio?: boolean; episodio?: number; aparencia?: Appearance;
+  titulo?: string; // profissão exatamente como a pessoa comentou (ex.: "Neurocirurgiã")
+  trabalho?: string; // id do prédio onde trabalha (de jobs.json → predio)
+  fundador?: boolean; titulos?: string[]; distintivo?: string; // os 10 primeiros: MORADOR FUNDADOR + distintivo dourado
+  ordem?: number; ordemConfirmada?: boolean; fonte?: string; // ordem de chegada (só confirmada quando o TikTok mostra)
+}
 export interface CityState {
   nome: string; slogan: string; dia: number; moradores: number;
   empregos: { total: number; ocupados: number }; casas: { total: number; ocupadas: number };
   status: string; evolucao: { nivel: number; nome: string; proximaMeta: string };
-  metas: { id: string; nome: string; alvo: number; concluida: boolean }[]; atualizadoEm: string;
+  metas: { id: string; nome: string; alvo: number; concluida: boolean; base?: 'moradores' | 'seguidores' }[]; atualizadoEm: string;
+  seguidores?: { valor: number | null; fonte: string; atualizadoEm: string | null }; // contador do TikTok, separado dos moradores
+  conquistas?: { id: string; nome: string; dia: number; data: string }[];
 }
 export interface Episode { episodio: number; id: string; titulo: string; duracao: number; data: string; resumo: string; status: string; estado: { moradores: number; empregos: number } }
 

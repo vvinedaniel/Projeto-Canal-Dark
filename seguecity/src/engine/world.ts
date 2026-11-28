@@ -5,7 +5,7 @@ import { N, OX, OY, WORLD_H, sx, sy } from './iso';
 import { tileAt, isRoad } from './map';
 import { hash2, mulberry32 } from './rng';
 import { apartment, house, shop } from './sprites/buildings';
-import { prefeitura, escola, hospital, mercado, delegacia, oficina, terminal, obra } from './sprites/civic';
+import { prefeitura, escola, hospital, mercado, delegacia, oficina, terminal, obra, cemiterio, advocacia } from './sprites/civic';
 import { tree, lamp, bench, fountain, bridge, trafficLight, busStop, newsstand, popcorn, lotSign, flagpole, festoon, monument, coreto, streetClock, flowerBed, trashBin, hydrant, stopSign, type TreeKind } from './sprites/props';
 import type { Obj } from './types';
 
@@ -62,6 +62,8 @@ export function getWorld(): World {
       case 'delegacia': objects.push(place(delegacia(b), b.tipo, b)); break;
       case 'oficina': objects.push(place(oficina(b), b.tipo, b)); break;
       case 'terminal': objects.push(place(terminal(b), b.tipo, b)); break;
+      case 'cemiterio': objects.push(cemiterio(b)); break;
+      case 'advocacia': objects.push(advocacia(b)); break;
       case 'obra': {
         const { site, crane } = obra(b);
         objects.push(place(site, 'obra', b), place(crane, 'obra', b));

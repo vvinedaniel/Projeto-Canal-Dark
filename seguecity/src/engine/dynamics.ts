@@ -144,7 +144,7 @@ let oid = 0;
 const mkDyn = (id: string, kind: string, fp: [number, number, number, number], sprite: Sprite, dx: number, dy: number, lights: Light[] = [], group: Obj['group'] = 'street'): Obj =>
   ({ id, kind, fp, layer: 1, sprite, group, lights, dx, dy });
 
-export interface DynParams { t: number; traffic: number; people: number; beacons?: boolean }
+export interface DynParams { t: number; traffic: number; people: number; beacons?: boolean; vehicles?: string[] } // vehicles: lista fixa de ids da frota (ex.: só os carros dos moradores)
 export interface Reflection { x: number; y: number; len: number; color: U32 }
 
 // vaga-lumes sobre a mata e os jardins
@@ -165,14 +165,17 @@ export function dynamics(world: World, p: DynParams): { objs: Obj[]; refl: Refle
   const t = p.t;
   // ---- veículos (simulação com semáforos, filas e paradas de ônibus)
   for (const st of vehiclesAt(t)) {
-    if (st.veh.rank >= p.traffic && st.veh.id !== 'bus') continue;
-    if (st.veh.id === 'bus' && p.traffic <= 0.05) continue;
+    if (p.vehicles) { if (!p.vehicles.includes(st.veh.id)) continue; }
+    else {
+      if (st.veh.rank >= p.traffic && st.veh.id !== 'bus') continue;
+      if (st.veh.id === 'bus' && p.traffic <= 0.05) continue;
+    }
     objs.push(vehicleObj(st.veh.id, st.veh.kind, st.veh.color, st.i, st.j, st.hd, t));
   }
   // ---- estacionados (com giroflex)
   objs.push(vehicleObj('amb', 'ambulance', 2, 18.9, 9.5, '-i', t, true));
   // viatura parada em frente à delegacia só quando a rua está vazia (sem trânsito circulando)
-  if (p.traffic < 0.05) objs.push(vehicleObj('pol', 'police', 2, 5.6, 24.68, '+i', t, true));
+  if (p.traffic < 0.05 && !p.vehicles?.includes('C0')) objs.push(vehicleObj('pol', 'police', 2, 5.6, 24.68, '+i', t, true));
   objs.push(vehicleObj('bus2', 'bus', 0, 13.0, 22.0, '+j', t));
   objs.push(vehicleObj('bus3', 'bus', 0, 13.9, 22.4, '-j', t));
   // ---- pedestres

@@ -13,7 +13,9 @@ import { personObj } from '../../engine/dynamics';
 import { lookOf } from '../../engine/sprites/people';
 import { useFonts } from '../../hooks/useFonts';
 import { EXEMPLOS } from '../../data/exemplos';
-import { city, episodes } from '../../data';
+import { episodes } from '../../data';
+import DIA01 from '../../../data/snapshots/dia-01.json';
+const city = DIA01.cidade; // capas do Ep. 01: estado oficial do Dia 01
 
 const EP = episodes.find((e) => e.id === 'ep01')!;
 const big = (size: number, color = C.white): React.CSSProperties => ({

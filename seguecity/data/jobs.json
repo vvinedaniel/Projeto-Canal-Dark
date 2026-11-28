@@ -4,7 +4,7 @@
     "nome": "Médico(a)",
     "predio": "hospital",
     "vagas": 4,
-    "ocupadas": 0,
+    "ocupadas": 1,
     "roupa": {
       "camisa": "#f2f4f7",
       "calca": "#4f7fb8",
@@ -89,7 +89,7 @@
     "nome": "Comerciante",
     "predio": "mercado",
     "vagas": 3,
-    "ocupadas": 0,
+    "ocupadas": 1,
     "roupa": {
       "camisa": "#e8b13a",
       "calca": "#3c3f52",
@@ -149,7 +149,7 @@
     "nome": "Policial",
     "predio": "delegacia",
     "vagas": 4,
-    "ocupadas": 0,
+    "ocupadas": 1,
     "roupa": {
       "camisa": "#2c4c88",
       "calca": "#1e2a4a",
@@ -161,7 +161,7 @@
     "nome": "Mecânico(a)",
     "predio": "oficina",
     "vagas": 2,
-    "ocupadas": 0,
+    "ocupadas": 2,
     "roupa": {
       "camisa": "#3a5ea8",
       "calca": "#3a5ea8",
@@ -214,6 +214,54 @@
       "camisa": "#3b3f57",
       "calca": "#5a6b8c",
       "extra": "oculos"
+    }
+  },
+  {
+    "id": "neurocirurgiao",
+    "nome": "Neurocirurgião(ã)",
+    "predio": "hospital",
+    "vagas": 1,
+    "ocupadas": 1,
+    "roupa": {
+      "camisa": "#2f7f9a",
+      "calca": "#2f7f9a",
+      "extra": "touca"
+    }
+  },
+  {
+    "id": "coveiro",
+    "nome": "Coveiro(a)",
+    "predio": "cemiterio",
+    "vagas": 2,
+    "ocupadas": 1,
+    "roupa": {
+      "camisa": "#5b5f6b",
+      "calca": "#3a3326",
+      "extra": "chapeu"
+    }
+  },
+  {
+    "id": "advogado",
+    "nome": "Advogado(a)",
+    "predio": "futuro-3",
+    "vagas": 3,
+    "ocupadas": 1,
+    "roupa": {
+      "camisa": "#1f2a44",
+      "calca": "#1f2a44",
+      "extra": "gravata"
+    }
+  },
+  {
+    "id": "empresario",
+    "nome": "Empresário(a)",
+    "predio": "escritorio-1",
+    "vagas": 4,
+    "ocupadas": 2,
+    "roupa": {
+      "camisa": "#3b2f4a",
+      "calca": "#2a2433",
+      "extra": "gravata"
     }
   }
 ]

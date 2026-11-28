@@ -7,11 +7,16 @@ import { Poster } from './scenes/Poster';
 import { CityDemo, DEMO_SECONDS } from './scenes/demo/CityDemo';
 import { Ep01, EP01_SECONDS } from './scenes/ep01/Ep01';
 import { Capa } from './scenes/ep01/Capas';
+import { FichaFundadores, FichaFundador } from './scenes/ep02/Fundadores';
+import { Dia02Preview } from './scenes/ep02/Preview';
 
 const FPS = 30;
 export const Root: React.FC = () => (
   <>
     <Composition id="Ep01" component={Ep01} width={1080} height={1920} fps={FPS} durationInFrames={EP01_SECONDS * FPS} />
+    <Composition id="Fundadores" component={FichaFundadores} width={1080} height={1920} fps={FPS} durationInFrames={30} />
+    <Composition id="FichaFundador" component={FichaFundador} width={1080} height={1080} fps={FPS} durationInFrames={30} defaultProps={{ id: 'm0001' }} />
+    <Composition id="Dia02Preview" component={Dia02Preview} width={1080} height={1920} fps={FPS} durationInFrames={300} defaultProps={{ shot: 0 }} />
     <Composition id="Ep01Capa" component={Capa} width={1080} height={1920} fps={FPS} durationInFrames={1} defaultProps={{ v: 'A' as 'A' | 'B' | 'C' }} />
     <Composition id="CityDemo" component={CityDemo} width={1080} height={1920} fps={FPS} durationInFrames={DEMO_SECONDS * FPS} />
     <Composition id="Sandbox" component={Sandbox} width={1080} height={1920} fps={FPS} durationInFrames={300} defaultProps={{ i: 16, j: 16, z: 0, zoom: 1, night: 1, home: 1, traffic: 1, people: 1 }} />

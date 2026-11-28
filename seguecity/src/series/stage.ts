@@ -15,6 +15,7 @@ export interface StageSpec {
   night?: number;
   people?: number; // 0..1 pedestres
   traffic?: number; // 0..1 trânsito
+  vehicles?: string[]; // frota fixa (ids de engine/traffic FLEET) — substitui a densidade quando informada
   homeFrac?: number; // 0..1 casas acesas (ordem fixa)
   levels?: Partial<FrameParams['levels']>;
   extra?: Obj[]; // personagens/objetos da cena
@@ -43,7 +44,7 @@ export function stage(s: StageSpec): Stage {
   const shots = (Array.isArray(s.shots[0]) ? s.shots : [s.shots]) as Key[][];
   const c0 = shots.length > 1 ? cameraCuts(shots, s.t, s.drift ?? 0.9) : cameraAt(shots[0], s.t, s.drift ?? 0.9);
   const cam = { ...c0, y: c0.y + ((0.5 - (s.frameY ?? 0.45)) * 1920) / c0.zoom };
-  const d = dynamics(world, { t: s.t + (s.timeOffset ?? 30), traffic: s.traffic ?? 1, people: s.people ?? 1 });
+  const d = dynamics(world, { t: s.t + (s.timeOffset ?? 30), traffic: s.traffic ?? 1, people: s.people ?? 1, vehicles: s.vehicles });
   const params: FrameParams = {
     t: s.t, cam, night: s.night ?? 1,
     levels: { civic: 1, home: 1, shop: 1, street: 1, ...s.levels },

@@ -11,6 +11,7 @@ export interface Appearance {
   oculos?: boolean;
   olhos?: string;
   roupa: { camisa: string; calca: string; sapato: string; extra?: string };
+  insignia?: 'fundador'; // distintivo dourado permanente dos 10 moradores fundadores
 }
 
 export const PELES = ['#f6d3b3', '#eebd94', '#d9a273', '#c08457', '#9c6440', '#7a4a2e', '#5b3420'];

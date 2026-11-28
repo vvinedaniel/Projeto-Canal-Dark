@@ -14,6 +14,7 @@ export interface HudProps {
   pulseMoradores?: number; // 0..1 destaque no contador
   warnMoradores?: boolean;
   label?: string; // rótulo do segundo contador
+  seguidores?: number | null; // contador do TikTok, separado dos moradores (null = ainda não informado)
 }
 
 export const Counter: React.FC<{ icon: string; label: string; value: React.ReactNode; color?: string; pulse?: number; warn?: boolean }> = ({ icon, label, value, color = C.white, pulse = 0, warn }) => (
@@ -28,7 +29,7 @@ export const Counter: React.FC<{ icon: string; label: string; value: React.React
   </PixelPanel>
 );
 
-export const Hud: React.FC<HudProps> = ({ moradores, empregos, dia = 1, hora = '21:40', show = 1, pulseMoradores = 0, warnMoradores, label = 'VAGAS' }) => {
+export const Hud: React.FC<HudProps> = ({ moradores, empregos, dia = 1, hora = '21:40', show = 1, pulseMoradores = 0, warnMoradores, label = 'VAGAS', seguidores }) => {
   const s = backOut(show);
   return (
     <div style={{ position: 'absolute', left: 0, right: 0, top: 150, height: 200, pointerEvents: 'none', opacity: clamp(show * 2) }}>
@@ -41,6 +42,7 @@ export const Hud: React.FC<HudProps> = ({ moradores, empregos, dia = 1, hora = '
       </div>
       <div style={{ position: 'absolute', right: 36, top: 0, display: 'flex', gap: 14, transform: `translateY(${(1 - s) * -60}px)` }}>
         <Counter icon="person" label="MORADORES" value={moradores} pulse={pulseMoradores} warn={warnMoradores} />
+        {seguidores !== undefined && <Counter icon="follow" label="SEGUIDORES" value={seguidores ?? '—'} color={C.cyan} />}
         <Counter icon="job" label={label} value={empregos} color={C.yellow} />
       </div>
     </div>

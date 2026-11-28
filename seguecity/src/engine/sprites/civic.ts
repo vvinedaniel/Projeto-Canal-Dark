@@ -17,7 +17,7 @@ const WHITE = hex('#fbf7ee');
 function finish(b: Building, m: Model, fp: [number, number, number, number], lights: Light[], topZ: number, group: Obj['group'] = 'civic'): Obj {
   const sprite = m.render();
   const ci = (fp[0] + fp[2]) / 2, cj = (fp[1] + fp[3]) / 2;
-  return { id: b.id, kind: b.tipo, fp, layer: 1, sprite, group, lights, anchor: { x: sx(ci, cj), y: sy(ci, cj, topZ) }, ref: b.id };
+  return { id: b.id, kind: b.tipo, fp, layer: 1, sprite, group, lights, anchor: { x: sx(ci, cj), y: sy(ci, cj, topZ) }, ref: b.id, planned: b.status === 'planejado' };
 }
 
 const lattice = (r = P.metal, k = 0): Shader => (h, px, py, o) => {
@@ -429,4 +429,92 @@ export function obra(b: Building): { site: Obj; crane: Obj } {
   const craneLights: Light[] = [halo(mi, mj, top + 22, 0.3, E.red, 1), halo(mi - 4.5, mj, top + 6, 0.25, E.red, 0.9)];
   const crane: Obj = { id: 'grua', kind: 'grua', fp: [mi - 0.17, mj - 0.17, mi + 0.17, mj + 0.17], layer: 1, sprite: cm.render({ edge: false }), group: 'civic', lights: craneLights, ref: b.id };
   return { site, crane };
+}
+
+// ---------------- CEMITÉRIO (4x2, canto sudeste) ----------------
+// Muro baixo de pedra, portão com arco "CEMITÉRIO", lápides e cruzes, capela com cruz e ciprestes.
+export function cemiterio(b: Building): Obj {
+  const i0 = b.posicao.i + 0.08, j0 = b.posicao.j + 0.1, i1 = b.posicao.i + b.tamanho.w - 0.08, j1 = b.posicao.j + b.tamanho.d - 0.12;
+  const m = new Model();
+  const stone: Shader = (h, px, py, o) => { o.c = pick(P.stone, lum(h) + (h.face === 'T' ? 0.12 : 0) + (((col(h) >> 2) + row(h)) % 3 === 0 ? -0.05 : 0) + (hash2(px, py, 8) - 0.5) * 0.06, px, py); };
+  const wallH = 5, t = 0.09;
+  const gA = i0 + 1.25, gB = i0 + 2.55; // vão do portão na frente (+j)
+  m.box(i0, j0, 0, i1, j0 + t, wallH, stone); // fundo
+  m.box(i0, j0, 0, i0 + t, j1, wallH, stone); // esquerda
+  m.box(i1 - t, j0, 0, i1, j1, wallH, stone, 'TR'); // direita
+  m.box(i0, j1 - t, 0, gA, j1, wallH, stone); m.box(gB, j1 - t, 0, i1, j1, wallH, stone); // frente com o vão
+  // pilares do arco e placa CEMITÉRIO (letras em pé, com acento)
+  const pA = i0 + 0.62, pB = i0 + 3.1;
+  for (const pi of [pA, pB]) m.box(pi - 0.08, j1 - 0.12, 0, pi + 0.08, j1 + 0.04, 30, stone);
+  const sg: Sign = { text: 'CEMITÉRIO', face: 'L', vTop: 9.5, fg: hex('#2a2033'), bg: null };
+  const cols = Math.round((pB - pA - 0.16) * 16);
+  m.box(pA + 0.08, j1 - 0.08, 19, pB - 0.08, j1, 30, (h, px, py, o) => {
+    if (h.face === 'T') { o.c = pick(P.stone, 0.85, px, py); return; }
+    if (signPixel(o, h, px, py, sg, cols)) return;
+    const r = row(h), c = col(h);
+    o.c = r === 0 || r === 10 || c === 0 || c === cols - 1 ? pick(P.slate, lum(h) - 0.1, px, py) : pick(P.cream, lum(h) + 0.12, px, py);
+  });
+  // portão de ferro entreaberto
+  m.box(gA, j1 - 0.04, 0, gA + 0.42, j1 - 0.02, 9, (h, px, py, o) => { o.c = col(h) % 2 === 0 || row(h) === 8 ? pick(P.black, 0.55, px, py) : 0; });
+  m.box(gB - 0.42, j1 - 0.3, 0, gB - 0.4, j1 - 0.02, 9, (h, px, py, o) => { o.c = col(h) % 2 === 0 || row(h) === 8 ? pick(P.black, 0.55, px, py) : 0; });
+  // lápides (2 fileiras) com canteiros na frente; algumas cruzes
+  const graveTop: Shader = (h, px, py, o) => { o.c = pick(P.white, lum(h) - 0.08 + (h.face === 'T' ? 0.1 : 0), px, py); };
+  for (let r = 0; r < 2; r++) for (let k = 0; k < 5; k++) {
+    const gi = i0 + 0.32 + k * 0.5, gj = j0 + 0.32 + r * 0.62;
+    if (gi > i0 + 2.75) continue;
+    m.box(gi - 0.12, gj + 0.1, 0, gi + 0.12, gj + 0.46, 1.2, (h, px, py, o) => { o.c = h.face === 'T' ? pick(P.grass, 0.35 + (hash2(px, py, 3) > 0.8 ? 0.15 : 0), px, py) : pick(P.soil, lum(h), px, py); });
+    if ((k + r) % 3 === 1) {
+      m.box(gi - 0.025, gj, 0, gi + 0.025, gj + 0.05, 11, graveTop);
+      m.box(gi - 0.1, gj, 6.5, gi + 0.1, gj + 0.05, 8, graveTop);
+    } else m.box(gi - 0.11, gj, 0, gi + 0.11, gj + 0.07, 7, (h, px, py, o) => { o.c = pick(P.stone, lum(h) + 0.05 + (row(h) === 6 ? 0.12 : 0), px, py); });
+  }
+  // capela com cruz
+  const ci0 = i0 + 2.95, cj0 = j0 + 0.2, ci1 = i1 - 0.16, cj1 = j0 + 1.35, cH = 16;
+  m.box(ci0, cj0, 0, ci1, cj1, cH, (h, px, py, o) => {
+    if (h.face === 'T') { o.c = pick(P.white, 0.8, px, py); return; }
+    const c = col(h), r = row(h), w = h.face === 'L' ? Math.round((ci1 - ci0) * 16) : Math.round((cj1 - cj0) * 16);
+    if (h.face === 'L' && Math.abs(c - w / 2) < 2.5 && r < 10) { o.c = pick(P.wood, lum(h) - 0.15, px, py); return; }
+    if (h.face === 'R' && r > 7 && r < 12 && (c % 6 === 2 || c % 6 === 3)) { o.c = hex('#6a5aa8'); o.e = scale(E.warm, 0.25); return; }
+    o.c = pick(P.white, lum(h) + 0.05 + (r < 2 ? -0.1 : 0), px, py);
+  });
+  m.add(new GableJ(ci0 - 0.04, cj0 - 0.04, ci1 + 0.04, cj1 + 0.04, cH, 7, (h, px, py, o) => { o.c = h.face === 'GE' ? pick(P.white, lum(h), px, py) : pick(P.slate, lum(h) + 0.05 + (((h.v * 6) | 0) % 2 ? 0.05 : 0), px, py); }));
+  const cc = (ci0 + ci1) / 2, cjj = cj1 - 0.15;
+  m.box(cc - 0.02, cjj - 0.02, cH + 6, cc + 0.02, cjj + 0.02, cH + 15, solid(P.yellow, 0.25));
+  m.box(cc - 0.08, cjj - 0.02, cH + 11, cc + 0.08, cjj + 0.02, cH + 12.5, solid(P.yellow, 0.25));
+  // ciprestes (troncos + copas empilhadas)
+  for (const [ti, tj] of [[i0 + 0.22, j0 + 0.22], [i0 + 2.7, j0 + 0.2], [i0 + 0.22, j1 - 0.35]] as [number, number][]) {
+    m.add(new Cyl(ti, tj, 0.035, 0, 5, solid(P.trunk, 0)));
+    [[6, 0.2], [13, 0.17], [19, 0.13], [24, 0.08]].forEach(([z, r]) => m.add(new Dome(ti, tj, z, r, (h, px, py, o) => { o.c = pick(P.foliage, lum(h) - 0.25 + (hash2(px, py, 5) - 0.5) * 0.12, px, py); })));
+  }
+  const lights: Light[] = [halo(pA, j1 + 0.02, 28, 0.6, E.warm, 0.7), pool((pA + pB) / 2, j1 + 0.35, 1.2, E.warm, 0.6)];
+  return finish(b, m, [b.posicao.i, b.posicao.j, b.posicao.i + b.tamanho.w, b.posicao.j + b.tamanho.d], lights, 40);
+}
+
+// ---------------- ESCRITÓRIO DE ADVOCACIA (2x3, lote 3) ----------------
+// Prédio de pedra de 3 andares, colunas na entrada, "ADVOCACIA" na face larga e uma balança na frente.
+const SCALES = ['...#...', '#######', '.#...#.', '#.#.#.#', '###.###', '...#...', '..###..'];
+export function advocacia(b: Building): Obj {
+  const i0 = b.posicao.i + 0.25, j0 = b.posicao.j + 0.3, i1 = b.posicao.i + b.tamanho.w - 0.25, j1 = b.posicao.j + b.tamanho.d - 0.3, H = 42;
+  const colsL = Math.round((i1 - i0) * 16), colsR = Math.round((j1 - j0) * 16);
+  const seed = strSeed(b.id);
+  const grid: Grid = { z0: 5, floorH: 12, floors: 3, ww: 4, wh: 7, cell: 8, sill: 3, margin: 3 };
+  const signs: Sign[] = [
+    { text: b.placa ?? 'ADVOCACIA', face: 'R', vTop: H - 2, fg: hex('#f2e6c4'), bg: P.blue, glow: hex('#ffe9b0') },
+    { text: '[balança]', face: 'L', vTop: H - 1, fg: hex('#ffd84a'), bg: P.blue, glow: hex('#ffd84a'), mask: iconMask(SCALES) },
+  ];
+  const ws = wallShader({
+    wall: P.cream, trim: P.blue, glass: P.glass, grid, seed, lit: 0.6, colsL, colsR, baseH: 4, signs, bands: true, texture: 'pedra', quoins: true, roof: { w: i1 - i0, d: j1 - j0, kind: 'laje' },
+    door: { face: 'L', c0: Math.floor(colsL / 2) - 3, w: 6, h: 11, glow: scale(E.warm, 0.5) },
+    extra: (o, h, px, py, c, r) => { if (r >= H - 10) { o.c = pick(P.blue, lum(h) + 0.05, px, py); return true; } return false; },
+  });
+  const m = new Model();
+  m.box(i0, j0, 0, i1, j1, H, ws);
+  rooftopSimple(m, i0, j0, i1, j1, H);
+  // degraus e duas colunas na entrada
+  m.box(i0 + 0.2, j1, 0, i1 - 0.2, j1 + 0.22, 2, solid(P.stone, 0.15));
+  for (const ci of [i0 + 0.35, i1 - 0.35]) m.add(new Cyl(ci, j1 + 0.12, 0.06, 2, 17, (h, px, py, o) => { o.c = pick(P.white, lum(h) + 0.1 + ((Math.round(h.u * 8) & 1) ? 0 : -0.04), px, py); }));
+  m.box(i0 + 0.2, j1, 17, i1 - 0.2, j1 + 0.22, 20, solid(P.white, 0.1));
+  const cl = (i0 + i1) / 2;
+  const lights: Light[] = [pool(cl, j1 + 0.5, 1.3, E.warm, 0.8), halo(cl, j1 + 0.15, 15, 0.45, E.warm, 0.6)];
+  return finish(b, m, [i0, j0, i1, j1 + 0.25], lights, H + 10);
 }

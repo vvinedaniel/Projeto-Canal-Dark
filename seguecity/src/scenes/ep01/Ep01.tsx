@@ -29,7 +29,9 @@ import { lookOf } from '../../engine/sprites/people';
 import { appearanceFor, seedOf } from '../../engine/characters';
 import { hash2 } from '../../engine/rng';
 import type { Obj } from '../../engine/types';
-import { buildings, city, episodes, jobs } from '../../data';
+import { buildings, episodes, jobs } from '../../data';
+// o Ep. 01 mostra sempre o estado oficial do Dia 01 (snapshot), não o estado vivo da cidade
+import DIA01 from '../../../data/snapshots/dia-01.json';
 import { EXEMPLOS } from '../../data/exemplos';
 import { WORDS, W, speaking } from './narration';
 import { JobPicker, SlotCard, StatPanel, type JobCard } from './ui';
@@ -37,7 +39,8 @@ import { JobPicker, SlotCard, StatPanel, type JobCard } from './ui';
 export const EP01_SECONDS = 75;
 const EP = episodes.find((e) => e.id === 'ep01')!;
 const ANA = EXEMPLOS[0];
-const WORKPLACES = [...new Set(jobs.map((j) => j.predio))];
+const city = DIA01.cidade;
+const WORKPLACES = [...new Set(DIA01.profissoes.map((j) => j.predio))];
 
 // ---------------- âncoras da fala ----------------
 const A = {
