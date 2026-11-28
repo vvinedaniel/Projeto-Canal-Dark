@@ -1,0 +1,5 @@
+node_modules/
+out/
+# áudio sintetizado é reproduzível (npm run audio:build; o render gera se faltar)
+public/audio/music/*.wav
+public/audio/sfx/*.wav

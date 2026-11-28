@@ -1,0 +1,47 @@
+{
+  "nome": "SegueCity",
+  "slogan": "Você segue. Você mora. Você decide.",
+  "dia": 1,
+  "moradores": 0,
+  "empregos": {
+    "total": 48,
+    "ocupados": 0
+  },
+  "casas": {
+    "total": 24,
+    "ocupadas": 0
+  },
+  "status": "cidade_pronta_aguardando_moradores",
+  "evolucao": {
+    "nivel": 1,
+    "nome": "Vila recém-construída",
+    "proximaMeta": "Primeiro morador"
+  },
+  "metas": [
+    {
+      "id": "primeiro-morador",
+      "nome": "Primeiro morador",
+      "alvo": 1,
+      "concluida": false
+    },
+    {
+      "id": "fundadores",
+      "nome": "Fundadores da cidade",
+      "alvo": 10,
+      "concluida": false
+    },
+    {
+      "id": "novo-bairro",
+      "nome": "Novo bairro",
+      "alvo": 50,
+      "concluida": false
+    },
+    {
+      "id": "eleicao",
+      "nome": "Eleição para prefeito",
+      "alvo": 100,
+      "concluida": false
+    }
+  ],
+  "atualizadoEm": "2026-11-28"
+}

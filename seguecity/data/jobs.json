@@ -1,0 +1,219 @@
+[
+  {
+    "id": "medico",
+    "nome": "Médico(a)",
+    "predio": "hospital",
+    "vagas": 4,
+    "ocupadas": 0,
+    "roupa": {
+      "camisa": "#f2f4f7",
+      "calca": "#4f7fb8",
+      "extra": "jaleco"
+    }
+  },
+  {
+    "id": "enfermeiro",
+    "nome": "Enfermeiro(a)",
+    "predio": "hospital",
+    "vagas": 4,
+    "ocupadas": 0,
+    "roupa": {
+      "camisa": "#5fc2b5",
+      "calca": "#5fc2b5",
+      "extra": "touca"
+    }
+  },
+  {
+    "id": "professor",
+    "nome": "Professor(a)",
+    "predio": "escola",
+    "vagas": 6,
+    "ocupadas": 0,
+    "roupa": {
+      "camisa": "#c4553f",
+      "calca": "#3b3f57",
+      "extra": "livro"
+    }
+  },
+  {
+    "id": "diretor",
+    "nome": "Diretor(a) escolar",
+    "predio": "escola",
+    "vagas": 1,
+    "ocupadas": 0,
+    "roupa": {
+      "camisa": "#6b4f8f",
+      "calca": "#2c2c3c",
+      "extra": "oculos"
+    }
+  },
+  {
+    "id": "prefeito",
+    "nome": "Prefeito(a)",
+    "predio": "prefeitura",
+    "vagas": 1,
+    "ocupadas": 0,
+    "roupa": {
+      "camisa": "#2d3047",
+      "calca": "#2d3047",
+      "extra": "faixa",
+      "eleicao": true
+    }
+  },
+  {
+    "id": "servidor",
+    "nome": "Servidor(a) público",
+    "predio": "prefeitura",
+    "vagas": 3,
+    "ocupadas": 0,
+    "roupa": {
+      "camisa": "#e0e6ee",
+      "calca": "#3e4a66",
+      "extra": "cracha"
+    }
+  },
+  {
+    "id": "jardineiro",
+    "nome": "Jardineiro(a)",
+    "predio": "prefeitura",
+    "vagas": 1,
+    "ocupadas": 0,
+    "roupa": {
+      "camisa": "#5a8f3c",
+      "calca": "#6b4a2e",
+      "extra": "chapeu"
+    }
+  },
+  {
+    "id": "comerciante",
+    "nome": "Comerciante",
+    "predio": "mercado",
+    "vagas": 3,
+    "ocupadas": 0,
+    "roupa": {
+      "camisa": "#e8b13a",
+      "calca": "#3c3f52",
+      "extra": "avental"
+    }
+  },
+  {
+    "id": "padeiro",
+    "nome": "Padeiro(a)",
+    "predio": "padaria",
+    "vagas": 2,
+    "ocupadas": 0,
+    "roupa": {
+      "camisa": "#f4efe6",
+      "calca": "#8a8f99",
+      "extra": "chapeu-chef"
+    }
+  },
+  {
+    "id": "farmaceutico",
+    "nome": "Farmacêutico(a)",
+    "predio": "farmacia",
+    "vagas": 2,
+    "ocupadas": 0,
+    "roupa": {
+      "camisa": "#f2f4f7",
+      "calca": "#3a8a5c",
+      "extra": "jaleco"
+    }
+  },
+  {
+    "id": "barista",
+    "nome": "Barista",
+    "predio": "cafe",
+    "vagas": 1,
+    "ocupadas": 0,
+    "roupa": {
+      "camisa": "#4a2f2a",
+      "calca": "#2c2c3c",
+      "extra": "avental"
+    }
+  },
+  {
+    "id": "sorveteiro",
+    "nome": "Sorveteiro(a)",
+    "predio": "sorveteria",
+    "vagas": 1,
+    "ocupadas": 0,
+    "roupa": {
+      "camisa": "#f08cb6",
+      "calca": "#f2f4f7",
+      "extra": "bone"
+    }
+  },
+  {
+    "id": "policial",
+    "nome": "Policial",
+    "predio": "delegacia",
+    "vagas": 4,
+    "ocupadas": 0,
+    "roupa": {
+      "camisa": "#2c4c88",
+      "calca": "#1e2a4a",
+      "extra": "quepe"
+    }
+  },
+  {
+    "id": "mecanico",
+    "nome": "Mecânico(a)",
+    "predio": "oficina",
+    "vagas": 2,
+    "ocupadas": 0,
+    "roupa": {
+      "camisa": "#3a5ea8",
+      "calca": "#3a5ea8",
+      "extra": "macacao"
+    }
+  },
+  {
+    "id": "motorista",
+    "nome": "Motorista",
+    "predio": "terminal",
+    "vagas": 4,
+    "ocupadas": 0,
+    "roupa": {
+      "camisa": "#8fb6e0",
+      "calca": "#2f3648",
+      "extra": "bone"
+    }
+  },
+  {
+    "id": "engenheiro",
+    "nome": "Engenheiro(a)",
+    "predio": "obra",
+    "vagas": 2,
+    "ocupadas": 0,
+    "roupa": {
+      "camisa": "#f08a24",
+      "calca": "#3b4a6b",
+      "extra": "capacete"
+    }
+  },
+  {
+    "id": "pedreiro",
+    "nome": "Pedreiro(a)",
+    "predio": "obra",
+    "vagas": 4,
+    "ocupadas": 0,
+    "roupa": {
+      "camisa": "#9aa3ad",
+      "calca": "#4a5568",
+      "extra": "capacete"
+    }
+  },
+  {
+    "id": "analista",
+    "nome": "Programador(a)",
+    "predio": "escritorio-1",
+    "vagas": 3,
+    "ocupadas": 0,
+    "roupa": {
+      "camisa": "#3b3f57",
+      "calca": "#5a6b8c",
+      "extra": "oculos"
+    }
+  }
+]

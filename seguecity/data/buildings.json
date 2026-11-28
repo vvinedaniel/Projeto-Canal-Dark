@@ -1,0 +1,818 @@
+[
+  {
+    "id": "prefeitura",
+    "nome": "Prefeitura",
+    "tipo": "prefeitura",
+    "posicao": {
+      "i": 10,
+      "j": 5
+    },
+    "tamanho": {
+      "w": 5,
+      "d": 4
+    },
+    "status": "pronto",
+    "andares": 3,
+    "destaque": true
+  },
+  {
+    "id": "escola",
+    "nome": "Escola Municipal",
+    "tipo": "escola",
+    "posicao": {
+      "i": 4,
+      "j": 4
+    },
+    "tamanho": {
+      "w": 5,
+      "d": 3
+    },
+    "status": "pronto",
+    "andares": 2,
+    "destaque": true
+  },
+  {
+    "id": "hospital",
+    "nome": "Hospital",
+    "tipo": "hospital",
+    "posicao": {
+      "i": 16,
+      "j": 4
+    },
+    "tamanho": {
+      "w": 4,
+      "d": 5
+    },
+    "status": "pronto",
+    "andares": 5,
+    "destaque": true
+  },
+  {
+    "id": "mercado",
+    "nome": "Mercadinho",
+    "tipo": "mercado",
+    "posicao": {
+      "i": 16,
+      "j": 11
+    },
+    "tamanho": {
+      "w": 4,
+      "d": 3
+    },
+    "status": "pronto",
+    "andares": 1,
+    "destaque": true,
+    "frente": "i+"
+  },
+  {
+    "id": "padaria",
+    "nome": "Padaria",
+    "tipo": "loja",
+    "posicao": {
+      "i": 16,
+      "j": 14
+    },
+    "tamanho": {
+      "w": 2,
+      "d": 3
+    },
+    "status": "pronto",
+    "andares": 2,
+    "placa": "PADARIA",
+    "cor": "cream",
+    "toldo": "red"
+  },
+  {
+    "id": "farmacia",
+    "nome": "Farmácia",
+    "tipo": "loja",
+    "posicao": {
+      "i": 18,
+      "j": 14
+    },
+    "tamanho": {
+      "w": 2,
+      "d": 3
+    },
+    "status": "pronto",
+    "andares": 2,
+    "placa": "FARMÁCIA",
+    "cor": "white",
+    "toldo": "green"
+  },
+  {
+    "id": "torre-1",
+    "nome": "Torre Ipê",
+    "tipo": "apartamento",
+    "posicao": {
+      "i": 4,
+      "j": 11
+    },
+    "tamanho": {
+      "w": 2,
+      "d": 3
+    },
+    "status": "pronto",
+    "andares": 8,
+    "cor": "slate"
+  },
+  {
+    "id": "escritorio-1",
+    "nome": "Centro Empresarial",
+    "tipo": "escritorio",
+    "posicao": {
+      "i": 6,
+      "j": 11
+    },
+    "tamanho": {
+      "w": 3,
+      "d": 3
+    },
+    "status": "pronto",
+    "andares": 6
+  },
+  {
+    "id": "apto-4",
+    "nome": "Residencial Jardim",
+    "tipo": "apartamento",
+    "posicao": {
+      "i": 4,
+      "j": 14
+    },
+    "tamanho": {
+      "w": 3,
+      "d": 3
+    },
+    "status": "pronto",
+    "andares": 4,
+    "cor": "brick"
+  },
+  {
+    "id": "apto-3",
+    "nome": "Edifício Horizonte",
+    "tipo": "apartamento",
+    "posicao": {
+      "i": 7,
+      "j": 14
+    },
+    "tamanho": {
+      "w": 2,
+      "d": 3
+    },
+    "status": "pronto",
+    "andares": 5,
+    "cor": "cream"
+  },
+  {
+    "id": "delegacia",
+    "nome": "Delegacia",
+    "tipo": "delegacia",
+    "posicao": {
+      "i": 4,
+      "j": 18
+    },
+    "tamanho": {
+      "w": 3,
+      "d": 3
+    },
+    "status": "pronto",
+    "andares": 2,
+    "destaque": true
+  },
+  {
+    "id": "oficina",
+    "nome": "Oficina Mecânica",
+    "tipo": "oficina",
+    "posicao": {
+      "i": 7,
+      "j": 18
+    },
+    "tamanho": {
+      "w": 2,
+      "d": 3
+    },
+    "status": "pronto",
+    "andares": 1
+  },
+  {
+    "id": "apto-1",
+    "nome": "Edifício Aurora",
+    "tipo": "apartamento",
+    "posicao": {
+      "i": 4,
+      "j": 21
+    },
+    "tamanho": {
+      "w": 2,
+      "d": 3
+    },
+    "status": "pronto",
+    "andares": 4,
+    "cor": "orange"
+  },
+  {
+    "id": "apto-2",
+    "nome": "Residencial Primavera",
+    "tipo": "apartamento",
+    "posicao": {
+      "i": 6,
+      "j": 21
+    },
+    "tamanho": {
+      "w": 3,
+      "d": 3
+    },
+    "status": "pronto",
+    "andares": 3,
+    "cor": "mint"
+  },
+  {
+    "id": "sorveteria",
+    "nome": "Sorveteria",
+    "tipo": "loja",
+    "posicao": {
+      "i": 10,
+      "j": 18
+    },
+    "tamanho": {
+      "w": 2,
+      "d": 3
+    },
+    "status": "pronto",
+    "andares": 2,
+    "placa": "SORVETES",
+    "cor": "lilac",
+    "toldo": "pink"
+  },
+  {
+    "id": "cafe",
+    "nome": "Café",
+    "tipo": "loja",
+    "posicao": {
+      "i": 12,
+      "j": 18
+    },
+    "tamanho": {
+      "w": 2,
+      "d": 3
+    },
+    "status": "pronto",
+    "andares": 2,
+    "placa": "CAFÉ",
+    "cor": "pink",
+    "toldo": "yellow"
+  },
+  {
+    "id": "terminal",
+    "nome": "Terminal de Ônibus",
+    "tipo": "terminal",
+    "posicao": {
+      "i": 10,
+      "j": 21
+    },
+    "tamanho": {
+      "w": 2,
+      "d": 3
+    },
+    "status": "pronto",
+    "andares": 1,
+    "destaque": true
+  },
+  {
+    "id": "obra",
+    "nome": "Canteiro de Obras",
+    "tipo": "obra",
+    "posicao": {
+      "i": 26,
+      "j": 4
+    },
+    "tamanho": {
+      "w": 4,
+      "d": 6
+    },
+    "status": "em_obra",
+    "andares": 4,
+    "destaque": true
+  },
+  {
+    "id": "casa-01",
+    "nome": "Casa 1",
+    "tipo": "casa",
+    "posicao": {
+      "i": 4,
+      "j": 25
+    },
+    "tamanho": {
+      "w": 2,
+      "d": 2
+    },
+    "status": "pronto",
+    "andares": 1,
+    "frente": "j+",
+    "bairro": "Vila Nova",
+    "cor": "white",
+    "moradores": 0
+  },
+  {
+    "id": "casa-02",
+    "nome": "Casa 2",
+    "tipo": "casa",
+    "posicao": {
+      "i": 6,
+      "j": 25
+    },
+    "tamanho": {
+      "w": 2,
+      "d": 2
+    },
+    "status": "pronto",
+    "andares": 2,
+    "frente": "j+",
+    "bairro": "Vila Nova",
+    "cor": "lilac",
+    "moradores": 0
+  },
+  {
+    "id": "casa-03",
+    "nome": "Casa 3",
+    "tipo": "casa",
+    "posicao": {
+      "i": 8,
+      "j": 25
+    },
+    "tamanho": {
+      "w": 2,
+      "d": 2
+    },
+    "status": "pronto",
+    "andares": 1,
+    "frente": "j+",
+    "bairro": "Vila Nova",
+    "cor": "pink",
+    "moradores": 0
+  },
+  {
+    "id": "casa-04",
+    "nome": "Casa 4",
+    "tipo": "casa",
+    "posicao": {
+      "i": 10,
+      "j": 25
+    },
+    "tamanho": {
+      "w": 2,
+      "d": 2
+    },
+    "status": "pronto",
+    "andares": 1,
+    "frente": "j+",
+    "bairro": "Vila Nova",
+    "cor": "brick",
+    "moradores": 0
+  },
+  {
+    "id": "casa-05",
+    "nome": "Casa 5",
+    "tipo": "casa",
+    "posicao": {
+      "i": 12,
+      "j": 25
+    },
+    "tamanho": {
+      "w": 2,
+      "d": 2
+    },
+    "status": "pronto",
+    "andares": 1,
+    "frente": "j+",
+    "bairro": "Vila Nova",
+    "cor": "orange",
+    "moradores": 0
+  },
+  {
+    "id": "casa-06",
+    "nome": "Casa 6",
+    "tipo": "casa",
+    "posicao": {
+      "i": 14,
+      "j": 25
+    },
+    "tamanho": {
+      "w": 2,
+      "d": 2
+    },
+    "status": "pronto",
+    "andares": 1,
+    "frente": "j+",
+    "bairro": "Vila Nova",
+    "cor": "mint",
+    "moradores": 0
+  },
+  {
+    "id": "casa-07",
+    "nome": "Casa 7",
+    "tipo": "casa",
+    "posicao": {
+      "i": 16,
+      "j": 25
+    },
+    "tamanho": {
+      "w": 2,
+      "d": 2
+    },
+    "status": "pronto",
+    "andares": 2,
+    "frente": "j+",
+    "bairro": "Vila Nova",
+    "cor": "blue",
+    "moradores": 0
+  },
+  {
+    "id": "casa-08",
+    "nome": "Casa 8",
+    "tipo": "casa",
+    "posicao": {
+      "i": 18,
+      "j": 25
+    },
+    "tamanho": {
+      "w": 2,
+      "d": 2
+    },
+    "status": "pronto",
+    "andares": 1,
+    "frente": "j+",
+    "bairro": "Vila Nova",
+    "cor": "teal",
+    "moradores": 0
+  },
+  {
+    "id": "casa-09",
+    "nome": "Casa 9",
+    "tipo": "casa",
+    "posicao": {
+      "i": 4,
+      "j": 29
+    },
+    "tamanho": {
+      "w": 2,
+      "d": 2
+    },
+    "status": "pronto",
+    "andares": 1,
+    "frente": "j-",
+    "bairro": "Vila Nova",
+    "cor": "yellow",
+    "moradores": 0
+  },
+  {
+    "id": "casa-10",
+    "nome": "Casa 10",
+    "tipo": "casa",
+    "posicao": {
+      "i": 6,
+      "j": 29
+    },
+    "tamanho": {
+      "w": 2,
+      "d": 2
+    },
+    "status": "pronto",
+    "andares": 1,
+    "frente": "j-",
+    "bairro": "Vila Nova",
+    "cor": "cream",
+    "moradores": 0
+  },
+  {
+    "id": "casa-11",
+    "nome": "Casa 11",
+    "tipo": "casa",
+    "posicao": {
+      "i": 8,
+      "j": 29
+    },
+    "tamanho": {
+      "w": 2,
+      "d": 2
+    },
+    "status": "pronto",
+    "andares": 1,
+    "frente": "j-",
+    "bairro": "Vila Nova",
+    "cor": "white",
+    "moradores": 0
+  },
+  {
+    "id": "casa-12",
+    "nome": "Casa 12",
+    "tipo": "casa",
+    "posicao": {
+      "i": 10,
+      "j": 29
+    },
+    "tamanho": {
+      "w": 2,
+      "d": 2
+    },
+    "status": "pronto",
+    "andares": 2,
+    "frente": "j-",
+    "bairro": "Vila Nova",
+    "cor": "lilac",
+    "moradores": 0
+  },
+  {
+    "id": "casa-13",
+    "nome": "Casa 13",
+    "tipo": "casa",
+    "posicao": {
+      "i": 12,
+      "j": 29
+    },
+    "tamanho": {
+      "w": 2,
+      "d": 2
+    },
+    "status": "pronto",
+    "andares": 1,
+    "frente": "j-",
+    "bairro": "Vila Nova",
+    "cor": "pink",
+    "moradores": 0
+  },
+  {
+    "id": "casa-14",
+    "nome": "Casa 14",
+    "tipo": "casa",
+    "posicao": {
+      "i": 14,
+      "j": 29
+    },
+    "tamanho": {
+      "w": 2,
+      "d": 2
+    },
+    "status": "pronto",
+    "andares": 1,
+    "frente": "j-",
+    "bairro": "Vila Nova",
+    "cor": "brick",
+    "moradores": 0
+  },
+  {
+    "id": "casa-15",
+    "nome": "Casa 15",
+    "tipo": "casa",
+    "posicao": {
+      "i": 16,
+      "j": 29
+    },
+    "tamanho": {
+      "w": 2,
+      "d": 2
+    },
+    "status": "pronto",
+    "andares": 1,
+    "frente": "j-",
+    "bairro": "Vila Nova",
+    "cor": "orange",
+    "moradores": 0
+  },
+  {
+    "id": "casa-16",
+    "nome": "Casa 16",
+    "tipo": "casa",
+    "posicao": {
+      "i": 18,
+      "j": 29
+    },
+    "tamanho": {
+      "w": 2,
+      "d": 2
+    },
+    "status": "pronto",
+    "andares": 1,
+    "frente": "j-",
+    "bairro": "Vila Nova",
+    "cor": "mint",
+    "moradores": 0
+  },
+  {
+    "id": "casa-17",
+    "nome": "Casa 17",
+    "tipo": "casa",
+    "posicao": {
+      "i": 27,
+      "j": 11
+    },
+    "tamanho": {
+      "w": 2,
+      "d": 2
+    },
+    "status": "pronto",
+    "andares": 2,
+    "frente": "i+",
+    "bairro": "Beira-Rio",
+    "cor": "blue",
+    "moradores": 0
+  },
+  {
+    "id": "casa-18",
+    "nome": "Casa 18",
+    "tipo": "casa",
+    "posicao": {
+      "i": 27,
+      "j": 13
+    },
+    "tamanho": {
+      "w": 2,
+      "d": 2
+    },
+    "status": "pronto",
+    "andares": 1,
+    "frente": "i+",
+    "bairro": "Beira-Rio",
+    "cor": "teal",
+    "moradores": 0
+  },
+  {
+    "id": "casa-19",
+    "nome": "Casa 19",
+    "tipo": "casa",
+    "posicao": {
+      "i": 27,
+      "j": 15
+    },
+    "tamanho": {
+      "w": 2,
+      "d": 2
+    },
+    "status": "pronto",
+    "andares": 1,
+    "frente": "i+",
+    "bairro": "Beira-Rio",
+    "cor": "yellow",
+    "moradores": 0
+  },
+  {
+    "id": "casa-20",
+    "nome": "Casa 20",
+    "tipo": "casa",
+    "posicao": {
+      "i": 27,
+      "j": 17
+    },
+    "tamanho": {
+      "w": 2,
+      "d": 2
+    },
+    "status": "pronto",
+    "andares": 1,
+    "frente": "i+",
+    "bairro": "Beira-Rio",
+    "cor": "cream",
+    "moradores": 0
+  },
+  {
+    "id": "casa-21",
+    "nome": "Casa 21",
+    "tipo": "casa",
+    "posicao": {
+      "i": 27,
+      "j": 19
+    },
+    "tamanho": {
+      "w": 2,
+      "d": 2
+    },
+    "status": "pronto",
+    "andares": 1,
+    "frente": "i+",
+    "bairro": "Beira-Rio",
+    "cor": "white",
+    "moradores": 0
+  },
+  {
+    "id": "casa-22",
+    "nome": "Casa 22",
+    "tipo": "casa",
+    "posicao": {
+      "i": 27,
+      "j": 21
+    },
+    "tamanho": {
+      "w": 2,
+      "d": 2
+    },
+    "status": "pronto",
+    "andares": 2,
+    "frente": "i+",
+    "bairro": "Beira-Rio",
+    "cor": "lilac",
+    "moradores": 0
+  },
+  {
+    "id": "casa-23",
+    "nome": "Casa 23",
+    "tipo": "casa",
+    "posicao": {
+      "i": 27,
+      "j": 25
+    },
+    "tamanho": {
+      "w": 2,
+      "d": 2
+    },
+    "status": "pronto",
+    "andares": 1,
+    "frente": "i+",
+    "bairro": "Beira-Rio",
+    "cor": "pink",
+    "moradores": 0
+  },
+  {
+    "id": "casa-24",
+    "nome": "Casa 24",
+    "tipo": "casa",
+    "posicao": {
+      "i": 27,
+      "j": 27
+    },
+    "tamanho": {
+      "w": 2,
+      "d": 2
+    },
+    "status": "pronto",
+    "andares": 1,
+    "frente": "i+",
+    "bairro": "Beira-Rio",
+    "cor": "brick",
+    "moradores": 0
+  },
+  {
+    "id": "futuro-1",
+    "nome": "Lote 1 (futuro)",
+    "tipo": "apartamento",
+    "posicao": {
+      "i": 16,
+      "j": 18
+    },
+    "tamanho": {
+      "w": 2,
+      "d": 3
+    },
+    "status": "planejado",
+    "andares": 5,
+    "cor": "teal"
+  },
+  {
+    "id": "futuro-2",
+    "nome": "Lote 2 (futuro)",
+    "tipo": "loja",
+    "posicao": {
+      "i": 18,
+      "j": 18
+    },
+    "tamanho": {
+      "w": 2,
+      "d": 3
+    },
+    "status": "planejado",
+    "andares": 2,
+    "placa": "LOJA NOVA",
+    "cor": "yellow",
+    "toldo": "blue"
+  },
+  {
+    "id": "futuro-3",
+    "nome": "Lote 3 (futuro)",
+    "tipo": "escritorio",
+    "posicao": {
+      "i": 16,
+      "j": 21
+    },
+    "tamanho": {
+      "w": 2,
+      "d": 3
+    },
+    "status": "planejado",
+    "andares": 4
+  },
+  {
+    "id": "futuro-4",
+    "nome": "Lote 4 (futuro)",
+    "tipo": "apartamento",
+    "posicao": {
+      "i": 18,
+      "j": 21
+    },
+    "tamanho": {
+      "w": 2,
+      "d": 3
+    },
+    "status": "planejado",
+    "andares": 3,
+    "cor": "pink"
+  }
+]

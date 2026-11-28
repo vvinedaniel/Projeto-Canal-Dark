@@ -1,0 +1,28 @@
+[
+  {
+    "episodio": 0,
+    "id": "demo",
+    "titulo": "Demo — A cidade",
+    "duracao": 15,
+    "data": "2026-11-28",
+    "resumo": "Demonstração visual da SegueCity pronta: câmera cinematográfica, trânsito, água, luzes e personagens.",
+    "status": "produzido",
+    "estado": {
+      "moradores": 0,
+      "empregos": 48
+    }
+  },
+  {
+    "episodio": 1,
+    "id": "ep01",
+    "titulo": "DIA 01 — Construí uma cidade inteira, mas ninguém mora nela",
+    "duracao": 75,
+    "data": "2026-11-28",
+    "resumo": "A cidade está pronta, mas vazia. Apresenta a SegueCity e a mecânica: cada seguidor pode virar morador; quem comentar nome e profissão pode aparecer no próximo episódio.",
+    "status": "produzido",
+    "estado": {
+      "moradores": 0,
+      "empregos": 48
+    }
+  }
+]
