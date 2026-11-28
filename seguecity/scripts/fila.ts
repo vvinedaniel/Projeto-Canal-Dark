@@ -27,7 +27,7 @@ function status() {
   const esp = Object.entries(F.regras.capacidadePorEpisodioEspecifica ?? {}).map(([e, v]) => `${e}: ${v}`).join(', ');
   console.log(`Capacidade narrativa: ${F.regras.capacidadePorEpisodio} por episódio${esp ? ` (exceções: ${esp})` : ''} · próximo episódio livre: ${prox} (${capacidadeDo(db, prox)})`);
   console.log(`Moradia: capacidade ${I.moradia.capacidade} · ocupadas ${I.moradia.ocupadas} (${I.moradia.ocupacaoPct}%) · livres ${I.moradia.livres} · ocupação prevista com os agendados ${I.moradia.ocupacaoProjetadaPct}%`);
-  console.log(`Empregos: ${I.empregos.ocupados}/${I.empregos.total} ocupados · ${I.empregos.livres} vagas livres`);
+  console.log(`Empregos: ${I.empregos.ocupados}/${I.empregos.total} ocupados · ${I.empregos.livres} vagas livres · ${I.empregos.disponiveis} disponíveis agora (${I.empregos.emPredioPlanejado} em prédio planejado, ${I.empregos.dependemDaEleicao} dependem da eleição)`);
   console.log(`Demanda reprimida: ${I.demandaReprimida.total} (${I.demandaReprimida.semMoradia} sem moradia, ${I.demandaReprimida.semProfissao} sem profissão) · déficit de moradia se toda a fila entrasse: ${I.demandaReprimida.deficitDeMoradia}`);
   console.log(I.alerta ? `⚠ ALERTA DE EXPANSÃO (${I.alerta.nivel}): ${I.alerta.mensagem}` : `Alerta de expansão: não (dispara em ${Math.round(F.regras.alertaExpansao * 100)}% de ocupação)`);
   const travados = db.episodes.filter((e) => /^ep\d+$/.test(e.id) && travado(db, e.id)).map((e) => `${e.id}${e.lista?.encerrada ? ` (lista encerrada: ${e.lista.moradores.length})` : ` (${e.status})`}`);

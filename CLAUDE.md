@@ -355,6 +355,16 @@ e `tools/bench-cap.cjs` (métodos de captura). Resultados em `out/bench.jsonl`.
     planta holográfica e do "terreno vazio".
   - **Plano de carros:** a câmera acompanha um veículo da frota, com posição tirada de `vehiclesAt(t +
     timeOffset)`, e desenha um anel nele. Em plano aberto os carros somem.
+  - **Fechamento do Dia 02:**
+    - 18 seguidores em 28/11/2026 (`city.ts seguidores 18`).
+    - HUD com "SEGUIDORES 18 · ELEIÇÃO 18/100" e "VAGAS 44 DISPONÍVEIS". Três contadores só cabem ao lado
+      da marca com rótulos curtos: o detalhe vai na linha pequena (`sub`) do `Counter`.
+    - Vagas livres (48) × disponíveis (44): `vagasDetalhe()` em `cidade.ts`. Prédio planejado e prefeito
+      antes da eleição não contam como disponíveis.
+    - `proximaMeta` agora é calculada pelo `sync`.
+    - A lembrança do Dia 01 não mostra seguidores (o número não existia naquele dia).
+    - Nome duvidoso na voz: confira com o Whisper large-v3-turbo local, que é mais preciso que o small.
+    - Os testes da fila partem de uma cópia sem o `dia-02.json` oficial.
   - **`pgrep -f` de novo:** um laço de espera com o padrão no próprio texto travou. Espere pelo aviso da
     tarefa em segundo plano ou pelo arquivo final.
 - **Fontes pixel não têm "º":** Jersey cai em "o" ("No 1") e Silkscreen mostra um asterisco. Use

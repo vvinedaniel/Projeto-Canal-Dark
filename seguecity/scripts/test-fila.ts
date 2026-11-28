@@ -1,7 +1,7 @@
 // Testes da fila de entrada e das regras de moradores (npm run test:fila).
 // Cada cenário roda numa CÓPIA dos dados (SEGUECITY_DATA=<pasta temporária>): os dados reais nunca são tocados.
 // Os nomes de teste existem só nessas cópias.
-import { cpSync, existsSync, mkdtempSync, readFileSync, rmSync, writeFileSync, copyFileSync } from 'node:fs';
+import { cpSync, existsSync, mkdtempSync, readFileSync, rmSync, writeFileSync } from 'node:fs';
 import { execFileSync } from 'node:child_process';
 import { createHash } from 'node:crypto';
 import os from 'node:os';
@@ -18,6 +18,9 @@ function copia() {
   if (dir) rmSync(dir, { recursive: true, force: true });
   dir = mkdtempSync(path.join(os.tmpdir(), 'seguecity-teste-'));
   cpSync(REAL, dir, { recursive: true });
+  const of = path.join(dir, 'snapshots/dia-02.json'), ra = path.join(dir, 'snapshots/dia-02.rascunho.json');
+  baseDia02 = readFileSync(existsSync(of) ? of : ra, 'utf8');
+  rmSync(of, { force: true });
   return dir;
 }
 const J = (f: string) => JSON.parse(readFileSync(path.join(dir, f), 'utf8'));
@@ -32,7 +35,10 @@ function check(nome: string, cond: boolean, info = '') {
   if (cond) { ok++; console.log(`  ✓ ${nome}`); } else { falhas++; console.log(`  ✗ ${nome}${info ? ` — ${info}` : ''}`); }
 }
 const add = (...a: string[]) => cli('fila', 'add', ...a);
-const oficializaDia = (n: number) => copyFileSync(path.join(dir, 'snapshots/dia-02.rascunho.json'), path.join(dir, `snapshots/dia-${String(n).padStart(2, '0')}.json`));
+// os cenários partem do estado ANTES de congelar o Dia 02: a cópia não leva o dia-02.json oficial
+// (ele vira a base dos snapshots simulados, ou o rascunho se o oficial ainda não existir)
+let baseDia02 = '';
+const oficializaDia = (n: number) => writeFileSync(path.join(dir, `snapshots/dia-${String(n).padStart(2, '0')}.json`), baseDia02);
 
 async function main() {
   // ------------------------------------------------------------------ regras que já existiam
@@ -172,4 +178,3 @@ async function main() {
   if (falhas) process.exit(1);
 }
 main().catch((e) => { console.error(e); process.exit(1); });
-void existsSync;

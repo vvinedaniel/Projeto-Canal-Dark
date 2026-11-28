@@ -15,7 +15,7 @@
   "evolucao": {
     "nivel": 1,
     "nome": "Vila recém-construída",
-    "proximaMeta": "Primeiro morador"
+    "proximaMeta": "Novo bairro (10/50 moradores)"
   },
   "metas": [
     {
@@ -23,35 +23,39 @@
       "nome": "Primeiro morador",
       "alvo": 1,
       "concluida": true,
-      "base": "moradores"
+      "base": "moradores",
+      "atual": 10
     },
     {
       "id": "fundadores",
       "nome": "Fundadores da cidade",
       "alvo": 10,
       "concluida": true,
-      "base": "moradores"
+      "base": "moradores",
+      "atual": 10
     },
     {
       "id": "novo-bairro",
       "nome": "Novo bairro",
       "alvo": 50,
       "concluida": false,
-      "base": "moradores"
+      "base": "moradores",
+      "atual": 10
     },
     {
       "id": "eleicao",
       "nome": "Eleição para prefeito",
       "alvo": 100,
       "concluida": false,
-      "base": "seguidores"
+      "base": "seguidores",
+      "atual": 18
     }
   ],
   "atualizadoEm": "2026-11-28",
   "seguidores": {
-    "valor": null,
+    "valor": 18,
     "fonte": "TikTok (número informado pelo dono do canal)",
-    "atualizadoEm": null
+    "atualizadoEm": "2026-11-28"
   },
   "conquistas": [
     {
@@ -93,7 +97,10 @@
     "empregos": {
       "total": 58,
       "ocupados": 10,
-      "livres": 48
+      "livres": 48,
+      "disponiveis": 44,
+      "emPredioPlanejado": 3,
+      "dependemDaEleicao": 1
     },
     "fila": {
       "emEspera": 0,

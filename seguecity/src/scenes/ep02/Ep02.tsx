@@ -318,8 +318,8 @@ export const Ep02: React.FC = () => {
       <FxLayer draw={(c) => CUTS.forEach((tc) => tileWipe(c, t, tc))} />
 
       {/* HUD fixa + minimapa nos planos que procuram lugares */}
-      <Hud moradores={moradoresHud} empregos={dia01 ? 48 : VAGAS.livres} dia={dia01 ? 1 : 2} hora={hora} show={1 - endA} warnMoradores={dia01}
-        pulseMoradores={t < T.rob ? (t % 0.24 < 0.12 ? 0.6 : 0) * (t < 2.6 ? 1 : 0) : win(t, A.zero, A.zero + 0.8, 0.1, 0.3)} label="VAGAS LIVRES" seguidores={SEGUIDORES ?? undefined} />
+      <Hud moradores={moradoresHud} empregos={dia01 ? 48 : VAGAS.disponiveis ?? VAGAS.livres} dia={dia01 ? 1 : 2} hora={hora} show={1 - endA} warnMoradores={dia01}
+        pulseMoradores={t < T.rob ? (t % 0.24 < 0.12 ? 0.6 : 0) * (t < 2.6 ? 1 : 0) : win(t, A.zero, A.zero + 0.8, 0.1, 0.3)} label="VAGAS" empregosSub={dia01 ? undefined : "DISPONÍVEIS"} seguidores={dia01 ? undefined : SEGUIDORES ?? undefined} seguidoresSub={dia01 ? undefined : EST.metaEleicao ? `ELEIÇÃO ${EST.metaEleicao.atual}/${EST.metaEleicao.alvo}` : undefined} />
       <Minimap cam={cam} t={t} a={(interior ? 0 : 1) * (win(t, T.problema + 0.3, T.cemit - 0.1, 0.3, 0.2) + win(t, A.gabrielly2 - 0.2, T.carros - 0.05, 0.3, 0.2))} ping={t < T.advoc ? { i: 28, j: 30 } : { i: 17, j: 22.5 }} />
       {cur && <Cursor x={cur.x} y={cur.y} press={cur.press} clickAge={cur.clickAge} a={Math.min(1, curA)} />}
 

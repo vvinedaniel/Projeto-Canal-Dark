@@ -30,7 +30,7 @@ de `src/scenes/ep02/narration-v2.json`. Todo evento visual e sonoro é ancorado 
 | 18 | 51,82–54,48 | E cinco serviços abriram suas portas. | Centro da cidade | Painel "SERVIÇOS ABERTOS" conta de 1 a 5 (hospital, delegacia, oficina, mercadinho, Centro Empresarial); cada prédio acende com contorno verde na hora em que é contado. |
 | 19 | 54,48–60,06 | Esses dez moradores receberão um distintivo dourado de fundador para sempre. | Praça e monumento | Grade com os 10 retratos, nomes e profissões. Em "dourado", uma estrela entra em cada retrato; em "fundador", o título brilha; em "sempre", a faixa "DISTINTIVO DOURADO · PARA SEMPRE". |
 | 20 | 60,06–65,64 | Agora começa uma nova missão: encontrar nossos primeiros moradores pioneiros. | Ilha inteira | Painel "NOVA MISSÃO" → "ENCONTRAR OS PIONEIROS". Três categorias: FUNDADORES 1–10 (10/10), **PIONEIROS 11–100 · os próximos 90 (0/90)**, que acende em "pioneiros", e CIDADÃOS 101+ (bloqueado). |
-| 21 | 65,64–68,38 | Ainda temos catorze casas disponíveis. | Vila Nova e Beira-Rio | Marcadores ciano nas 14 casas livres; painel "14 CASAS LIVRES" e "48 VAGAS DE EMPREGO LIVRES · 58 NO TOTAL · 10 OCUPADAS". |
+| 21 | 65,64–68,38 | Ainda temos catorze casas disponíveis. | Vila Nova e Beira-Rio | Marcadores ciano nas 14 casas livres; painel "14 CASAS LIVRES" e "44 VAGAS DE EMPREGO DISPONÍVEIS · 58 NO TOTAL · 10 OCUPADAS · 48 LIVRES · 3 EM OBRAS PLANEJADAS · 1 DE PREFEITO (ELEIÇÃO)". |
 | 22 | 68,38–71,30 | Comente seu nome e sua profissão. | Casa livre (Casa 32) | Ficha **PRÓXIMO MORADOR · PIONEIRO** (sem número); botões COMENTE e NOME + PROFISSÃO; casa livre contornada em ciano. |
 | 23 | 71,30–75,00 | Quem será o próximo cidadão da SegueCity? | Ilha à noite, afastando | Marca por ~3,7 s: logo oficial com o slogan; acorde final em "SegueCity"; "DIA 03 EM BREVE" depois que a voz termina. |
 
@@ -44,5 +44,5 @@ de `src/scenes/ep02/narration-v2.json`. Todo evento visual e sonoro é ancorado 
 - Só o Mateus é numerado. A ordem dos outros nove não é mostrada.
 - Cemitério e advocacia aparecem só como **projetos** (planta holográfica). A decisão de construir é da
   administração da cidade, não um pedido do Roberto.
-- Contador de seguidores: só aparece quando o número real for informado (`ep02.estado.seguidores`). Não
-  há número inventado.
+- HUD: MORADORES 10 · SEGUIDORES 18 (informado em 28/11/2026), com "ELEIÇÃO 18/100" · VAGAS 44 DISPONÍVEIS.
+  Na lembrança do Dia 01 a HUD mostra o estado daquele dia: 0 moradores e nenhum seguidor informado.

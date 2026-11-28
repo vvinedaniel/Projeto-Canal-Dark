@@ -92,6 +92,19 @@ function mesmaPessoa(a: Ident, b: Ident): 'sim' | 'nao' | 'desconhecido' {
 export const CATEGORIAS = { fundador: { de: 1, ate: 10, nome: 'FUNDADOR' }, pioneiro: { de: 11, ate: 100, nome: 'PIONEIRO' }, cidadao: { de: 101, nome: 'CIDADÃO' } } as const;
 export const categoriaDoNumero = (n: number) => (n <= CATEGORIAS.fundador.ate ? 'FUNDADOR' : n <= CATEGORIAS.pioneiro.ate ? 'PIONEIRO' : 'CIDADÃO');
 
+// ---------------- vagas: livres × efetivamente disponíveis ----------------
+// livres = não ocupadas; disponíveis = livres que um morador novo pode ocupar agora
+// (não contam as vagas em prédio ainda planejado nem as que dependem da eleição, como a de prefeito)
+export function vagasDetalhe(db: DB) {
+  const st = (id: string) => db.buildings.find((b) => b.id === id)?.status;
+  const eleicaoFeita = db.city.metas?.find((m: any) => m.id === 'eleicao')?.concluida === true;
+  const livre = (j: any) => Math.max(0, j.vagas - (j.ocupadas ?? 0));
+  const emProjeto = db.jobs.filter((j) => st(j.predio) === 'planejado').reduce((s, j) => s + livre(j), 0);
+  const dependeEleicao = eleicaoFeita ? 0 : db.jobs.filter((j) => j.roupa?.eleicao && st(j.predio) !== 'planejado').reduce((s, j) => s + livre(j), 0);
+  const total = db.jobs.reduce((s, j) => s + j.vagas, 0), ocupados = db.jobs.reduce((s, j) => s + Math.min(j.vagas, j.ocupadas ?? 0), 0);
+  return { total, ocupados, livres: total - ocupados, disponiveis: total - ocupados - emProjeto - dependeEleicao, emPredioPlanejado: emProjeto, dependemDaEleicao: dependeEleicao };
+}
+
 // ---------------- indicadores de moradia e alerta de expansão ----------------
 export function indicadores(db: DB) {
   const reais = db.residents.filter((r) => !r.ficticio);
@@ -111,7 +124,7 @@ export function indicadores(db: DB) {
   return {
     atualizadoEm: today(),
     moradia: { capacidade, ocupadas, livres: capacidade - ocupadas, ocupacaoPct: pct(ocupadas), ocupacaoProjetadaPct: pct(Math.min(capacidade, ocupadas + agendados)), unidadesDeApartamento: capacidade - casas.length },
-    empregos: { total: db.city.empregos.total, ocupados: db.city.empregos.ocupados, livres: db.city.empregos.total - db.city.empregos.ocupados },
+    empregos: vagasDetalhe(db),
     fila: { emEspera, agendados, aguardandoMoradia: n('aguardando-moradia'), aguardandoProfissao: n('aguardando-profissao'), incorporados: n('incorporado'), recusados: n('recusado') },
     // pedidos que a cidade não consegue atender agora (sem casa ou sem profissão), mais o que faltaria de casa se toda a fila entrasse
     demandaReprimida: { total: n('aguardando-moradia') + n('aguardando-profissao'), semMoradia: n('aguardando-moradia'), semProfissao: n('aguardando-profissao'), deficitDeMoradia: Math.max(0, emEspera - (capacidade - ocupadas)) },
@@ -164,7 +177,10 @@ export function sync(db: DB) {
   }
   const reais = residents.filter((r) => !r.ficticio).length;
   const seg = city.seguidores?.valor ?? null;
-  for (const m of city.metas) m.concluida = (m.base === 'seguidores' ? (seg ?? 0) : reais) >= m.alvo;
+  for (const m of city.metas) { m.atual = m.base === 'seguidores' ? seg : reais; m.concluida = (m.atual ?? 0) >= m.alvo; }
+  // próxima meta = a primeira da lista ainda não concluída, com o progresso real
+  const prox = city.metas.find((m: any) => !m.concluida);
+  if (city.evolucao) city.evolucao.proximaMeta = prox ? `${prox.nome} (${prox.atual ?? 0}/${prox.alvo} ${prox.base === 'seguidores' ? 'seguidores' : 'moradores'})` : 'todas as metas atuais concluídas';
   city.conquistas ??= [];
   if (reais >= 10 && !city.conquistas.some((c: any) => c.id === 'primeiros-10-moradores'))
     city.conquistas.push({ id: 'primeiros-10-moradores', nome: 'Os 10 Moradores Fundadores', dia: city.dia, data: today() });

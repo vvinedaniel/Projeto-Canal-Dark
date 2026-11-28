@@ -1,6 +1,6 @@
 # Relatório de qualidade — Ep. 02 "OS PRIMEIROS MORADORES CHEGARAM!"
 
-Data: 28/11/2026. **Nada foi publicado.**
+Data: 28/11/2026. **Versão final aprovada (capa B). Nada foi publicado.** Produção do Dia 02 encerrada.
 
 ## Arquivos
 
@@ -9,10 +9,10 @@ Data: 28/11/2026. **Nada foi publicado.**
 | Vídeo original | `out/seguecity-ep02.mp4` |
 | Versão leve (para baixar no app) | `out/seguecity-ep02-leve.mp4` |
 | Legendas | `out/seguecity-ep02.srt` (27 blocos, mesmos tempos da tela) |
-| Capas | `out/ep02-capas/capa-A.png`, `capa-B.png`, `capa-C.png` (1080×1920) |
+| Capas | **`out/ep02-capas/capa-B.png` (escolhida: UM COVEIRO NUMA CIDADE SEM CEMITÉRIO)**; alternativas `capa-A.png`, `capa-C.png` |
 | Storyboard | `docs/STORYBOARD-EP02.md` |
 | Folha de revisão (1 quadro/s) | `out/folha-ep02.jpg` |
-| Snapshot do Dia 02 | `data/snapshots/dia-02.rascunho.json` (o oficial aguarda o número de seguidores, ver abaixo) |
+| Snapshot oficial do Dia 02 | `data/snapshots/dia-02.json` (gravado em 28/11/2026, imutável; o rascunho foi removido) |
 | Pacote | `out/seguecity-ep02-entrega.zip` |
 
 ## Especificação técnica (`npx tsx scripts/validate.ts out/seguecity-ep02.mp4 --dur 75`)
@@ -36,9 +36,13 @@ Data: 28/11/2026. **Nada foi publicado.**
 - **Transcrição:** feita localmente, com o modelo Whisper small (sherpa-onnx). Não foi usado nenhum serviço
   externo nem crédito pago.
   - Os nomes foram corrigidos pelo cadastro. O reconhecimento bruto ouviu "Alice", "Mury" e "Gabriele".
-  - **Conferir de ouvido:** a voz pode ter pronunciado "Alice" em vez de "Alicia" (f11, 28,5 s). A legenda
-    e a ficha mostram **Alicia**, como no cadastro. Se a pronúncia estiver errada, o certo é gerar só essa
-    frase de novo no ElevenLabs. Eu recoloco a frase sem mexer no resto.
+  - **Pronúncia de "Alicia", conferida em 28/11/2026:** a fala f11, aos 28,5 s, foi transcrita de novo,
+    localmente, com o Whisper large-v3-turbo, um modelo bem mais preciso.
+    - Ele reconhece **"Alicia e Muri escolheram ser empresários"** e "Mari chegou como neurocirurgiã".
+    - Só o modelo pequeno ouvia "Alice".
+    - "Gabrielly" sai escrito "Gabriele" nos dois modelos, que é a mesma pronúncia.
+    - A voz foi mantida sem mudanças. É uma conferência automática; eu não ouço o áudio.
+
 - **Legendas:**
   - palavra a palavra, com a palavra atual em amarelo;
   - os tempos vêm das frases medidas (silencedetect −35 dB / 0,22 s);
@@ -64,14 +68,25 @@ No máximo 2 rótulos no mundo ao mesmo tempo.
 
 ## Dados mostrados (todos de `data/episodes.json → ep02.estado`, congelados)
 
-- **Moradores:** 10. O contador de seguidores não aparece porque o número real ainda não foi informado.
+- **Moradores:** 10.
+- **Seguidores:** **18**, informado pelo dono do canal em 28/11/2026. Fica na HUD, separado dos moradores,
+  com a meta **ELEIÇÃO 18/100**. A lembrança do Dia 01 não mostra seguidores, porque esse número não existia
+  naquele dia.
+- **Próxima meta** (`city-state.evolucao.proximaMeta`): agora é calculada sozinha a cada `sync`. É a primeira
+  meta ainda não concluída: **"Novo bairro (10/50 moradores)"**. Antes estava parada em "Primeiro morador".
 - **Casas:** 24 no total, 10 ocupadas e 14 livres.
 - **Serviços abertos:** 5 (Hospital, Delegacia, Oficina, Mercadinho e Centro Empresarial). São os prédios
   prontos com pelo menos um fundador trabalhando.
-- **Vagas de emprego, revisadas depois das atribuições:** **58 no total, 10 ocupadas e 48 livres.**
-  - Das 48 livres, 3 ficam em prédios que ainda são projeto: 1 de coveiro e 2 de advogado.
-  - Outra é a de prefeito, que só abre com a eleição.
-  - Por isso, quem entrar pela fila pode ocupar de fato 44 vagas.
+- **Vagas de emprego, revisadas depois das atribuições:** 58 no total, 10 ocupadas, **48 livres** e
+  **44 disponíveis**.
+  - Livres são as vagas não ocupadas.
+  - Disponíveis são as livres que um morador novo pode ocupar agora.
+  - A diferença são 3 vagas em prédios que ainda são projeto (1 de coveiro e 2 de advogado) e 1 de prefeito,
+    que só abre com a eleição.
+  - A HUD mostra "VAGAS 44 DISPONÍVEIS". O painel de casas e vagas mostra "44 VAGAS DE EMPREGO DISPONÍVEIS ·
+    58 NO TOTAL · 10 OCUPADAS · 48 LIVRES · 3 EM OBRAS PLANEJADAS · 1 DE PREFEITO (ELEIÇÃO)".
+  - Nos dados, `city-state.indicadores.empregos` e `episodes.json → ep02.estado.vagas` trazem `livres` e
+    `disponiveis`. O `npm run fila` mostra os dois.
   - Mecânico (2/2) e neurocirurgião (1/1) estão lotados.
 
 | Profissão | Local | Vagas | Ocupadas | Livres |
@@ -114,18 +129,18 @@ No máximo 2 rótulos no mundo ao mesmo tempo.
 - **Aparência:** é fictícia, em pixel art e sem fotos. Nome e profissão vêm dos comentários.
 - **Ep. 01:** não foi alterado, e o `dia-01.json` também não (hash conferido).
 
-## Pendências (dependem de você)
+## Encerramento do Dia 02
 
-1. **Número real de seguidores e data.** Com ele:
-   - o contador SEGUIDORES entra na HUD;
-   - eu renderizo de novo (~6 min);
-   - eu gravo o **snapshot oficial `dia-02.json`**, que não pode ser sobrescrito depois.
-
-   O snapshot oficial ainda não foi gravado para não ficar com seguidores vazio enquanto o vídeo final
-   mostra o número. Se você preferir publicar sem esse contador, eu gravo o snapshot oficial na hora.
-2. **Ordem dos comentários dos fundadores 2–10:** se for confirmada antes do snapshot oficial, os números
-   viram definitivos. Se não for, ficam provisórios.
-3. **Pronúncia de "Alicia" na voz** (ver acima).
+- **Snapshot oficial `data/snapshots/dia-02.json`:** gravado depois da conferência dos dados (18 seguidores,
+  10 moradores, 14 casas livres, 58/10/48/44 vagas, metas e fila vazia). Não pode ser sobrescrito
+  (`city:snapshot` recusa).
+- **Numeração:** Mateus é o Nº 1. Os outros nove ficam com `numero: null` e `numeroProvisorio` até a ordem dos
+  comentários ser confirmada.
+- **`dia-01.json`:** intacto (hash conferido antes e depois).
+- **Ep. 02:** marcado como `produzido`. A lista dele continua encerrada com os 10 fundadores.
+- **Próximos moradores:** como o snapshot oficial do Dia 02 existe, os comentários novos podem ser
+  incorporados pela fila no Ep. 03 (`npm run fila:incorporar -- --episodio ep03`). Eles entram como
+  PIONEIROS, a partir do nº 11.
 
 ## Revisão visual
 

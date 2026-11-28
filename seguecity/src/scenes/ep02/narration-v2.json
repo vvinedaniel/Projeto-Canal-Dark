@@ -192,5 +192,6 @@
    "de": 70.004,
    "ate": 72.56
   }
- ]
+ ],
+ "conferenciaNomes": "2026-11-28: conferência automática local com Whisper large-v3-turbo (sherpa-onnx). f10 \"Mari chegou como neurocirurgiã\", f11 \"Alicia e Muri escolheram ser empresários\" — o modelo maior reconhece Alicia; o Whisper small ouvia \"Alice\". Gabrielly é transcrita \"Gabriele\" pelos dois (mesma pronúncia). Voz mantida sem mudanças."
 }

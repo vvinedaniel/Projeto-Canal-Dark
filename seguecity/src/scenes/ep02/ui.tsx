@@ -213,7 +213,7 @@ export const MissionPanel: React.FC<{ a: number; out?: number; t: number; titleA
 };
 
 // casas e vagas livres (números do estado gravado do episódio)
-export const FreePanel: React.FC<{ a: number; out?: number; casas: number; vagas: { total: number; ocupadas: number; livres: number }; jobA: number; y?: number }> = ({ a, out = 0, casas, vagas, jobA, y = 370 }) => {
+export const FreePanel: React.FC<{ a: number; out?: number; casas: number; vagas: { total: number; ocupadas: number; livres: number; disponiveis?: number; emPredioPlanejado?: number; dependemDaEleicao?: number }; jobA: number; y?: number }> = ({ a, out = 0, casas, vagas, jobA, y = 370 }) => {
   if (!vis(a, out)) return null;
   return (
     <div style={{ position: 'absolute', left: 50, right: 50, top: y, display: 'flex', flexDirection: 'column', gap: 14, ...enter(a, out) }}>
@@ -231,10 +231,11 @@ export const FreePanel: React.FC<{ a: number; out?: number; casas: number; vagas
         <PixelPanel u={4} edge={GOLD} bg="rgba(14,16,44,0.94)">
           <div style={{ display: 'flex', alignItems: 'center', gap: 20 }}>
             <PixelIcon name="job" px={8} />
-            <span style={{ fontFamily: F.pixel, fontSize: 96, color: GOLD, lineHeight: 0.8 }}>{vagas.livres}</span>
+            <span style={{ fontFamily: F.pixel, fontSize: 96, color: GOLD, lineHeight: 0.8 }}>{vagas.disponiveis ?? vagas.livres}</span>
             <div style={{ display: 'flex', flexDirection: 'column', lineHeight: 0.95 }}>
-              <span style={{ fontFamily: F.pixel, fontSize: 52, color: C.white }}>VAGAS DE EMPREGO LIVRES</span>
-              <span style={{ fontFamily: F.hud, fontSize: 21, color: C.dim }}>{vagas.total} NO TOTAL · {vagas.ocupadas} OCUPADAS</span>
+              <span style={{ fontFamily: F.pixel, fontSize: 52, color: C.white }}>{vagas.disponiveis !== undefined ? 'VAGAS DE EMPREGO DISPONÍVEIS' : 'VAGAS DE EMPREGO LIVRES'}</span>
+              <span style={{ fontFamily: F.hud, fontSize: 20, color: C.dim }}>{vagas.total} NO TOTAL · {vagas.ocupadas} OCUPADAS · {vagas.livres} LIVRES</span>
+              {vagas.disponiveis !== undefined && <span style={{ fontFamily: F.hud, fontSize: 18, color: C.dim, marginTop: 2 }}>{vagas.emPredioPlanejado} EM OBRAS PLANEJADAS · {vagas.dependemDaEleicao} DE PREFEITO (ELEIÇÃO)</span>}
             </div>
           </div>
         </PixelPanel>

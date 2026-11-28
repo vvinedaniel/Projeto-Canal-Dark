@@ -31,9 +31,9 @@
     "id": "ep02",
     "titulo": "EPISÓDIO 02 — OS PRIMEIROS MORADORES CHEGARAM!",
     "duracao": 75,
-    "data": null,
+    "data": "2026-11-28",
     "resumo": "Dez pessoas reais viraram os moradores fundadores. Uma delas, Roberto, escolheu ser coveiro numa cidade sem cemitério. As 10 casas ganham donos; cada fundador aparece com nome, profissão, casa e trabalho (só o Mateus é numerado: Nº 1, confirmado). A administração da cidade reserva terrenos para dois projetos futuros, o cemitério e o escritório de advocacia (ainda não construídos). Chegam os primeiros carros, cinco serviços abrem, os fundadores ganham o distintivo dourado e começa a missão dos PIONEIROS (moradores 11 a 100).",
-    "status": "em produção (narração oficial recebida; roteiro, fundadores, obras e categoria PIONEIRO aprovados)",
+    "status": "produzido",
     "estado": {
       "moradores": 10,
       "empregos": 48,
@@ -41,10 +41,9 @@
         "total": 58,
         "ocupadas": 10,
         "livres": 48,
-        "emPredioPlanejado": {
-          "total": 5,
-          "ocupadas": 2
-        }
+        "disponiveis": 44,
+        "emPredioPlanejado": 3,
+        "dependemDaEleicao": 1
       },
       "casas": {
         "total": 24,
@@ -56,9 +55,14 @@
         "cemiterio",
         "futuro-3"
       ],
-      "seguidores": null
+      "seguidores": 18,
+      "seguidoresEm": "2026-11-28",
+      "metaEleicao": {
+        "atual": 18,
+        "alvo": 100
+      }
     },
-    "snapshot": "data/snapshots/dia-02.rascunho.json",
+    "snapshot": "data/snapshots/dia-02.json",
     "lista": {
       "encerrada": true,
       "moradores": [
@@ -75,6 +79,7 @@
       ],
       "encerradaEm": "2026-11-28"
     },
-    "narracao": "public/audio/ep02/narracao-original.mp3 (10_pessoas.mp3, voz ElevenLabs do Ep. 01, 72,6 s, sem aceleração)"
+    "narracao": "public/audio/ep02/narracao-original.mp3 (10_pessoas.mp3, voz ElevenLabs do Ep. 01, 72,6 s, sem aceleração)",
+    "capa": "B — UM COVEIRO NUMA CIDADE SEM CEMITÉRIO"
   }
 ]

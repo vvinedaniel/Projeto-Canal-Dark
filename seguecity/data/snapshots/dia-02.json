@@ -1,7 +1,7 @@
 {
-  "snapshot": "SegueCity — estado em RASCUNHO (aguardando aprovação) do Dia 02",
+  "snapshot": "SegueCity — estado oficial do Dia 02",
   "dia": 2,
-  "registradoEm": "2026-11-28T19:36:31.383Z",
+  "registradoEm": "2026-11-28T20:27:51.519Z",
   "episodio": [
     {
       "id": "ep02",
@@ -13,10 +13,9 @@
           "total": 58,
           "ocupadas": 10,
           "livres": 48,
-          "emPredioPlanejado": {
-            "total": 5,
-            "ocupadas": 2
-          }
+          "disponiveis": 44,
+          "emPredioPlanejado": 3,
+          "dependemDaEleicao": 1
         },
         "casas": {
           "total": 24,
@@ -28,7 +27,12 @@
           "cemiterio",
           "futuro-3"
         ],
-        "seguidores": null
+        "seguidores": 18,
+        "seguidoresEm": "2026-11-28",
+        "metaEleicao": {
+          "atual": 18,
+          "alvo": 100
+        }
       },
       "lista": {
         "encerrada": true,
@@ -55,13 +59,13 @@
     "evolucao": {
       "nivel": 1,
       "nome": "Vila recém-construída",
-      "proximaMeta": "Primeiro morador"
+      "proximaMeta": "Novo bairro (10/50 moradores)"
     },
     "moradores": 10,
     "seguidores": {
-      "valor": null,
+      "valor": 18,
       "fonte": "TikTok (número informado pelo dono do canal)",
-      "atualizadoEm": null
+      "atualizadoEm": "2026-11-28"
     },
     "casas": {
       "total": 24,
@@ -77,28 +81,32 @@
         "nome": "Primeiro morador",
         "alvo": 1,
         "concluida": true,
-        "base": "moradores"
+        "base": "moradores",
+        "atual": 10
       },
       {
         "id": "fundadores",
         "nome": "Fundadores da cidade",
         "alvo": 10,
         "concluida": true,
-        "base": "moradores"
+        "base": "moradores",
+        "atual": 10
       },
       {
         "id": "novo-bairro",
         "nome": "Novo bairro",
         "alvo": 50,
         "concluida": false,
-        "base": "moradores"
+        "base": "moradores",
+        "atual": 10
       },
       {
         "id": "eleicao",
         "nome": "Eleição para prefeito",
         "alvo": 100,
         "concluida": false,
-        "base": "seguidores"
+        "base": "seguidores",
+        "atual": 18
       }
     ],
     "conquistas": [
@@ -122,7 +130,10 @@
       "empregos": {
         "total": 58,
         "ocupados": 10,
-        "livres": 48
+        "livres": 48,
+        "disponiveis": 44,
+        "emPredioPlanejado": 3,
+        "dependemDaEleicao": 1
       },
       "fila": {
         "emEspera": 0,
@@ -1101,11 +1112,11 @@
     "observacao": "lista fechada: título e distintivo exclusivos e permanentes destes 10 moradores"
   },
   "arquivos": {
-    "city-state.json": "b0b8681de63062670c11bb8d1ac1c293198372a37aaf36832eff399cb71f7b63",
+    "city-state.json": "5273f470971b7af21e4cd2eb575cc43ca27830274ff1ab533a0561ddf6f4ffac",
     "buildings.json": "b5018fa7fe56f63088a7471bae61ae30fba3142ac8b3560b78a47bcc92159438",
     "jobs.json": "1a20a98400b0964490a71bf9faf224b7dce4bd2bf55f6087201649fc98792fee",
     "residents.json": "46777086c8d3aaa55fabc6ebd85b57f3ae91b3db5be5ba25253c06883946b562",
-    "episodes.json": "2510f30a7fe0f52ee598306e483d0d0abfc13b420b55b3fa70bf80f4d965d561",
+    "episodes.json": "7c36b4d5c2df6f109b050dbdddd0023790d0aa094d849f9b38747757b3d9e0f8",
     "mapa.json": "c48c6d7d4574e72c49f22bfa8fdfaf1b2f2602b3f11088d2ce31359f5d676a20",
     "pending-residents.json": "51ecafd52eaaf2f9c83089d12ff8b3aa0f46e50bd77708a6177f849b01cceabd"
   }

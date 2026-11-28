@@ -95,7 +95,7 @@ Todo comando que muda a fila ou os moradores recalcula `city-state.json → indi
 | `moradia.capacidade` | casas prontas + unidades de apartamento definidas |
 | `moradia.ocupadas` / `livres` / `ocupacaoPct` | ocupação atual |
 | `moradia.ocupacaoProjetadaPct` | ocupação se todos os pedidos agendados entrarem |
-| `empregos.total` / `ocupados` / `livres` | vagas de trabalho |
+| `empregos.total` / `ocupados` / `livres` / `disponiveis` | vagas de trabalho. `disponiveis` são as livres que um morador novo pode ocupar agora: não contam as de prédio ainda planejado (`emPredioPlanejado`) nem a de prefeito antes da eleição (`dependemDaEleicao`) |
 | `fila.*` | em espera, agendados, aguardando moradia, aguardando profissão, incorporados, recusados |
 | `demandaReprimida` | pedidos que a cidade não consegue atender agora (`semMoradia` + `semProfissao`) e o déficit de casas se toda a fila entrasse |
 
@@ -108,7 +108,9 @@ O alerta aparece em `npm run fila` e em `npm run city:status`, e fica registrado
 `city-state.json → alertas`, com a data. Ele é marcado como resolvido quando a ocupação cai.
 **O alerta não constrói nada.** Novas moradias são decisão de história, tomada por quem produz o episódio.
 
-Hoje: 24 casas, 10 ocupadas (41,7%), 0 pedidos e nenhum alerta.
+No fim do Dia 02: 24 casas, 10 ocupadas (41,7%), 0 pedidos e nenhum alerta. As vagas são 58 no total, 10 ocupadas,
+48 livres e 44 disponíveis. A próxima meta (`evolucao.proximaMeta`, calculada pelo `sync`) é "Novo bairro (10/50 moradores)",
+e a eleição está em 18/100 seguidores.
 
 ## Cada pedido (`pending-residents.json → pendentes[]`)
 
@@ -155,7 +157,7 @@ npm run test:fila                                         # testes automáticos 
 ## Fluxo de um episódio novo (ex.: Ep. 03)
 
 1. Durante a semana, registre cada comentário válido com `fila:add`, de preferência com `--tiktok`.
-2. Aprovado o Ep. 02, congele o Dia 02 com `npm run city:snapshot` (grava o `dia-02.json` oficial).
+2. O Dia 02 já está congelado: `data/snapshots/dia-02.json` foi gravado em 28/11/2026.
 3. Veja `npm run fila`: pedidos aguardando profissão, demanda reprimida e alerta de expansão. Crie em
    `jobs.json` as profissões que a história vai abrir e rode `fila:agendar`.
 4. Rode `npm run fila:incorporar -- --episodio ep03`. Os moradores recebem número, categoria (PIONEIRO a
