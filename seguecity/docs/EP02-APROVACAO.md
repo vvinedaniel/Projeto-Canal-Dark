@@ -12,8 +12,9 @@ Base:
 
 | Item | Situação |
 |---|---|
-| 10 moradores cadastrados | Pelo comando oficial (`residents:add`), com nome e profissão **exatamente como comentados** (campo `titulo`) e fonte "comentário no TikTok". Nenhum morador inventado. |
-| Ordem de chegada | **Mateus = Morador Nº 1** (1º comentário, confirmado). Os outros 9 estão como "ordem a confirmar" (`ordemConfirmada: false`) e não recebem número na tela. |
+| 10 moradores cadastrados | Cadastrados antes da fila existir, com nome e profissão **exatamente como comentados** (campo `titulo`) e fonte "comentário no TikTok". Nenhum morador inventado. Os comentários novos vão para a fila de entrada e só entram a partir do Ep. 03 (`docs/FILA-DE-MORADORES.md`). |
+| Categoria | Os 10 têm `categoria: FUNDADOR` (lista fechada e exclusiva). O próximo morador real será o **Nº 11, a primeira categoria PIONEIRO** (nº 11–100); do nº 101 em diante, CIDADÃO. |
+| Ordem de chegada | **Mateus = Morador Nº 1** (1º comentário, confirmado). Os outros 9 estão como "ordem a confirmar" (`ordemConfirmada: false`) e não recebem número na tela. Nos dados, os nº 2–10 seguem a ordem da sua mensagem; se a ordem real for confirmada, eles são corrigidos antes do snapshot oficial do Dia 02. |
 | Título e distintivo | Os 10 têm `MORADOR FUNDADOR` (permanente) e `distintivo: fundador-ouro`. O distintivo é uma estrela dourada no peito, no retrato e no sprite da cidade. |
 | Profissões novas | Neurocirurgião(ã) (no hospital), Coveiro(a) (no cemitério), Advogado(a) (no escritório de advocacia) e Empresário(a) (no Centro Empresarial). Cada morador guarda a forma que comentou: Neurocirurgiã, Advogada, Empresária, Empresário. |
 | Casas | 10 casas individuais, da Casa 12 à 30, na Vila Nova. **Mateus ficou com a Casa 12**, a mesma que o Ep. 01 mostrou como "LIVRE · PODE SER A SUA". |
@@ -137,3 +138,5 @@ Arquivos:
    como Nº 1.
 5. **Fichas visuais:** a aparência de algum fundador deve mudar (cabelo, barba, óculos, porte)?
 6. **Local das obras:** cemitério no canto sudeste e advocacia no Lote 3 estão aprovados?
+7. **Opcional (cena 12):** a ficha do convite pode dizer "MORADOR Nº 11 · PIONEIRO" em vez de "MORADOR Nº 11 · ?".
+   Isso apresenta a categoria nova sem mudar a fala. Não muda nada no tempo de produção.
