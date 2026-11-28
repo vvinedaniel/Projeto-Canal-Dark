@@ -23,6 +23,7 @@ O V2 é um upgrade em cima do mesmo motor (`src/engine/`) e da mesma estrutura d
 | Estados de luz e clima (noite, amanhecer, chuva, neblina) | `out/entrega-v2/08-estados.png` |
 | Demonstração cinematográfica de 15 s | `out/seguecity-demo-cidade.mp4` |
 | Comparativo antes × depois (5 pares) | `out/comparativo/comparativo-*.png` |
+| Fecho com a logo oficial | `out/entrega-v2/09-fecho-logo-oficial.png` |
 
 Tudo é regenerado com `npm run entrega:imagens` (~3 min) e `npm run render:demo` (~1 min).
 O Ep. 01 completo de 75 s **não** foi renderizado de novo: aguarda a sua aprovação do visual.
@@ -111,6 +112,18 @@ O Ep. 01 completo de 75 s **não** foi renderizado de novo: aguarda a sua aprova
   ortografia em segundos (`npm run check:signs:img` → `out/stills/placas/`).
   `npm run check:signs` continua conferindo se tudo cabe.
 
+### 11. Logo oficial (recebida depois da primeira entrega da V2)
+- `scripts/brand-logo.py` tira o fundo azul-marinho da logo recebida e grava `public/brand/logo.png`.
+  O original fica intacto em `logo-original.png`. O recorte é limpo, com 1 px de suavização; o brilho
+  neon é desenhado no vídeo, porque o fundo da imagem tinha ruído que virava halo pontilhado.
+- **Emblema inteiro** na cartela de fecho, com brilho ciano, sem repetir o slogan (ele já está no
+  emblema). O plano final foi baixado ~75 px para a ilha aparecer inteira sob a logo.
+- **HUD**: o nome SEGUECITY nas cores da logo (SEGUE branco, CITY dourado com contorno azul-marinho). O
+  emblema inteiro ficaria ilegível no canto.
+- **Bandeira oficial** da cidade igual à da logo: verde com coroa dourada (mastros da praça e da
+  prefeitura).
+- A HUD some no fecho, para a marca não aparecer duas vezes.
+
 ## Desempenho
 
 Medido neste container (4 vCPU, sem GPU), com o mesmo método e a V1 numa cópia separada (tag `seguecity-v1`) (`scripts/bench.ts`: 150 quadros
@@ -135,12 +148,9 @@ Medido neste container (4 vCPU, sem GPU), com o mesmo método e a V1 numa cópia
 
 ## Pendências e próximos passos
 
-1. **Logo oficial**: não veio arquivo de logo, só a narração. O vídeo usa o logo desenhado em pixel art.
-   Para trocar, salve o logo em `public/brand/logo.png` (PNG transparente). A HUD e o final usam esse
-   arquivo sozinhos, sem mexer no código (ver `public/brand/LEIA-ME.md`).
-2. **Ep. 01 com a narração nova** (`Cidade.mp3`, 16 frases): os tempos de cada frase já foram medidos
+1. **Ep. 01 com a narração nova** (`Cidade.mp3`, 16 frases): os tempos de cada frase já foram medidos
    (`src/scenes/ep01/narration-v2.json`). Depois da sua aprovação deste visual, o Ep. 01 será refeito
    com o gancho "MORADORES 0" desde o 1º quadro, o final ao amanhecer, exatamente 75 s (2250 quadros),
    validado com ffprobe e entregue em MP4 + ZIP.
-3. Na quina do terminal, um poste ainda cobre parte do "T" de TERMINAL num ângulo específico. Nos
+2. Na quina do terminal, um poste ainda cobre parte do "T" de TERMINAL num ângulo específico. Nos
    enquadramentos usados não atrapalha a leitura.

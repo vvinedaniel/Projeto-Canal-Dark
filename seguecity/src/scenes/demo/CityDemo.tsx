@@ -37,7 +37,7 @@ const SHOTS: Key[][] = [
   [{ t: CUT.rua, i: 6.2, j: 27.3, z: 8, zoom: 3.6 }, { t: CUT.demo, i: 11.8, j: 27.3, z: 8, zoom: 3.75 }],
   [{ t: CUT.demo, i: 11.0, j: 15.6, z: 6, zoom: 4.7 }, { t: 6.8, i: 12.0, j: 14.6, z: 6, zoom: 4.3 }, { t: CUT.close, i: 13.2, j: 13.6, z: 6, zoom: 4.0 }],
   [{ t: CUT.close, i: 6.7, j: 27.7, z: 16, zoom: 6.2 }, { t: CUT.fim, i: 7.9, j: 27.8, z: 16, zoom: 6.8 }],
-  [{ t: CUT.fim, i: 9.0, j: 25.0, z: 10, zoom: 2.8 }, { t: 13.4, i: 15.0, j: 16.4, z: -14, zoom: 1.65 }, { t: 15, i: 16.0, j: 15.6, z: -24, zoom: 1.5 }],
+  [{ t: CUT.fim, i: 9.0, j: 25.0, z: 10, zoom: 2.8 }, { t: 13.4, i: 15.0, j: 16.4, z: 30, zoom: 1.65 }, { t: 15, i: 16.0, j: 15.6, z: 26, zoom: 1.5 }],
 ];
 const CUTS = cutTimes(SHOTS);
 const ANA = EXEMPLOS[0];
@@ -129,7 +129,7 @@ export const CityDemo: React.FC = () => {
       <FxLayer draw={(c) => CUTS.forEach((tc) => tileWipe(c, t, tc))} />
 
       {/* HUD */}
-      <Hud moradores={city.moradores} empregos={vagas} dia={city.dia} hora={clock(t)} show={1} warnMoradores={!demo} pulseMoradores={win(t, 0, 2.4, 0.01, 0.3) * (0.5 + 0.5 * Math.sin(t * 9))} />
+      <Hud moradores={city.moradores} empregos={vagas} dia={city.dia} hora={clock(t)} show={1 - endA} warnMoradores={!demo} pulseMoradores={win(t, 0, 2.4, 0.01, 0.3) * (0.5 + 0.5 * Math.sin(t * 9))} />
       <Minimap cam={cam} t={t} a={win(t, CUT.rua, CUT.close, 0.3, 0.2)} ping={t < CUT.demo ? { i: 11, j: 26 } : { i: 12.5, j: 13.5 }} />
       {/* gancho: a premissa em 1 quadro */}
       <BigCounter a={clamp(0.7 + t * 2) * (1 - smooth((t - 2.45) / 0.3))} value={0} label="MORADORES" sub="A CIDADE ESTÁ PRONTA · NINGUÉM MORA NELA" blink t={t} y={400} />
@@ -137,11 +137,9 @@ export const CityDemo: React.FC = () => {
       <CharacterCard a={smooth((t - 9.3) / 0.35)} out={smooth((t - 11.45) / 0.25)} t={t} app={ANA.aparencia} id={ANA.id} nome={ANA.nome} profissao={ANA.titulo} linhas={['BAIRRO: VILA NOVA · CASA 14', 'TRABALHA NO HOSPITAL', 'CHEGOU NO DIA 01']} exemplo y={380} px={5} />
       {cur && <Cursor x={cur.x} y={cur.y} press={cur.press} clickAge={cur.clickAge} a={win(t, 8.75, 11.6, 0.15, 0.2)} />}
       {/* fecho no amanhecer */}
-      <AbsoluteFill style={{ alignItems: 'center', justifyContent: 'flex-start', paddingTop: 420, opacity: endA, transform: `translateY(${(1 - easeOut(endA)) * 30}px)` }}>
-        <Logo size={112} />
-        <div style={{ marginTop: 24, fontFamily: F.hud, fontWeight: 700, fontSize: 29, color: C.white, letterSpacing: 2, textShadow: '0 4px 0 #000', textAlign: 'center', lineHeight: 1.5 }}>
-          VOCÊ SEGUE. VOCÊ MORA. <span style={{ color: C.yellow }}>VOCÊ DECIDE.</span>
-        </div>
+      {/* logo oficial (o slogan já está no emblema) */}
+      <AbsoluteFill style={{ alignItems: 'center', justifyContent: 'flex-start', paddingTop: 150, opacity: endA, transform: `translateY(${(1 - easeOut(endA)) * 30}px) scale(${0.92 + 0.08 * easeOut(endA)})` }}>
+        <Logo size={98} />
       </AbsoluteFill>
       <AbsoluteFill style={{ alignItems: 'center', justifyContent: 'flex-end', paddingBottom: 470, opacity: endA }}>
         <div style={{ fontFamily: F.pixel, fontSize: 92, color: C.white, textAlign: 'center', lineHeight: 0.95, WebkitTextStroke: `9px ${C.ink}`, paintOrder: 'stroke fill', textShadow: `0 7px 0 ${C.ink}` }}>

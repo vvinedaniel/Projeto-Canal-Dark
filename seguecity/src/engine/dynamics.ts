@@ -284,6 +284,8 @@ function fountainJets(world: World, t: number): Obj {
   return { id: 'jatos', kind: 'jatos', fp: [12.45, 13.45, 12.56, 13.56], layer: 1, sprite: spr, group: 'civic', lights: [] };
 }
 
+const CROWN = ['#.#.#', '#####', '#####'];
+const CROWN_BIG = ['#..#..#', '##.#.##', '#######', '#######'];
 function flagObj(k: number, f: { x: number; y: number; big: boolean; i: number; j: number }, t: number): Obj {
   const W = f.big ? 18 : 13, H = f.big ? 11 : 8;
   const cv = new OffscreenCanvas(W + 1, H + 4), c = cv.getContext('2d')!;
@@ -291,10 +293,11 @@ function flagObj(k: number, f: { x: number; y: number; big: boolean; i: number; 
     const wave = Math.round(Math.sin(x * 0.55 - t * 7 + k) * 1.3 * (x / W));
     const shade = 0.85 + 0.15 * Math.sin(x * 0.55 - t * 7 + k + 1.2);
     for (let y = 0; y < H; y++) {
-      let col = [106, 63, 208];
-      const cxp = W * 0.34, cyp = H / 2;
-      if (Math.abs(x - cxp) + Math.abs(y - cyp) < (f.big ? 3.5 : 2.5)) col = [255, 214, 74];
-      if (y >= H - 2) col = [245, 245, 250];
+      // bandeira oficial (igual à da logo): verde com coroa dourada
+      let col = y === 0 ? [72, 170, 92] : y === H - 1 ? [30, 104, 52] : [46, 140, 70];
+      const cr = f.big ? CROWN_BIG : CROWN;
+      const gx = x - Math.round(W * 0.42 - cr[0].length / 2), gy = y - Math.round((H - cr.length) / 2);
+      if (gy >= 0 && gy < cr.length && gx >= 0 && gx < cr[0].length && cr[gy][gx] === '#') col = gy === cr.length - 1 ? [216, 150, 40] : [255, 210, 64];
       c.fillStyle = `rgb(${col.map((v) => Math.round(v * shade)).join(',')})`;
       c.fillRect(x + 1, y + 1 + wave, 1, 1);
     }

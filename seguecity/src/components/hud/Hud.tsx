@@ -33,7 +33,7 @@ export const Hud: React.FC<HudProps> = ({ moradores, empregos, dia = 1, hora = '
   return (
     <div style={{ position: 'absolute', left: 0, right: 0, top: 150, height: 200, pointerEvents: 'none', opacity: clamp(show * 2) }}>
       <div style={{ position: 'absolute', left: 36, top: 14, transform: `translateY(${(1 - s) * -60}px)` }}>
-        <Logo size={50} />
+        <Logo size={50} variant="marca" />
         <div style={{ marginTop: 12, marginLeft: 4, display: 'flex', alignItems: 'center', gap: 10, fontFamily: F.hud, fontSize: 20, color: C.dim }}>
           <PixelIcon name="moon" px={3} />
           <span>DIA {String(dia).padStart(2, '0')} · {hora}</span>

@@ -308,10 +308,7 @@ export const Ep01: React.FC = () => {
       <CtaButton a={win(t, A.segue - 0.15, 71.9, 0.3, 0.3)} icon="follow" text="SEGUE O PERFIL" color={C.cyan} t={t} y={420} />
       <CtaButton a={win(t, A.comenta - 0.15, 71.9, 0.3, 0.3)} icon="comment" text="NOME + PROFISSÃO" color={C.yellow} t={t} y={600} />
       <AbsoluteFill style={{ alignItems: 'center', justifyContent: 'flex-start', paddingTop: 440, opacity: smooth((t - 71.95) / 0.35), transform: `scale(${0.85 + 0.15 * easeOut(clamp((t - 71.95) / 0.5))})` }}>
-        <Logo size={124} />
-        <div style={{ marginTop: 34, fontFamily: F.hud, fontWeight: 700, fontSize: 31, color: C.white, letterSpacing: 2, textShadow: '0 4px 0 #000', textAlign: 'center', lineHeight: 1.5 }}>
-          VOCÊ SEGUE. VOCÊ MORA.<br /><span style={{ color: C.yellow }}>VOCÊ DECIDE.</span>
-        </div>
+        <Logo size={105} />{/* logo oficial; o slogan já está no emblema */}
       </AbsoluteFill>
     </EpisodeShell>
   );

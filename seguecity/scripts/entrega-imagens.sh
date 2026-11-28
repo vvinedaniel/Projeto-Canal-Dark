@@ -22,6 +22,8 @@ shot 05-regiao-comercial Sandbox 2 "{\"zoom\":4.2,\"i\":17.8,\"j\":14.2,\"z\":10
 shot 06-personagem-exemplo CityDemo 10.2 '{}'
 # kit de interiores
 shot 07-interiores Interiores 0 '{}'
+# fecho com a logo oficial (último quadro da demo)
+shot 09-fecho-logo-oficial CityDemo 14.9 '{}'
 # estados de luz e clima (estado real: sem moradores e sem trânsito)
 OUT=out/stills/_estados; mkdir -p "$OUT"
 CAM='"zoom":2.6,"i":13.5,"j":16,"z":0,"home":0,"traffic":0,"people":0'

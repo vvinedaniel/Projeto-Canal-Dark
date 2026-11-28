@@ -291,5 +291,11 @@ e `tools/bench-cap.cjs` (métodos de captura). Resultados em `out/bench.jsonl`.
     enquadramento do vídeo.
   - `npm run entrega:imagens` gera ilha 4K, closes, personagem, interiores, estados de clima e o
     comparativo antes × depois. As folhas são montadas com o Playwright pré-instalado.
+- **Logo oficial:** a imagem recebida tinha fundo azul-marinho com vinheta e ruído. Recortar por "cor para
+  alfa" deixou um halo pontilhado. Funcionou recortar o corpo do emblema (diferença > 80 para a cor do
+  fundo, fechamento e preenchimento de buracos), suavizar 1 px a borda e desenhar o brilho neon no vídeo
+  (`scripts/brand-logo.py`).
+  - O emblema inteiro vai nas cartelas; no canto da HUD vai só o nome, nas mesmas cores.
+  - A bandeira da cidade segue a da logo.
 - **Desempenho V2:** ~17 quadros/s de render (só render, sem codificar), 4% mais lento que a V1 com todo o
   detalhe novo. A demo de 15 s fica pronta em ~70 s no total.
