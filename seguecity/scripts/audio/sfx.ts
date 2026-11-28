@@ -550,3 +550,55 @@ export function water(): Stereo {
   mix.mix(flowF, 1).mix(drops, 0.35);
   return mix;
 }
+
+/** trovão: estalo seco + ronco grave que rola e some (evento "tempestade" do Ep. 01) */
+export function thunder(): Stereo {
+  const dur = 3.2;
+  const N = s2n(dur);
+  const out = new Stereo(N);
+  const nl = noise(N, 7101), nr = noise(N, 7102);
+  const lpL = new SVF(900, 0.6), lpR = new SVF(900, 0.6), lo1 = new SVF(140, 0.9), lo2 = new SVF(140, 0.9);
+  const r = new Rng(7103);
+  // pulsos de "rolagem" (o som vai e volta)
+  const bumps = Array.from({ length: 7 }, (_, k) => ({ t: 0.05 + k * 0.28 + r.next() * 0.2, a: 0.55 + 0.45 * r.next() }));
+  for (let i = 0; i < N; i++) {
+    const t = i / SR;
+    const crack = t < 0.18 ? Math.exp(-t / 0.035) : 0;
+    let roll = 0;
+    for (const b of bumps) roll += b.a * Math.exp(-Math.abs(t - b.t) / 0.22) * (t > b.t - 0.12 ? 1 : 0.2);
+    const env = roll * Math.exp(-t / 1.1) * (t < 0.01 ? t / 0.01 : 1);
+    if (i % 32 === 0) { const fc = 300 + 1600 * Math.exp(-t / 0.4); lpL.set(fc, 0.6); lpR.set(fc, 0.6); }
+    out.L[i] = lpL.lp(nl[i]) * (crack * 1.4 + env * 0.9) + lo1.lp(nl[i]) * env * 1.6;
+    out.R[i] = lpR.lp(nr[i]) * (crack * 1.2 + env * 0.9) + lo2.lp(nr[i]) * env * 1.6;
+  }
+  edgeFade(out.L, 32, 2400); edgeFade(out.R, 32, 2400);
+  return addVerb(out, 0.4, 0.7, 3000, 60);
+}
+
+/** chuva em loop: ruído claro filtrado + gotas esparsas (ambiente do evento "tempestade") */
+export function rain(): Stereo {
+  const dur = 10;
+  const N = s2n(dur);
+  const r = new Rng(7201);
+  const hiss = new Stereo(N);
+  const nl = noise(N, 7202), nr = noise(N, 7203);
+  for (let i = 0; i < N; i++) { hiss.L[i] = nl[i]; hiss.R[i] = nr[i]; }
+  const bed = circular(hiss, (big) => {
+    const res = new Stereo(big.n);
+    const a = new SVF(4200, 0.5), b = new SVF(4600, 0.5), la = new SVF(900, 0.6), lb = new SVF(900, 0.6);
+    for (let i = 0; i < big.n; i++) {
+      res.L[i] = a.bp(big.L[i]) * 0.5 + la.lp(big.L[i]) * 0.22;
+      res.R[i] = b.bp(big.R[i]) * 0.5 + lb.lp(big.R[i]) * 0.22;
+    }
+    return res;
+  }, 3);
+  const drops = new Stereo(N);
+  for (let k = 0; k < 900; k++) {
+    const t = r.next() * dur, f0 = 1800 + 3500 * r.next(), tau = 0.002 + 0.004 * r.next();
+    const x = arr(tau * 6);
+    for (let i = 0; i < x.length; i++) { const tt = i / SR; x[i] = Math.sin(TAU * f0 * tt) * Math.exp(-tt / tau); }
+    edgeFade(x, 0, 12);
+    addMonoWrap(drops, s2n(t), x, 0.08 + 0.25 * Math.pow(r.next(), 2), r.uni() * 0.9);
+  }
+  return new Stereo(N).mix(bed, 1).mix(drops, 0.6);
+}

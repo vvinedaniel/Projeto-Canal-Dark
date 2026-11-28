@@ -15,14 +15,15 @@
   {
     "episodio": 1,
     "id": "ep01",
-    "titulo": "DIA 01 — Construí uma cidade inteira, mas ninguém mora nela",
+    "titulo": "EPISÓDIO 01 — A FUNDAÇÃO: Construí uma cidade inteira, mas ninguém mora nela.",
     "duracao": 75,
     "data": "2026-11-28",
-    "resumo": "A cidade está pronta, mas vazia. Apresenta a SegueCity e a mecânica: cada seguidor pode virar morador; quem comentar nome e profissão pode aparecer no próximo episódio.",
+    "resumo": "A cidade nasce do zero e está pronta, mas tem 0 moradores. Apresenta casas, escola, hospital, comércio e prefeitura; explica que cada novo seguidor pode virar cidadão, escolher nome e profissão e viver na cidade; mostra (como simulação) o crescimento e a meta da primeira eleição com 100 seguidores; termina ao amanhecer convidando o primeiro morador.",
     "status": "produzido",
     "estado": {
       "moradores": 0,
       "empregos": 48
-    }
+    },
+    "narracao": "public/audio/ep01/narracao-original.mp3 (Cidade.mp3, 62 s de voz, sem aceleração)"
   }
 ]

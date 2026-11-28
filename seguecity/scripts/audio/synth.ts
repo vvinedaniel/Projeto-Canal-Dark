@@ -45,6 +45,8 @@ const ITEMS: Item[] = [
   { id: 'stamp', file: 'sfx/stamp.wav', render: F.stamp, norm: SFX },
   { id: 'night-ambience', file: 'sfx/night-ambience.wav', render: F.nightAmbience, norm: AMB, exact: 20 },
   { id: 'water', file: 'sfx/water.wav', render: F.water, norm: AMB, exact: 10 },
+  { id: 'thunder', file: 'sfx/thunder.wav', render: F.thunder, norm: SFX },
+  { id: 'rain', file: 'sfx/rain.wav', render: F.rain, norm: AMB, exact: 10 },
 ];
 
 function fit(s: Stereo, sec: number): Stereo {

@@ -45,19 +45,21 @@ npm run validate -- out/seguecity-ep01.mp4 --dur 75
   de exemplo, interiores (`Interiores`) e estados de luz e clima.
 - Relatório do upgrade gráfico V2: `docs/RELATORIO-V2.md`.
 
-## Narração (pronta para receber a voz)
+## Narração do Ep. 01 (oficial)
 
-O Ep. 01 já sai com legendas, trilha e efeitos, mesmo sem voz. Para incluir a narração final:
+A voz oficial é `public/audio/ep01/narracao-original.mp3` (Cidade.mp3: 62 s de fala, 16 frases).
 
-1. Salve a voz em `public/audio/ep01/narracao.wav` (ou `.mp3`), começando no 0 s do episódio.
-2. Rode `npm run narration:fit`. O script detecta as falas por silêncio (−35 dB / 0,22 s), junta trechos
-   até sobrar um por frase e grava `src/scenes/ep01/narration-timing.json`. Ele avisa se alguma frase
-   sair da janela da cena.
-3. Rode `npm run render:ep01`. Legendas, rótulos, efeitos e o abaixamento da trilha sob a voz seguem os
-   novos tempos.
+1. `python3 scripts/ep01-narracao.py`
+   - Recorta cada frase no meio das pausas medidas (`src/scenes/ep01/narration-v2.json`) e a recoloca na
+     linha do tempo de 75 s, com respiros extras nas viradas (`EXTRA`). A voz não é acelerada nem cortada.
+   - Grava `public/audio/ep01/narracao.wav` (75,000 s).
+   - Grava `src/scenes/ep01/words.json`, com o início e o fim de cada palavra (sílabas + vales de energia).
+2. `npm run audio:build`: a trilha (`scripts/audio/music.ts → renderEp01`) lê as mesmas seções e acentos
+   do `words.json`.
+3. `npm run render:ep01`, depois `npm run srt` (legendas .srt com os mesmos tempos da tela).
 
-O roteiro e as marcações provisórias estão em `src/scenes/ep01/narration.ts`. Todos os eventos visuais
-são ancorados em palavras da fala (`W('fundadores')`), nunca em números soltos.
+Todos os eventos visuais e sonoros são ancorados em palavras da fala (`W('cidadão')`), nunca em números
+soltos. Storyboard: `docs/STORYBOARD-EP01.md`. Próximo dia: `docs/DIA-02.md`.
 
 ## Cidade e moradores (persistência local em `data/`)
 
@@ -96,7 +98,8 @@ seguecity/
     render.ts                 render + loudness em 2 passes + x264 yuv420p + faststart
     validate.ts               checagem ffprobe/ffmpeg das especificações
     stills.ts, sheet.sh       quadros soltos e folha de contato para revisão
-    narration-fit.ts          encaixa a voz real nas frases do roteiro
+    ep01-narracao.py          monta a narração na linha do tempo e alinha as palavras (words.json)
+    srt.ts / snapshot.ts      legendas .srt; snapshot oficial do estado da cidade (data/snapshots/)
     city.ts                   moradores, contador e personagens de teste
     audio/                    sintetizador chiptune (Node puro): synth.ts, music.ts, sfx.ts…
   src/
@@ -119,7 +122,7 @@ seguecity/
                               Minimap, PixelIcon, PixelPanel), fx/ (seleção, transição em ladrilhos, fogos,
                               brilho, poeira, holofotes, marcadores)
     scenes/demo/CityDemo.tsx  Fase 1
-    scenes/ep01/              Ep01.tsx (cenas), narration.ts (roteiro e tempos), narration-timing.json
+    scenes/ep01/              Ep01.tsx (cenas), narration.ts + words.json (fala e tempos), ui.tsx, Capas.tsx
     hooks/useFonts.ts, utils/ (câmera por quadros-chave, easing, áudio opcional), data/index.ts
 ```
 

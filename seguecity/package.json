@@ -11,7 +11,6 @@
     "render:demo": "tsx scripts/render.ts demo",
     "render:ep01": "tsx scripts/render.ts ep01",
     "validate": "tsx scripts/validate.ts",
-    "narration:fit": "tsx scripts/narration-fit.ts",
     "city:status": "tsx scripts/city.ts status",
     "city:moradores": "tsx scripts/city.ts moradores",
     "residents:add": "tsx scripts/city.ts add",
@@ -19,7 +18,10 @@
     "residents:clear-test": "tsx scripts/city.ts limpar-teste",
     "check:signs": "tsx scripts/stills.ts Sandbox 0 --scale 0.25 --out out/stills/check --strict",
     "check:signs:img": "tsx scripts/stills.ts Placas 0-0.4:0.0333 --scale 0.5 --out out/stills/placas",
-    "entrega:imagens": "bash scripts/entrega-imagens.sh"
+    "entrega:imagens": "bash scripts/entrega-imagens.sh",
+    "city:dia": "tsx scripts/city.ts dia",
+    "city:snapshot": "tsx scripts/snapshot.ts",
+    "srt": "tsx scripts/srt.ts"
   },
   "dependencies": {
     "@fontsource/jersey-10": "^5.3.0",

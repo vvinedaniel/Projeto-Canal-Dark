@@ -297,5 +297,23 @@ e `tools/bench-cap.cjs` (métodos de captura). Resultados em `out/bench.jsonl`.
   (`scripts/brand-logo.py`).
   - O emblema inteiro vai nas cartelas; no canto da HUD vai só o nome, nas mesmas cores.
   - A bandeira da cidade segue a da logo.
+- **Ep. 01 oficial (narração Cidade.mp3, 62 s de voz em 75 s):**
+  - `scripts/ep01-narracao.py` recorta as frases no meio das pausas e recoloca cada uma com um respiro
+    extra (`EXTRA`). Não acelera a voz.
+  - O mesmo script grava `words.json`, com o tempo de cada palavra (sílabas + vales de energia). Esse
+    arquivo alimenta legendas, âncoras `W()`, seções e acentos da trilha e o `.srt`.
+  - Mudou a voz? Rode o script, `npm run audio:build` e `render`.
+- **Interiores em cena:** `InteriorShot` (`src/series/`) mostra a sala em tela cheia, ampliada em
+  sharp-bilinear.
+  - Não desenhe o `CityCanvas` por baixo enquanto ela está na tela: economiza render.
+  - O corte em ladrilhos cobre a troca cidade ↔ interior.
+- **Ritmo que funcionou:** 24 planos em 75 s. Cada palavra-chave da fala tem um estímulo (rótulo,
+  carta, botão, prédio, carimbo).
+- **Revisão pegou:** poeira de dezenas de prédios juntos vira mancha, rótulo sobre letreiro, legenda
+  sobre o assunto (`frameY` por plano) e plano aberto demais para ler o evento.
+- **Capas:** a grade do perfil corta em 3:4 no centro; título, número e logo ficam em y 240–1680.
+- **Estado oficial:**
+  - `npm run city:snapshot` grava `data/snapshots/dia-NN.json`, com hash de cada arquivo e sem sobrescrever.
+  - Moradores reais entram só por `residents:add`, a partir de comentários reais (`docs/DIA-02.md`).
 - **Desempenho V2:** ~17 quadros/s de render (só render, sem codificar), 4% mais lento que a V1 com todo o
   detalhe novo. A demo de 15 s fica pronta em ~70 s no total.

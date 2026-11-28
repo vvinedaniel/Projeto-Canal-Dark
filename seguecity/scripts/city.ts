@@ -1,6 +1,7 @@
 // Administração local da cidade (data/*.json).
 //   npx tsx scripts/city.ts status
 //   npx tsx scripts/city.ts moradores 12                       define o contador de moradores do HUD
+//   npx tsx scripts/city.ts dia 2                              avança o dia da cidade
 //   npx tsx scripts/city.ts add --nome "Ana" --profissao medico [--bairro "Vila Nova"] [--teste]
 //   npx tsx scripts/city.ts seed 5                             cadastra 5 personagens fictícios de teste
 //   npx tsx scripts/city.ts limpar-teste                       remove os personagens de teste
@@ -58,6 +59,12 @@ if (cmd === 'moradores') {
   city.moradores = n; city.atualizadoEm = today();
   save('city-state.json', city);
   console.log(`contador de moradores = ${n} (só o HUD; cadastre moradores com "add" para contar de verdade)`);
+} else if (cmd === 'dia') {
+  const n = Number(args[1]);
+  if (!Number.isInteger(n) || n < 1) throw new Error('uso: city.ts dia <número>');
+  city.dia = n; city.atualizadoEm = today();
+  save('city-state.json', city);
+  console.log(`dia da cidade = ${n}`);
 } else if (cmd === 'add') {
   const r = addResident(opt('--nome') ?? 'Sem nome', opt('--profissao') ?? 'mecanico', opt('--bairro'), args.includes('--teste'));
   sync();

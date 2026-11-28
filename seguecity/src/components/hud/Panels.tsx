@@ -63,10 +63,10 @@ export const Stamp: React.FC<{ a: number; text: string; sub?: string; y?: number
   );
 };
 
-export const SimTag: React.FC<{ a: number; text?: string }> = ({ a, text = 'PRÉVIA · SIMULAÇÃO DO FUTURO' }) => {
+export const SimTag: React.FC<{ a: number; text?: string; y?: number }> = ({ a, text = 'PRÉVIA · SIMULAÇÃO DO FUTURO', y = 372 }) => {
   if (a <= 0.001) return null;
   return (
-    <div style={{ position: 'absolute', left: 0, right: 0, top: 372, display: 'flex', justifyContent: 'center', opacity: clamp(a) }}>
+    <div style={{ position: 'absolute', left: 0, right: 0, top: y, display: 'flex', justifyContent: 'center', opacity: clamp(a) }}>
       <div style={{ fontFamily: F.hud, fontWeight: 700, fontSize: 24, color: C.ink, background: C.cyan, padding: '6px 16px', boxShadow: '4px 4px 0 rgba(0,0,0,0.5)', letterSpacing: 2 }}>{text}</div>
     </div>
   );

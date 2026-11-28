@@ -3,6 +3,7 @@
 // (~105–111 BPM) para que toda troca de cena caia exatamente num tempo forte.
 import { Biquad, OnePole, Rng, SR, Stereo, clamp, db, filterStereo, nm, s2n, saturate, tapeStop } from './dsp';
 import * as I from './instruments';
+import EP01_WORDS from '../../src/scenes/ep01/words.json';
 
 // ------------------------------------------------------------------------------------
 // grade rítmica
@@ -230,314 +231,199 @@ function fadeOut(s: Stereo, a: number, b: number): Stereo {
 }
 
 // ====================================================================================
-// EP01 (75 s)
+// EP01 (75 s) — "A Fundação", narração oficial (Cidade.mp3)
+// Seções e acentos saem de src/scenes/ep01/words.json (posição de cada frase e palavra na linha do tempo).
 // ====================================================================================
+const PH = Object.fromEntries(EP01_WORDS.frases.map((f) => [f.id, f])) as Record<string, { a: number; b: number }>;
+const WORD = (w: string, after = 0): number => {
+  const x = EP01_WORDS.palavras.find((p) => p.a >= after && p.w.toLowerCase().replace(/[^a-zà-ü]/g, '').startsWith(w));
+  if (!x) throw new Error(`palavra ${w}`);
+  return x.a;
+};
+// cortes de cena do vídeo (mesmos de src/scenes/ep01/Ep01.tsx → T)
+const CUT = { vazio: 6.8, iCasa: 14.65, voce: 18.85, ana: 26.8, jobs: 33.5, cresce: 42.45, evento: 47.6, eleicao: 51.3, hoje: 61.2, fim: 69.0 };
+const RESOLVE = 69.55; // acorde final junto da logo
+export const EP01_VOICE: [number, number][] = EP01_WORDS.frases.map((f) => [f.a, f.b]);
 export const EP01_SECTIONS = [
-  { t0: 0.0, t1: 8.0, name: 'wonder (maravilha)', beats: 0, voice: [0.3, 7.6] },
-  { t0: 8.0, t1: 15.0, name: 'empty city (cidade vazia)', beats: 0, voice: [8.4, 9.8] },
-  { t0: 15.0, t1: 24.0, name: 'the idea (a ideia)', beats: 16, voice: [15.2, 23.6] },
-  { t0: 24.0, t1: 35.0, name: 'your character (seu personagem)', beats: 20, voice: [24.2, 34.2] },
-  { t0: 35.0, t1: 48.0, name: 'jobs tour (profissões)', beats: 24, voice: [35.2, 47.0] },
-  { t0: 48.0, t1: 58.0, name: 'growth (crescimento)', beats: 18, voice: [48.2, 57.6] },
-  { t0: 58.0, t1: 68.0, name: 'future/mayor (futuro/prefeito)', beats: 18, voice: [58.2, 67.6] },
-  { t0: 68.0, t1: 75.0, name: 'finale/CTA', beats: 7, voice: [68.1, 74.6] },
-] as const;
-export const EP01_VOICE: [number, number][] = EP01_SECTIONS.map((s) => [s.voice[0], s.voice[1]]);
-// uma batida por profissão falada (mesmos tempos de src/scenes/ep01/narration.ts)
-export const EP01_ACCENT_TARGETS = [37.1, 38.9, 40.7, 42.5, 44.3, 46.1];
+  { t0: 0, t1: CUT.vazio, name: 'construção (gancho)' },
+  { t0: CUT.vazio, t1: CUT.voce, name: 'cidade vazia + tour + interiores' },
+  { t0: CUT.voce, t1: CUT.ana, name: 'você entra (seguir → cidadão)' },
+  { t0: CUT.ana, t1: CUT.jobs, name: 'seu personagem' },
+  { t0: CUT.jobs, t1: CUT.cresce, name: 'profissões' },
+  { t0: CUT.cresce, t1: CUT.evento, name: 'crescimento (simulação)' },
+  { t0: CUT.evento, t1: CUT.eleicao, name: 'tempestade (acontecimentos)' },
+  { t0: CUT.eleicao, t1: CUT.hoje, name: 'eleição / quem vai governar' },
+  { t0: CUT.hoje, t1: RESOLVE, name: 'hoje começa → primeiro morador' },
+  { t0: RESOLVE, t1: 75, name: 'amanhecer + logo' },
+];
 export const EP01_INFO: { accents: number[]; tempos: { t0: number; t1: number; bpm: number }[] } = { accents: [], tempos: [] };
-
-function ep01Intro(): Stereo {
-  I.resetSeeds(101);
-  const rng = new Rng(1101);
-  const mx = new I.Mixer(s2n(9.2), BUSES);
-  const g = new Grid(0, 60 / 104, 0.08);
-  EP01_INFO.tempos.push({ t0: 0, t1: 8, bpm: g.bpm });
-  const chords = [CH.Fmaj7, CH.Em7, CH.Dm7, CH.Cmaj7];
-  for (let k = 0; k < 4; k++) {
-    const ch = chords[k];
-    const t = g.b(4 * k);
-    I.pad(mx.bus('pad'), t, k < 3 ? 4 * g.spb + 0.02 : 2.0, ch.pad, { attack: k === 0 ? 0.16 : 0.1, cutoff: 1250, gain: 0.95 });
-    for (let e = 0; e < 8; e++) {
-      const i16 = 16 * k + 2 * e;
-      const te = g.s(i16);
-      if (te > 8.25) break;
-      // pulso leve: baixo staccato em colcheias
-      I.bass(mx.bus('bass'), te, g.s16 * 1.1, ch.bass + (e % 4 === 3 ? 12 : 0), { gain: e % 2 ? 0.42 : 0.6, decay: 0.07, sustain: 0.25 });
-      // arpejo curioso (registro médio, filtrado: não briga com a voz)
-      const pat = [0, 1, 2, 3, 1, 2, 3, 2];
-      I.pluck(mx.bus('arp'), te, ch.tones[pat[e]], { gain: 0.34 + 0.1 * rng.next(), pan: e % 2 ? 0.3 : -0.3, cutoff: 1150, envAmt: 1400, decay: 0.15, duty: 0.125 });
-      if (e % 2 === 1) I.shaker(mx.bus('perc'), te, { gain: 0.3, pan: -0.3 });
-    }
-    // brilhos esparsos (luzes da cidade), notas do acorde duas oitavas acima
-    for (const b of [1.5, 3]) {
-      const tb = g.b(4 * k + b);
-      if (tb > 7.4) continue;
-      I.bell(mx.bus('bell'), tb, ch.tones[rng.int(4)] + 24, { gain: 0.22, decay: 0.45, index: 1.0, pan: rng.uni() * 0.7 });
-    }
-  }
-  // primeiro quadro: glissando de brilho (antes da voz entrar em 0,3 s)
-  ['C6', 'F6', 'A6', 'C7'].forEach((n, i) => I.bell(mx.bus('bell'), 0.004 + i * 0.055, nm(n), { gain: 0.5 - i * 0.06, decay: 0.55, index: 1.2, pan: -0.45 + i * 0.3 }));
-  // floreio na pausa 7,6–8,0 (Cmaj7), que o "tape stop" engole
-  ([[53, 'C6'], [54, 'E6'], [55, 'G6'], [56, 'B6']] as [number, string][]).forEach(([i, n]) => {
-    I.bell(mx.bus('bell'), g.s(i), nm(n), { gain: 0.45, decay: 0.5, pan: -0.3 + (i - 53) * 0.2 });
-    I.pluck(mx.bus('arp'), g.s(i), nm(n) - 12, { gain: 0.6, cutoff: 1900, decay: 0.12, duty: 0.25 });
-  });
-  const mixed = mx.render(MIX);
-  return tapeStop(mixed, 8.0, 0.42, 1.7);
-}
-
-function ep01Main(): Stereo {
-  I.resetSeeds(202);
-  const rng = new Rng(2202);
-  const mx = new I.Mixer(s2n(75), BUSES);
-  const pad = mx.bus('pad');
-  const fx = mx.bus('fx');
-  const bellB = mx.bus('bell');
-
-  // ---------------- 8–15: cidade vazia -------------------------------------------
-  // "desligamento": grave caindo junto com o tape stop
-  I.boom(fx, 8.0, { f0: 150, f1: 34, glide: 0.16, decay: 0.3, gain: 0.3 });
-  I.pad(pad, 8.55, 6.0, ['D3', 'A3', 'E4'].map(nm), { attack: 1.5, release: 0.6, cutoff: 620, gain: 0.32, width: 0.85, pwm: 0.08, tri: 0.9 });
-  const motif: [number, string, number][] = [
-    [10.1, 'A4', 0.9], [10.8, 'D5', 0.8], [11.5, 'C5', 0.72], [12.05, 'A4', 0.7], [12.9, 'G4', 0.62], [13.5, 'E4', 0.55],
-  ];
-  motif.forEach(([t, n, v], i) => I.keys(mx.bus('keys'), t, nm(n), { gain: v * 0.33, pan: i % 2 ? 0.25 : -0.2, decay: 1.4 }));
-  // sobe para a ideia (14–15)
-  I.riser(fx, 14.0, 1.0, { f0: 350, f1: 7000, gain: 0.5, tone: [nm('A3'), nm('A5')], toneGain: 0.12, curve: 2.2 });
-  I.swell(fx, 15.0, 1.0, { gain: 0.45 });
-
-  // ---------------- 15–24: a ideia (16 tempos) ------------------------------------
-  const g2 = Grid.fit(15, 24, 16, 0.1);
-  EP01_INFO.tempos.push({ t0: 15, t1: 24, bpm: g2.bpm });
-  I.crash(fx, 15.0, { gain: 0.32, decay: 1.1 });
-  const s2: Chord[] = [CH.Fmaj7, CH.Am7, CH.Bbmaj7, CH.Csus4];
-  for (let k = 0; k < 4; k++) {
-    playBar(mx, g2, 16 * k, {
-      chord: s2[k],
-      chord2: k === 3 ? CH.C : undefined,
-      pad: { cutoff: 1450, gain: 0.9 },
-      bass: BASS_LIGHT,
-      bassGain: 0.85,
-      kick: k % 2 ? [0, 8, 10] : [0, 8],
-      kickGain: 0.8,
-      hats: EIGHTHS,
-      hatGain: 0.8,
-      snare: k === 3 ? [] : [],
-      arp: k >= 1 ? { pat: [0, 2, 1, 3, 2, 1, 3, 2], step: 2, gain: 0.5, cutoff: 1200 } : undefined,
-    }, rng);
-  }
-  I.snare(mx.bus('snare'), g2.s(62), { gain: 0.3 });
-  I.snare(mx.bus('snare'), g2.s(63), { gain: 0.45 });
-  // pausa 23,6–24,2: três sininhos subindo até o F6 da cena seguinte
-  ([[61, 'A5'], [62, 'C6'], [63, 'D6'], [64, 'F6']] as [number, string][]).forEach(([i, n], j) =>
-    I.bell(bellB, g2.s(i), nm(n), { gain: 0.42 + j * 0.04, decay: j === 3 ? 0.5 : 0.35, pan: -0.3 + j * 0.2 }),
-  );
-
-  // ---------------- 24–35: seu personagem (20 tempos) ------------------------------
-  const g3 = Grid.fit(24, 35, 20, 0.12);
-  EP01_INFO.tempos.push({ t0: 24, t1: 35, bpm: g3.bpm });
-  const s3: [Chord, Chord?][] = [[CH.Dm7], [CH.Bbmaj7], [CH.Fmaj7], [CH.C], [CH.Gm7, CH.C7]];
-  s3.forEach(([a, b], k) =>
-    playBar(mx, g3, 16 * k, {
-      chord: a,
-      chord2: b,
-      pad: { cutoff: 1400, gain: 0.82 },
-      bass: BASS_BOUNCE,
-      kick: [0, 6, 8],
-      kickGain: 0.88,
-      snare: [4, 12],
-      snareGain: 0.7,
-      ghost: k % 2 ? [7, 15] : [15],
-      hats: [...EIGHTHS, 3, 11],
-      hatGain: 0.9,
-      counter: { gain: 0.72, pan: 0.35 },
-    }, rng),
-  );
-  // pausa 34,2–35,2: virada de sino no C7 (último tempo)
-  ([[76, 'G5'], [77, 'Bb5'], [78, 'C6'], [79, 'E6']] as [number, string][]).forEach(([i, n], j) => {
-    I.bell(bellB, g3.s(i), nm(n), { gain: 0.4 + 0.04 * j, decay: 0.32, pan: 0.3 - j * 0.2 });
-  });
-
-  // ---------------- 35–48: profissões (24 tempos) -----------------------------------
-  const g4 = Grid.fit(35, 48, 24, 0.12);
-  EP01_INFO.tempos.push({ t0: 35, t1: 48, bpm: g4.bpm });
-  const s4: [Chord, Chord?][] = [[CH.Fmaj7], [CH.Em7], [CH.Dm7], [CH.Cmaj7], [CH.Bbmaj7], [CH.C7sus4, CH.C7]];
-  s4.forEach(([a, b], k) =>
-    playBar(mx, g4, 16 * k, {
-      chord: a,
-      chord2: b,
-      pad: { cutoff: 1550, gain: 0.9 },
-      padHi: 0.28,
-      bass: BASS_WALK,
-      kick: k === 5 ? [0, 6, 8, 14] : [0, 6, 8],
-      kickGain: 0.9,
-      snare: [4, 12],
-      snareGain: 0.75,
-      ghost: [15],
-      hats: SIXTEENTHS,
-      hatGain: 0.75,
-      shaker: [2, 6, 10, 14],
-      arp: { pat: [0, 1, 2, 3, 2, 1, 3, 1], step: 2, gain: 0.42, cutoff: 1150, pan: -0.4 },
-      counter: { gain: 0.55, pan: 0.4 },
-    }, rng),
-  );
-  // acentos das profissões (~a cada 2 s), na semicolcheia mais próxima
-  const accentNotes = ['C6', 'D6', 'F6', 'G6', 'A6', 'C7'];
-  EP01_ACCENT_TARGETS.forEach((tt, i) => {
-    const t = g4.q(tt);
-    EP01_INFO.accents.push(t);
-    I.tok(mx.bus('perc'), t, 820 + i * 40, { gain: 0.8, pan: i % 2 ? 0.3 : -0.3 });
-    I.bell(bellB, t, nm(accentNotes[i]), { gain: 0.4, decay: 0.3, index: 1.3, pan: i % 2 ? -0.35 : 0.35 });
-    I.boom(mx.bus('sub'), t, { f0: 95, f1: 60, decay: 0.09, glide: 0.03, gain: 0.35 });
-  });
-  // pausa 47,0–48,2: gancho melódico curto, pousando no D6 (terça do Bb) em 48,0
-  ([[89, 'C6', 1], [90, 'A5', 1], [91, 'E5', 1], [92, 'G5', 2], [94, 'A5', 1], [95, 'C6', 1], [96, 'D6', 2]] as [number, string, number][]).forEach(([i, n, l]) => {
-    I.lead(mx.bus('lead'), g4.s(i), l * g4.s16 * 0.85, nm(n), { gain: 0.55, duty: 0.25, cutoff: 2800, glide: 0.2 });
-    I.bell(bellB, g4.s(i), nm(n), { gain: 0.18, decay: 0.25 });
-  });
-
-  // ---------------- 48–58: crescimento (18 tempos) ----------------------------------
-  const g5 = Grid.fit(48, 58, 18, 0.1);
-  EP01_INFO.tempos.push({ t0: 48, t1: 58, bpm: g5.bpm });
-  const grow = (t: number): number => 1050 * Math.pow(2300 / 1050, clamp((t - 48) / 10, 0, 1));
-  const s5: Chord[] = [CH.Bbmaj7, CH.C6, CH.Dm7, CH.Em7];
-  s5.forEach((ch, k) =>
-    playBar(mx, g5, 16 * k, {
-      chord: ch,
-      pad: { cutoff: grow, gain: 0.82 + 0.06 * k },
-      padHi: k >= 2 ? 0.3 : 0,
-      bass: k < 2 ? BASS_BOUNCE : BASS_DRIVE,
-      kick: k < 2 ? [0, 6, 8] : [0, 4, 8, 12],
-      kickGain: 0.88,
-      snare: k === 3 ? [4, 12, 14] : [4, 12],
-      snareGain: 0.72 + 0.04 * k,
-      hats: k < 2 ? EIGHTHS : SIXTEENTHS,
-      hatGain: 0.8,
-      open: k === 3 ? [2, 6, 10, 14] : undefined,
-      shaker: k >= 1 ? [2, 6, 10, 14] : undefined,
-      arp: { pat: k < 2 ? [0, 1, 2, 3, 2, 1, 2, 3] : [0, 1, 2, 3, 4, 3, 2, 1], step: k < 2 ? 2 : 1, gain: 0.4 + 0.04 * k, cutoff: 1100 + 120 * k, oct: k === 3 ? 1 : 0 },
-      counter: k < 2 ? { gain: 0.55, pan: 0.4 } : undefined,
-    }, rng),
-  );
-  // meio compasso 56,89–58,0: C7sus4 + rufo de caixa e subida
-  playBar(mx, g5, 64, { chord: CH.C7sus4, beats: 2, pad: { cutoff: grow, gain: 1.0 }, padHi: 0.32, bass: BASS_LONG, kick: [0], hats: SIXTEENTHS, hatGain: 0.7, arp: { pat: [0, 1, 2, 3, 4, 5, 6, 7], step: 1, gain: 0.5, cutoff: 1500 } }, rng);
-  for (let j = 0; j < 12; j++) {
-    const t = j < 4 ? g5.s(64 + j) : g5.b(17) + ((j - 4) / 8) * g5.spb;
-    I.snare(mx.bus('snare'), t, { gain: 0.22 + 0.05 * j, decay: 0.07 });
-  }
-  I.riser(fx, 56.4, 1.6, { f0: 500, f1: 7500, gain: 0.42, curve: 2.4 });
-  I.swell(fx, 58.0, 1.1, { gain: 0.42 });
-
-  // ---------------- 58–68: futuro/prefeito (18 tempos) -------------------------------
-  const g6 = Grid.fit(58, 68, 18, 0.08);
-  EP01_INFO.tempos.push({ t0: 58, t1: 68, bpm: g6.bpm });
-  I.crash(fx, 58.0, { gain: 0.5, decay: 1.8 });
-  I.boom(mx.bus('sub'), 58.0, { f0: 80, f1: 43, decay: 0.7, gain: 0.5 });
-  const s6: [Chord, Chord?][] = [[CH.Fmaj7], [CH.Am7], [CH.Bbmaj7], [CH.Csus4, CH.C]];
-  s6.forEach(([a, b], k) =>
-    playBar(mx, g6, 16 * k, {
-      chord: a,
-      chord2: b,
-      pad: { cutoff: 1800, gain: 1.0, attack: 0.2, width: 0.85 },
-      padHi: 0.38,
-      bass: BASS_LONG,
-      bassGain: 1.0,
-      kick: [0, 7, 10],
-      kickGain: 0.95,
-      snare: [8],
-      snareGain: 0.95,
-      hats: EIGHTHS,
-      hatGain: 0.85,
-      open: [14],
-      shaker: [2, 6, 10, 14],
-      arp: { pat: [0, 1, 2, 3, 4, 3, 2, 1], step: 2, gain: 0.36, cutoff: 1250, oct: 0 },
-    }, rng),
-  );
-  // sinos "anthem": melodia lenta em mínimas, registro médio (sob a voz)
-  const anthem: [number, string, number][] = [
-    [0, 'A4', 0.5], [8, 'C5', 0.45], [16, 'E5', 0.5], [24, 'D5', 0.42], [32, 'D5', 0.48], [40, 'C5', 0.42], [48, 'G4', 0.46], [56, 'A4', 0.44], [64, 'D5', 0.5],
-  ];
-  anthem.forEach(([i, n, v], j) => {
-    I.bell(bellB, g6.s(i), nm(n), { gain: v, decay: 1.1, index: 1.1, ratio: 3.5, pan: j % 2 ? 0.25 : -0.25 });
-    I.bell(bellB, g6.s(i), nm(n) - 12, { gain: v * 0.5, decay: 1.2, index: 0.6, ratio: 2, pan: 0 });
-  });
-  // meio compasso 66,89–68,0: Gm7 + virada de tons (67,0–68,0)
-  playBar(mx, g6, 64, { chord: CH.Gm7, beats: 2, pad: { cutoff: 1800, gain: 0.95 }, padHi: 0.35, bass: [[0, 7, 0]], kick: [0], hats: [0, 2], hatGain: 0.7 }, rng);
-  const toms = [210, 190, 165, 150, 128, 112, 96];
-  toms.forEach((f, j) => I.tom(mx.bus('perc'), g6.s(65 + j), f, { gain: 0.55 + 0.06 * j, pan: 0.5 - j * 0.15 }));
-  I.snare(mx.bus('snare'), g6.s(70), { gain: 0.6 });
-  I.snare(mx.bus('snare'), g6.s(71), { gain: 0.8 });
-
-  // ---------------- 68–72: final (7 tempos) e 72: acorde + prato ------------------------
-  const g7 = Grid.fit(68, 72, 7, 0.08);
-  EP01_INFO.tempos.push({ t0: 68, t1: 72, bpm: g7.bpm });
-  I.crash(fx, 68.0, { gain: 0.5, decay: 1.5 });
-  playBar(mx, g7, 0, {
-    chord: CH.Bbmaj7,
-    pad: { cutoff: 2000, gain: 1.05, width: 0.9 },
-    padHi: 0.4,
-    bass: BASS_DRIVE,
-    bassGain: 1.0,
-    kick: [0, 6, 8, 11],
-    kickGain: 1.0,
-    snare: [4, 12],
-    snareGain: 0.9,
-    hats: SIXTEENTHS,
-    hatGain: 0.85,
-    open: [2, 6, 10, 14],
-    shaker: [2, 6, 10, 14],
-    arp: { pat: [0, 1, 2, 3, 4, 3, 2, 1], step: 1, gain: 0.42, cutoff: 1400 },
-    counter: { gain: 0.6, pan: 0.4 },
-  }, rng);
-  playBar(mx, g7, 16, {
-    chord: CH.Csus4,
-    chord2: CH.C,
-    beats: 3,
-    pad: { cutoff: 2100, gain: 1.05, width: 0.9 },
-    padHi: 0.4,
-    bass: [[0, 4, 0], [4, 2, 12], [6, 2, 0], [8, 4, 0]],
-    bassGain: 1.0,
-    kick: [0, 4, 8],
-    kickGain: 1.0,
-    hats: SIXTEENTHS,
-    hatGain: 0.8,
-    arp: { pat: [0, 1, 2, 3, 4, 5, 6, 7], step: 1, gain: 0.48, cutoff: 1600 },
-  }, rng);
-  for (let j = 0; j < 10; j++) {
-    const t = j < 2 ? g7.s(16 + 2 * j) : g7.s(18 + j);
-    I.snare(mx.bus('snare'), t, { gain: 0.3 + 0.06 * j, decay: 0.08 });
-  }
-  I.tom(mx.bus('perc'), g7.s(26), 150, { gain: 0.8, pan: 0.3 });
-  I.tom(mx.bus('perc'), g7.s(27), 110, { gain: 0.9, pan: -0.3 });
-  I.swell(fx, 72.0, 1.5, { gain: 0.7, curve: 2.4 });
-  I.riser(fx, 70.4, 1.6, { f0: 600, f1: 8000, gain: 0.35, curve: 2.6 });
-  // 72,0: o acorde que resolve (Fmaj9), prato e grave
-  const hit = 72.0;
-  I.pad(pad, hit, 1.4, CH.Fmaj9.pad, { attack: 0.015, decay: 1.2, sustain: 0.6, release: 0.9, cutoff: (t) => 2600 - 1400 * clamp((t - hit) / 2.5, 0, 1), gain: 1.5, width: 1 });
-  I.pad(pad, hit, 1.4, [nm('F4'), nm('A4'), nm('C5')], { attack: 0.015, release: 0.9, cutoff: 2400, gain: 0.5, width: 1 });
-  I.bass(mx.bus('bass'), hit, 1.8, nm('F1'), { gain: 1.0, decay: 0.8, sustain: 0.5 });
-  I.bass(mx.bus('bass'), hit, 1.8, nm('F2'), { gain: 0.6, decay: 0.8, sustain: 0.5 });
-  I.kick(mx.bus('kick'), hit, { gain: 1.1, decay: 0.3 });
-  mx.kickTimes.push(hit);
-  I.boom(mx.bus('sub'), hit, { f0: 85, f1: 43, decay: 0.9, gain: 0.75 });
-  I.crash(fx, hit, { gain: 0.85, decay: 2.2 });
-  ['F5', 'A5', 'C6', 'E6', 'G6'].forEach((n, j) => I.bell(bellB, hit + j * 0.012, nm(n), { gain: 0.42 - 0.04 * j, decay: 1.5, index: 1.4, pan: -0.5 + j * 0.25 }));
-  I.bell(bellB, hit + 0.25, nm('C7'), { gain: 0.25, decay: 1.0, pan: 0.4 });
-  I.bell(bellB, hit + 0.5, nm('F7'), { gain: 0.18, decay: 0.9, pan: -0.4 });
-
-  return mx.render(MIX);
-}
 
 export function renderEp01(): Stereo {
   EP01_INFO.accents = [];
   EP01_INFO.tempos = [];
-  const intro = ep01Intro();
-  const main = ep01Main();
-  main.mix(intro, 1.0);
+  I.resetSeeds(404);
+  const rng = new Rng(4404);
+  const mx = new I.Mixer(s2n(75), BUSES);
+  const bellB = mx.bus('bell');
+  const tempo = (g: Grid, t0: number, t1: number) => EP01_INFO.tempos.push({ t0, t1, bpm: g.bpm });
+
+  // ---------------- 0–6,8: construção (o primeiro quadro já é ação) ----------------
+  ['C6', 'F6', 'A6', 'C7'].forEach((n, i) => I.bell(bellB, 0.004 + i * 0.05, nm(n), { gain: 0.5 - i * 0.06, decay: 0.5, index: 1.2, pan: -0.45 + i * 0.3 }));
+  I.boom(mx.bus('sub'), 0.0, { f0: 90, f1: 45, decay: 0.5, gain: 0.45 });
+  const g1 = Grid.fit(0, CUT.vazio, 12, 0.06);
+  tempo(g1, 0, CUT.vazio);
+  const s1: Chord[] = [CH.Fmaj7, CH.Em7, CH.Dm7];
+  s1.forEach((ch, k) => playBar(mx, g1, 16 * k, {
+    chord: ch, chord2: k === 2 ? CH.Cmaj7 : undefined, split: 8,
+    pad: { cutoff: 1300 + 250 * k, gain: 0.85 }, bass: BASS_LIGHT, bassGain: 0.7,
+    kick: [0, 8], kickGain: 0.75, hats: EIGHTHS, hatGain: 0.55,
+    arp: { pat: [0, 1, 2, 3, 1, 2, 3, 2], step: 2, gain: 0.42, cutoff: 1150 + 150 * k },
+  }, rng));
+  // golpes de "obra" junto dos prédios assentando
+  [0.2, 0.75, 1.3, 1.85, 2.4].forEach((t, i) => I.tok(mx.bus('perc'), t, 640 + i * 60, { gain: 0.55, pan: i % 2 ? 0.3 : -0.3 }));
+  ['C6', 'E6', 'G6', 'C7'].forEach((n, i) => I.bell(bellB, 2.95 + i * 0.07, nm(n), { gain: 0.38, decay: 0.6, pan: -0.3 + i * 0.2 }));
+  // "Ninguém mora nela": a música desliga (tape stop) no corte
+  const first = tapeStop(mx.render(MIX), CUT.vazio, 0.4, 1.6);
+
+  const m2 = new I.Mixer(s2n(75), BUSES);
+  const pad2 = m2.bus('pad'), fx2 = m2.bus('fx'), bell2 = m2.bus('bell');
+  // ---------------- 6,8–18,85: cidade vazia, tour e interiores ----------------
+  I.boom(fx2, CUT.vazio, { f0: 150, f1: 34, glide: 0.16, decay: 0.3, gain: 0.3 });
+  I.pad(pad2, CUT.vazio + 0.4, CUT.iCasa - CUT.vazio - 0.2, ['D3', 'A3', 'E4'].map(nm), { attack: 1.2, release: 0.6, cutoff: 650, gain: 0.32, width: 0.85, pwm: 0.08, tri: 0.9 });
+  // tour: um toque por lugar falado (casas, escola, hospital, comércio, prefeitura)
+  const tour = ['casas', 'escola', 'hospital', 'comércio', 'prefeitura'].map((w) => WORD(w.normalize('NFC').toLowerCase().replace(/[^a-zà-ü]/g, '')));
+  ['A4', 'D5', 'F5', 'A5', 'D6'].forEach((n, i) => { I.keys(m2.bus('keys'), tour[i], nm(n), { gain: 0.3, pan: i % 2 ? 0.25 : -0.2, decay: 1.2 }); I.bell(bell2, tour[i], nm(n) + 12, { gain: 0.16, decay: 0.4 }); });
+  // interiores: pad mais quente e sininhos ("pronto", "esperando")
+  I.pad(pad2, CUT.iCasa, CUT.voce - CUT.iCasa + 0.2, CH.Bbmaj7.pad, { attack: 0.6, release: 0.5, cutoff: 900, gain: 0.45, width: 0.9 });
+  [[WORD('pronto'), 'F5'], [WORD('pronto') + 0.18, 'A5'], [WORD('esperando'), 'C6'], [WORD('habitantes'), 'D6']].forEach(([t, n]) => I.bell(bell2, t as number, nm(n as string), { gain: 0.3, decay: 0.6, pan: rng.uni() * 0.6 }));
+  I.riser(fx2, CUT.voce - 1.0, 1.0, { f0: 350, f1: 7000, gain: 0.45, tone: [nm('A3'), nm('A5')], toneGain: 0.1, curve: 2.2 });
+
+  // ---------------- 18,85–26,8: "é aqui que você entra" (a batida entra) ----------------
+  const g3 = Grid.fit(CUT.voce, CUT.ana, 14, 0.1);
+  tempo(g3, CUT.voce, CUT.ana);
+  I.crash(fx2, CUT.voce, { gain: 0.32, decay: 1.1 });
+  I.swell(fx2, CUT.voce, 0.9, { gain: 0.4 });
+  const s3: Chord[] = [CH.Fmaj7, CH.Am7, CH.Bbmaj7, CH.Csus4];
+  s3.forEach((ch, k) => playBar(m2, g3, 16 * k, {
+    chord: ch, chord2: k === 3 ? CH.C : undefined, beats: k === 3 ? 2 : undefined,
+    pad: { cutoff: 1450, gain: 0.9 }, bass: BASS_LIGHT, bassGain: 0.85,
+    kick: k % 2 ? [0, 8, 10] : [0, 8], kickGain: 0.8, hats: EIGHTHS, hatGain: 0.8,
+    arp: k >= 1 ? { pat: [0, 2, 1, 3, 2, 1, 3, 2], step: 2, gain: 0.48, cutoff: 1200 } : undefined,
+  }, rng));
+  const seg = WORD('seguidor'), cid = WORD('cidadão');
+  I.bell(bell2, g3.q(seg), nm('C6'), { gain: 0.4, decay: 0.4 });
+  ['F5', 'A5', 'C6', 'F6'].forEach((n, i) => I.bell(bell2, g3.q(cid) + i * g3.s16, nm(n), { gain: 0.34 + 0.03 * i, decay: 0.35, pan: -0.3 + 0.2 * i }));
+
+  // ---------------- 26,8–33,5: seu personagem (groove) ----------------
+  const g4 = Grid.fit(CUT.ana, CUT.jobs, 12, 0.12);
+  tempo(g4, CUT.ana, CUT.jobs);
+  const s4: [Chord, Chord?][] = [[CH.Dm7], [CH.Bbmaj7], [CH.Gm7, CH.C7]];
+  s4.forEach(([a, b], k) => playBar(m2, g4, 16 * k, {
+    chord: a, chord2: b, pad: { cutoff: 1400, gain: 0.82 }, bass: BASS_BOUNCE,
+    kick: [0, 6, 8], kickGain: 0.88, snare: [4, 12], snareGain: 0.7, ghost: k % 2 ? [7, 15] : [15],
+    hats: [...EIGHTHS, 3, 11], hatGain: 0.9, counter: { gain: 0.7, pan: 0.35 },
+  }, rng));
+
+  // ---------------- 33,5–42,45: profissões (um acento por profissão falada) ----------------
+  const g5 = Grid.fit(CUT.jobs, CUT.cresce, 16, 0.12);
+  tempo(g5, CUT.jobs, CUT.cresce);
+  const s5: [Chord, Chord?][] = [[CH.Fmaj7], [CH.Em7], [CH.Dm7], [CH.Bbmaj7, CH.C7sus4]];
+  s5.forEach(([a, b], k) => playBar(m2, g5, 16 * k, {
+    chord: a, chord2: b, pad: { cutoff: 1550, gain: 0.9 }, padHi: 0.26, bass: BASS_WALK,
+    kick: [0, 6, 8], kickGain: 0.9, snare: [4, 12], snareGain: 0.75, ghost: [15],
+    hats: SIXTEENTHS, hatGain: 0.72, shaker: [2, 6, 10, 14],
+    arp: { pat: [0, 1, 2, 3, 2, 1, 3, 1], step: 2, gain: 0.4, cutoff: 1150, pan: -0.4 }, counter: { gain: 0.5, pan: 0.4 },
+  }, rng));
+  const accentNotes = ['C6', 'D6', 'F6', 'G6', 'A6'];
+  ['médico', 'policial', 'empresário', 'mecânico', 'professor'].map((w) => WORD(w.replace(/[^a-zà-ü]/g, ''))).forEach((tt, i) => {
+    const t = g5.q(tt);
+    EP01_INFO.accents.push(t);
+    I.tok(m2.bus('perc'), t, 820 + i * 40, { gain: 0.8, pan: i % 2 ? 0.3 : -0.3 });
+    I.bell(bell2, t, nm(accentNotes[i]), { gain: 0.4, decay: 0.3, index: 1.3, pan: i % 2 ? -0.35 : 0.35 });
+    I.boom(m2.bus('sub'), t, { f0: 95, f1: 60, decay: 0.09, glide: 0.03, gain: 0.35 });
+  });
+  I.riser(fx2, CUT.cresce - 1.2, 1.2, { f0: 500, f1: 7000, gain: 0.35, curve: 2.4 });
+
+  // ---------------- 42,45–47,6: crescimento (simulação) ----------------
+  const g6 = Grid.fit(CUT.cresce, CUT.evento, 9, 0.1);
+  tempo(g6, CUT.cresce, CUT.evento);
+  I.crash(fx2, CUT.cresce, { gain: 0.4, decay: 1.4 });
+  const grow = (t: number): number => 1100 * Math.pow(2.1, clamp((t - CUT.cresce) / 5, 0, 1));
+  [CH.Bbmaj7, CH.C6].forEach((ch, k) => playBar(m2, g6, 16 * k, {
+    chord: ch, pad: { cutoff: grow, gain: 0.9 }, padHi: 0.3, bass: k ? BASS_DRIVE : BASS_BOUNCE,
+    kick: k ? [0, 4, 8, 12] : [0, 6, 8], kickGain: 0.9, snare: [4, 12], snareGain: 0.78,
+    hats: SIXTEENTHS, hatGain: 0.8, open: k ? [2, 6, 10, 14] : undefined, shaker: [2, 6, 10, 14],
+    arp: { pat: [0, 1, 2, 3, 4, 3, 2, 1], step: 1, gain: 0.42, cutoff: 1300 },
+  }, rng));
+  playBar(m2, g6, 32, { chord: CH.Dm7, beats: 1, pad: { cutoff: 2000, gain: 0.9 }, bass: BASS_LONG, kick: [0], hats: [0, 2], hatGain: 0.7 }, rng);
+  FUTURE_BUILD_TIMES().forEach((t, i) => I.bell(bell2, t, nm(['F5', 'A5', 'C6', 'E6'][i % 4]), { gain: 0.3, decay: 0.35 }));
+
+  // ---------------- 47,6–51,3: tempestade (a música escurece e segura) ----------------
+  I.pad(pad2, CUT.evento, CUT.eleicao - CUT.evento + 0.3, CH.Dm7.pad, { attack: 0.25, release: 0.5, cutoff: (t) => 1500 - 900 * clamp((t - CUT.evento) / 1.5, 0, 1), gain: 0.75, width: 0.9 });
+  I.bass(m2.bus('bass'), CUT.evento, 3.6, nm('D1'), { gain: 0.75, decay: 2.5, sustain: 0.6 });
+  [0, 0.92, 1.84, 2.76].forEach((d, i) => I.tom(m2.bus('perc'), CUT.evento + 0.1 + d, 120 - i * 8, { gain: 0.5 + 0.08 * i, pan: i % 2 ? 0.3 : -0.3 }));
+  I.boom(m2.bus('sub'), WORD('mudar'), { f0: 70, f1: 38, decay: 0.8, gain: 0.55 });
+  I.riser(fx2, CUT.eleicao - 1.4, 1.4, { f0: 400, f1: 6500, gain: 0.35, curve: 2.4 });
+
+  // ---------------- 51,3–61,2: eleição, quem vai governar (hino) ----------------
+  const g8 = Grid.fit(CUT.eleicao, CUT.hoje, 18, 0.08);
+  tempo(g8, CUT.eleicao, CUT.hoje);
+  I.crash(fx2, CUT.eleicao, { gain: 0.45, decay: 1.6 });
+  I.boom(m2.bus('sub'), CUT.eleicao, { f0: 80, f1: 43, decay: 0.7, gain: 0.45 });
+  const s8: [Chord, Chord?][] = [[CH.Fmaj7], [CH.Am7], [CH.Bbmaj7], [CH.Csus4, CH.C]];
+  s8.forEach(([a, b], k) => playBar(m2, g8, 16 * k, {
+    chord: a, chord2: b, pad: { cutoff: 1800, gain: 1.0, attack: 0.2, width: 0.85 }, padHi: 0.36, bass: BASS_LONG, bassGain: 1.0,
+    kick: [0, 7, 10], kickGain: 0.92, snare: [8], snareGain: 0.9, hats: EIGHTHS, hatGain: 0.82, open: [14], shaker: [2, 6, 10, 14],
+    arp: { pat: [0, 1, 2, 3, 4, 3, 2, 1], step: 2, gain: 0.34, cutoff: 1250 },
+  }, rng));
+  playBar(m2, g8, 64, { chord: CH.Gm7, beats: 2, pad: { cutoff: 1800, gain: 0.95 }, padHi: 0.34, bass: [[0, 7, 0]], kick: [0], hats: [0, 2], hatGain: 0.7 }, rng);
+  const anthem: [number, string, number][] = [[0, 'A4', 0.5], [8, 'C5', 0.45], [16, 'E5', 0.5], [24, 'D5', 0.42], [32, 'D5', 0.48], [40, 'C5', 0.42], [48, 'G4', 0.46], [56, 'A4', 0.44], [64, 'D5', 0.5]];
+  anthem.forEach(([i, n, v], j) => {
+    I.bell(bell2, g8.s(i), nm(n), { gain: v, decay: 1.1, index: 1.1, ratio: 3.5, pan: j % 2 ? 0.25 : -0.25 });
+    I.bell(bell2, g8.s(i), nm(n) - 12, { gain: v * 0.5, decay: 1.2, index: 0.6, ratio: 2, pan: 0 });
+  });
+  [210, 190, 165, 150, 128, 112].forEach((f, j) => I.tom(m2.bus('perc'), g8.s(66 + j), f, { gain: 0.5 + 0.06 * j, pan: 0.5 - j * 0.18 }));
+
+  // ---------------- 61,2–69,55: hoje começa → o primeiro morador ----------------
+  const g9 = Grid.fit(CUT.hoje, RESOLVE, 15, 0.08);
+  tempo(g9, CUT.hoje, RESOLVE);
+  I.crash(fx2, CUT.hoje, { gain: 0.5, decay: 1.6 });
+  const s9: [Chord, Chord?][] = [[CH.Bbmaj7], [CH.Fmaj7], [CH.Gm7, CH.C7sus4]];
+  s9.forEach(([a, b], k) => playBar(m2, g9, 16 * k, {
+    chord: a, chord2: b, pad: { cutoff: 1900 + 150 * k, gain: 1.0, width: 0.9 }, padHi: 0.38, bass: k === 2 ? BASS_DRIVE : BASS_BOUNCE, bassGain: 0.95,
+    kick: k === 2 ? [0, 4, 8, 12] : [0, 6, 8, 11], kickGain: 0.95, snare: [4, 12], snareGain: 0.85, hats: SIXTEENTHS, hatGain: 0.8,
+    open: [2, 6, 10, 14], shaker: [2, 6, 10, 14], arp: { pat: [0, 1, 2, 3, 4, 3, 2, 1], step: 1, gain: 0.4, cutoff: 1400 }, counter: k < 2 ? { gain: 0.55, pan: 0.4 } : undefined,
+  }, rng));
+  playBar(m2, g9, 48, { chord: CH.C7sus4, chord2: CH.C7, split: 6, beats: 3, pad: { cutoff: 2200, gain: 1.05 }, padHi: 0.4, bass: [[0, 4, 0], [4, 2, 12], [6, 2, 0], [8, 4, 0]], kick: [0, 4, 8], hats: SIXTEENTHS, hatGain: 0.8, arp: { pat: [0, 1, 2, 3, 4, 5, 6, 7], step: 1, gain: 0.46, cutoff: 1600 } }, rng);
+  for (let j = 0; j < 10; j++) I.snare(m2.bus('snare'), j < 4 ? g9.s(50 + 2 * j) : g9.s(54 + j), { gain: 0.28 + 0.06 * j, decay: 0.08 });
+  I.bell(bell2, WORD('primeiro', 66), nm('C6'), { gain: 0.42, decay: 0.5 });
+  I.bell(bell2, WORD('morador', 66), nm('F6'), { gain: 0.46, decay: 0.6 });
+  I.riser(fx2, RESOLVE - 1.6, 1.6, { f0: 600, f1: 8000, gain: 0.35, curve: 2.6 });
+  I.swell(fx2, RESOLVE, 1.5, { gain: 0.65, curve: 2.4 });
+
+  // ---------------- 69,55: amanhecer + logo — o acorde que resolve (Fmaj9) ----------------
+  const hit = RESOLVE;
+  I.pad(pad2, hit, 4.2, CH.Fmaj9.pad, { attack: 0.015, decay: 1.6, sustain: 0.7, release: 1.2, cutoff: (t) => 2600 - 1200 * clamp((t - hit) / 4, 0, 1), gain: 1.4, width: 1 });
+  I.bass(m2.bus('bass'), hit, 3.5, nm('F1'), { gain: 1.0, decay: 1.4, sustain: 0.6 });
+  I.kick(m2.bus('kick'), hit, { gain: 1.1, decay: 0.3 });
+  m2.kickTimes.push(hit);
+  I.boom(m2.bus('sub'), hit, { f0: 85, f1: 43, decay: 0.9, gain: 0.7 });
+  I.crash(fx2, hit, { gain: 0.85, decay: 2.4 });
+  ['F5', 'A5', 'C6', 'E6', 'G6'].forEach((n, j) => I.bell(bell2, hit + j * 0.012, nm(n), { gain: 0.42 - 0.04 * j, decay: 1.6, index: 1.4, pan: -0.5 + j * 0.25 }));
+  // brilhos do sol nascendo (arpejo lento descendo)
+  ['C7', 'A6', 'F6', 'E6', 'C6', 'A5'].forEach((n, j) => I.bell(bell2, hit + 0.8 + j * 0.42, nm(n), { gain: 0.24 - 0.02 * j, decay: 1.0, pan: j % 2 ? 0.4 : -0.4 }));
+  I.pad(pad2, hit + 2.6, 2.6, [nm('F4'), nm('A4'), nm('C5'), nm('G5')], { attack: 0.8, release: 1.2, cutoff: 1800, gain: 0.45, width: 1 });
+
+  const main = m2.render(MIX);
+  main.mix(first, 1.0);
   voicePocket(main, EP01_VOICE, 3, 0.18);
   master(main, 1.0);
-  return fadeOut(main, 73.4, 74.96);
+  return fadeOut(main, 73.2, 74.96);
+}
+// prédios da simulação (mesmos tempos de FUTURE em Ep01.tsx)
+function FUTURE_BUILD_TIMES(): number[] {
+  const b = WORD('bairros'), c = WORD('construídos'.replace(/[^a-zà-ü]/g, '')), e = WORD('empresas');
+  return [b + 0.05, b + 0.3, c, e + 0.05];
 }
 
 // ====================================================================================

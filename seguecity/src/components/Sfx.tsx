@@ -5,7 +5,7 @@ import { asset } from '../utils/audio';
 // Volume-base de cada efeito (docs/AUDIO.md): deixa todos ~8 LU abaixo de uma narração em -16 LUFS.
 export const SFX_BASE: Record<string, number> = {
   coin: 0.11, notify: 0.16, 'ui-move': 0.18, unlock: 0.2, sparkle: 0.2, levelup: 0.21, popup: 0.23, empty: 0.23,
-  'ui-blip': 0.23, stamp: 0.24, firework: 0.24, build: 0.41, tick: 0.47, typing: 0.7,
+  'ui-blip': 0.23, stamp: 0.24, firework: 0.24, build: 0.41, tick: 0.47, typing: 0.7, thunder: 0.42,
 };
 
 // Efeito sonoro disparado em t (s). Ignorado se o arquivo não existir. gain multiplica o volume-base.

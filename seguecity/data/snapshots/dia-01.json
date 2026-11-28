@@ -1,0 +1,724 @@
+{
+  "snapshot": "SegueCity — estado oficial do Dia 01",
+  "dia": 1,
+  "registradoEm": "2026-11-28T04:49:51.688Z",
+  "episodio": [
+    {
+      "id": "ep01",
+      "titulo": "EPISÓDIO 01 — A FUNDAÇÃO: Construí uma cidade inteira, mas ninguém mora nela.",
+      "estado": {
+        "moradores": 0,
+        "empregos": 48
+      }
+    }
+  ],
+  "cidade": {
+    "nome": "SegueCity",
+    "slogan": "Você segue. Você mora. Você decide.",
+    "status": "cidade_pronta_aguardando_moradores",
+    "evolucao": {
+      "nivel": 1,
+      "nome": "Vila recém-construída",
+      "proximaMeta": "Primeiro morador"
+    },
+    "moradores": 0,
+    "casas": {
+      "total": 24,
+      "ocupadas": 0
+    },
+    "empregos": {
+      "total": 48,
+      "ocupados": 0
+    },
+    "metas": [
+      {
+        "id": "primeiro-morador",
+        "nome": "Primeiro morador",
+        "alvo": 1,
+        "concluida": false
+      },
+      {
+        "id": "fundadores",
+        "nome": "Fundadores da cidade",
+        "alvo": 10,
+        "concluida": false
+      },
+      {
+        "id": "novo-bairro",
+        "nome": "Novo bairro",
+        "alvo": 50,
+        "concluida": false
+      },
+      {
+        "id": "eleicao",
+        "nome": "Eleição para prefeito",
+        "alvo": 100,
+        "concluida": false
+      }
+    ]
+  },
+  "predios": {
+    "prontos": 41,
+    "emObra": 1,
+    "planejados": 4,
+    "porTipo": {
+      "prefeitura": 1,
+      "escola": 1,
+      "hospital": 1,
+      "mercado": 1,
+      "loja": 5,
+      "apartamento": 7,
+      "escritorio": 2,
+      "delegacia": 1,
+      "oficina": 1,
+      "terminal": 1,
+      "obra": 1,
+      "casa": 24
+    },
+    "lista": [
+      {
+        "id": "prefeitura",
+        "tipo": "prefeitura",
+        "nome": "Prefeitura",
+        "status": "pronto",
+        "posicao": {
+          "i": 10,
+          "j": 5
+        },
+        "moradores": 0
+      },
+      {
+        "id": "escola",
+        "tipo": "escola",
+        "nome": "Escola Municipal",
+        "status": "pronto",
+        "posicao": {
+          "i": 4,
+          "j": 4
+        },
+        "moradores": 0
+      },
+      {
+        "id": "hospital",
+        "tipo": "hospital",
+        "nome": "Hospital",
+        "status": "pronto",
+        "posicao": {
+          "i": 16,
+          "j": 4
+        },
+        "moradores": 0
+      },
+      {
+        "id": "mercado",
+        "tipo": "mercado",
+        "nome": "Mercadinho",
+        "status": "pronto",
+        "posicao": {
+          "i": 16,
+          "j": 11
+        },
+        "moradores": 0
+      },
+      {
+        "id": "padaria",
+        "tipo": "loja",
+        "nome": "Padaria",
+        "status": "pronto",
+        "posicao": {
+          "i": 16,
+          "j": 14
+        },
+        "moradores": 0
+      },
+      {
+        "id": "farmacia",
+        "tipo": "loja",
+        "nome": "Farmácia",
+        "status": "pronto",
+        "posicao": {
+          "i": 18,
+          "j": 14
+        },
+        "moradores": 0
+      },
+      {
+        "id": "torre-1",
+        "tipo": "apartamento",
+        "nome": "Torre Ipê",
+        "status": "pronto",
+        "posicao": {
+          "i": 4,
+          "j": 11
+        },
+        "moradores": 0
+      },
+      {
+        "id": "escritorio-1",
+        "tipo": "escritorio",
+        "nome": "Centro Empresarial",
+        "status": "pronto",
+        "posicao": {
+          "i": 6,
+          "j": 11
+        },
+        "moradores": 0
+      },
+      {
+        "id": "apto-4",
+        "tipo": "apartamento",
+        "nome": "Residencial Jardim",
+        "status": "pronto",
+        "posicao": {
+          "i": 4,
+          "j": 14
+        },
+        "moradores": 0
+      },
+      {
+        "id": "apto-3",
+        "tipo": "apartamento",
+        "nome": "Edifício Horizonte",
+        "status": "pronto",
+        "posicao": {
+          "i": 7,
+          "j": 14
+        },
+        "moradores": 0
+      },
+      {
+        "id": "delegacia",
+        "tipo": "delegacia",
+        "nome": "Delegacia",
+        "status": "pronto",
+        "posicao": {
+          "i": 4,
+          "j": 21
+        },
+        "moradores": 0
+      },
+      {
+        "id": "oficina",
+        "tipo": "oficina",
+        "nome": "Oficina Mecânica",
+        "status": "pronto",
+        "posicao": {
+          "i": 7,
+          "j": 21
+        },
+        "moradores": 0
+      },
+      {
+        "id": "apto-1",
+        "tipo": "apartamento",
+        "nome": "Edifício Aurora",
+        "status": "pronto",
+        "posicao": {
+          "i": 4,
+          "j": 18
+        },
+        "moradores": 0
+      },
+      {
+        "id": "apto-2",
+        "tipo": "apartamento",
+        "nome": "Residencial Primavera",
+        "status": "pronto",
+        "posicao": {
+          "i": 6,
+          "j": 18
+        },
+        "moradores": 0
+      },
+      {
+        "id": "sorveteria",
+        "tipo": "loja",
+        "nome": "Sorveteria",
+        "status": "pronto",
+        "posicao": {
+          "i": 10,
+          "j": 18
+        },
+        "moradores": 0
+      },
+      {
+        "id": "cafe",
+        "tipo": "loja",
+        "nome": "Café",
+        "status": "pronto",
+        "posicao": {
+          "i": 13,
+          "j": 18
+        },
+        "moradores": 0
+      },
+      {
+        "id": "terminal",
+        "tipo": "terminal",
+        "nome": "Terminal de Ônibus",
+        "status": "pronto",
+        "posicao": {
+          "i": 10,
+          "j": 21
+        },
+        "moradores": 0
+      },
+      {
+        "id": "obra",
+        "tipo": "obra",
+        "nome": "Canteiro de Obras",
+        "status": "em_obra",
+        "posicao": {
+          "i": 26,
+          "j": 4
+        },
+        "moradores": 0
+      },
+      {
+        "id": "casa-01",
+        "tipo": "casa",
+        "nome": "Casa 1",
+        "status": "pronto",
+        "posicao": {
+          "i": 4,
+          "j": 25
+        },
+        "moradores": 0
+      },
+      {
+        "id": "casa-02",
+        "tipo": "casa",
+        "nome": "Casa 2",
+        "status": "pronto",
+        "posicao": {
+          "i": 6,
+          "j": 25
+        },
+        "moradores": 0
+      },
+      {
+        "id": "casa-03",
+        "tipo": "casa",
+        "nome": "Casa 3",
+        "status": "pronto",
+        "posicao": {
+          "i": 8,
+          "j": 25
+        },
+        "moradores": 0
+      },
+      {
+        "id": "casa-04",
+        "tipo": "casa",
+        "nome": "Casa 4",
+        "status": "pronto",
+        "posicao": {
+          "i": 10,
+          "j": 25
+        },
+        "moradores": 0
+      },
+      {
+        "id": "casa-05",
+        "tipo": "casa",
+        "nome": "Casa 5",
+        "status": "pronto",
+        "posicao": {
+          "i": 12,
+          "j": 25
+        },
+        "moradores": 0
+      },
+      {
+        "id": "casa-06",
+        "tipo": "casa",
+        "nome": "Casa 6",
+        "status": "pronto",
+        "posicao": {
+          "i": 14,
+          "j": 25
+        },
+        "moradores": 0
+      },
+      {
+        "id": "casa-07",
+        "tipo": "casa",
+        "nome": "Casa 7",
+        "status": "pronto",
+        "posicao": {
+          "i": 16,
+          "j": 25
+        },
+        "moradores": 0
+      },
+      {
+        "id": "casa-08",
+        "tipo": "casa",
+        "nome": "Casa 8",
+        "status": "pronto",
+        "posicao": {
+          "i": 18,
+          "j": 25
+        },
+        "moradores": 0
+      },
+      {
+        "id": "casa-09",
+        "tipo": "casa",
+        "nome": "Casa 9",
+        "status": "pronto",
+        "posicao": {
+          "i": 4,
+          "j": 29
+        },
+        "moradores": 0
+      },
+      {
+        "id": "casa-10",
+        "tipo": "casa",
+        "nome": "Casa 10",
+        "status": "pronto",
+        "posicao": {
+          "i": 6,
+          "j": 29
+        },
+        "moradores": 0
+      },
+      {
+        "id": "casa-11",
+        "tipo": "casa",
+        "nome": "Casa 11",
+        "status": "pronto",
+        "posicao": {
+          "i": 8,
+          "j": 29
+        },
+        "moradores": 0
+      },
+      {
+        "id": "casa-12",
+        "tipo": "casa",
+        "nome": "Casa 12",
+        "status": "pronto",
+        "posicao": {
+          "i": 10,
+          "j": 29
+        },
+        "moradores": 0
+      },
+      {
+        "id": "casa-13",
+        "tipo": "casa",
+        "nome": "Casa 13",
+        "status": "pronto",
+        "posicao": {
+          "i": 12,
+          "j": 29
+        },
+        "moradores": 0
+      },
+      {
+        "id": "casa-14",
+        "tipo": "casa",
+        "nome": "Casa 14",
+        "status": "pronto",
+        "posicao": {
+          "i": 14,
+          "j": 29
+        },
+        "moradores": 0
+      },
+      {
+        "id": "casa-15",
+        "tipo": "casa",
+        "nome": "Casa 15",
+        "status": "pronto",
+        "posicao": {
+          "i": 16,
+          "j": 29
+        },
+        "moradores": 0
+      },
+      {
+        "id": "casa-16",
+        "tipo": "casa",
+        "nome": "Casa 16",
+        "status": "pronto",
+        "posicao": {
+          "i": 18,
+          "j": 29
+        },
+        "moradores": 0
+      },
+      {
+        "id": "casa-17",
+        "tipo": "casa",
+        "nome": "Casa 17",
+        "status": "pronto",
+        "posicao": {
+          "i": 27,
+          "j": 11
+        },
+        "moradores": 0
+      },
+      {
+        "id": "casa-18",
+        "tipo": "casa",
+        "nome": "Casa 18",
+        "status": "pronto",
+        "posicao": {
+          "i": 27,
+          "j": 13
+        },
+        "moradores": 0
+      },
+      {
+        "id": "casa-19",
+        "tipo": "casa",
+        "nome": "Casa 19",
+        "status": "pronto",
+        "posicao": {
+          "i": 27,
+          "j": 15
+        },
+        "moradores": 0
+      },
+      {
+        "id": "casa-20",
+        "tipo": "casa",
+        "nome": "Casa 20",
+        "status": "pronto",
+        "posicao": {
+          "i": 27,
+          "j": 17
+        },
+        "moradores": 0
+      },
+      {
+        "id": "casa-21",
+        "tipo": "casa",
+        "nome": "Casa 21",
+        "status": "pronto",
+        "posicao": {
+          "i": 27,
+          "j": 19
+        },
+        "moradores": 0
+      },
+      {
+        "id": "casa-22",
+        "tipo": "casa",
+        "nome": "Casa 22",
+        "status": "pronto",
+        "posicao": {
+          "i": 27,
+          "j": 21
+        },
+        "moradores": 0
+      },
+      {
+        "id": "casa-23",
+        "tipo": "casa",
+        "nome": "Casa 23",
+        "status": "pronto",
+        "posicao": {
+          "i": 27,
+          "j": 25
+        },
+        "moradores": 0
+      },
+      {
+        "id": "casa-24",
+        "tipo": "casa",
+        "nome": "Casa 24",
+        "status": "pronto",
+        "posicao": {
+          "i": 27,
+          "j": 27
+        },
+        "moradores": 0
+      },
+      {
+        "id": "futuro-1",
+        "tipo": "apartamento",
+        "nome": "Lote 1 (futuro)",
+        "status": "planejado",
+        "posicao": {
+          "i": 16,
+          "j": 18
+        },
+        "moradores": 0
+      },
+      {
+        "id": "futuro-2",
+        "tipo": "loja",
+        "nome": "Lote 2 (futuro)",
+        "status": "planejado",
+        "posicao": {
+          "i": 18,
+          "j": 18
+        },
+        "moradores": 0
+      },
+      {
+        "id": "futuro-3",
+        "tipo": "escritorio",
+        "nome": "Lote 3 (futuro)",
+        "status": "planejado",
+        "posicao": {
+          "i": 16,
+          "j": 21
+        },
+        "moradores": 0
+      },
+      {
+        "id": "futuro-4",
+        "tipo": "apartamento",
+        "nome": "Lote 4 (futuro)",
+        "status": "planejado",
+        "posicao": {
+          "i": 18,
+          "j": 21
+        },
+        "moradores": 0
+      }
+    ]
+  },
+  "profissoes": [
+    {
+      "id": "medico",
+      "nome": "Médico(a)",
+      "predio": "hospital",
+      "vagas": 4,
+      "ocupadas": 0
+    },
+    {
+      "id": "enfermeiro",
+      "nome": "Enfermeiro(a)",
+      "predio": "hospital",
+      "vagas": 4,
+      "ocupadas": 0
+    },
+    {
+      "id": "professor",
+      "nome": "Professor(a)",
+      "predio": "escola",
+      "vagas": 6,
+      "ocupadas": 0
+    },
+    {
+      "id": "diretor",
+      "nome": "Diretor(a) escolar",
+      "predio": "escola",
+      "vagas": 1,
+      "ocupadas": 0
+    },
+    {
+      "id": "prefeito",
+      "nome": "Prefeito(a)",
+      "predio": "prefeitura",
+      "vagas": 1,
+      "ocupadas": 0
+    },
+    {
+      "id": "servidor",
+      "nome": "Servidor(a) público",
+      "predio": "prefeitura",
+      "vagas": 3,
+      "ocupadas": 0
+    },
+    {
+      "id": "jardineiro",
+      "nome": "Jardineiro(a)",
+      "predio": "prefeitura",
+      "vagas": 1,
+      "ocupadas": 0
+    },
+    {
+      "id": "comerciante",
+      "nome": "Comerciante",
+      "predio": "mercado",
+      "vagas": 3,
+      "ocupadas": 0
+    },
+    {
+      "id": "padeiro",
+      "nome": "Padeiro(a)",
+      "predio": "padaria",
+      "vagas": 2,
+      "ocupadas": 0
+    },
+    {
+      "id": "farmaceutico",
+      "nome": "Farmacêutico(a)",
+      "predio": "farmacia",
+      "vagas": 2,
+      "ocupadas": 0
+    },
+    {
+      "id": "barista",
+      "nome": "Barista",
+      "predio": "cafe",
+      "vagas": 1,
+      "ocupadas": 0
+    },
+    {
+      "id": "sorveteiro",
+      "nome": "Sorveteiro(a)",
+      "predio": "sorveteria",
+      "vagas": 1,
+      "ocupadas": 0
+    },
+    {
+      "id": "policial",
+      "nome": "Policial",
+      "predio": "delegacia",
+      "vagas": 4,
+      "ocupadas": 0
+    },
+    {
+      "id": "mecanico",
+      "nome": "Mecânico(a)",
+      "predio": "oficina",
+      "vagas": 2,
+      "ocupadas": 0
+    },
+    {
+      "id": "motorista",
+      "nome": "Motorista",
+      "predio": "terminal",
+      "vagas": 4,
+      "ocupadas": 0
+    },
+    {
+      "id": "engenheiro",
+      "nome": "Engenheiro(a)",
+      "predio": "obra",
+      "vagas": 2,
+      "ocupadas": 0
+    },
+    {
+      "id": "pedreiro",
+      "nome": "Pedreiro(a)",
+      "predio": "obra",
+      "vagas": 4,
+      "ocupadas": 0
+    },
+    {
+      "id": "analista",
+      "nome": "Programador(a)",
+      "predio": "escritorio-1",
+      "vagas": 3,
+      "ocupadas": 0
+    }
+  ],
+  "moradores": [],
+  "arquivos": {
+    "city-state.json": "1191997c0ff3f76fef30cdeeeebfe2bde98975a3b9227750d9dea9821d8d9a48",
+    "buildings.json": "40b0686fa3a9f244615f967f2d88f1f6754649de0e0ef35cc0931355c8b25c4e",
+    "jobs.json": "59324573765ea3e7b43fc007f3802a81c4d7e2de235e80c2317904dc943f9ee6",
+    "residents.json": "37517e5f3dc66819f61f5a7bb8ace1921282415f10551d2defa5c3eb0985b570",
+    "episodes.json": "3d30a654b32f69f0877039ea3dd29cb1d4efcc72412aae9f6c9c8b6746af701f",
+    "mapa.json": "c48c6d7d4574e72c49f22bfa8fdfaf1b2f2602b3f11088d2ce31359f5d676a20"
+  }
+}

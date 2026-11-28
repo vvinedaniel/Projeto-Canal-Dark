@@ -1,11 +1,7 @@
 # Narração do Ep. 01
 
-Coloque aqui a voz final como `narracao.wav` (ou `narracao.mp3`), em português brasileiro, começando
-no 0 s do episódio e terminando antes de 75 s. Depois rode:
+- `narracao-original.mp3`: a voz oficial recebida (Cidade.mp3), intacta.
+- `narracao.wav`: a mesma voz na linha do tempo de 75 s, gerada por `python3 scripts/ep01-narracao.py`.
+  As frases são recortadas nas pausas e ganham respiros; nada é acelerado.
 
-```bash
-npm run narration:fit   # mede as frases no áudio e grava src/scenes/ep01/narration-timing.json
-npm run render:ep01     # renderiza de novo com a voz; a trilha abaixa sozinha sob a fala
-```
-
-Sem este arquivo o episódio é renderizado só com trilha, efeitos e legendas (marcações provisórias).
+Depois de gerar, rode `npm run render:ep01`. A trilha abaixa sozinha sob a fala.

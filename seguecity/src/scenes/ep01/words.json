@@ -1,0 +1,1069 @@
+{
+ "fonte": "scripts/ep01-narracao.py",
+ "frases": [
+  {
+   "id": "f01",
+   "text": "Eu construí uma cidade inteira do zero.",
+   "a": 0.15,
+   "b": 2.81
+  },
+  {
+   "id": "f02",
+   "text": "Mas existe um pequeno problema…",
+   "a": 3.5,
+   "b": 5.84
+  },
+  {
+   "id": "f03",
+   "text": "Ninguém mora nela.",
+   "a": 6.84,
+   "b": 8.0
+  },
+  {
+   "id": "f04",
+   "text": "Tem casas, escola, hospital, comércio e até uma prefeitura.",
+   "a": 9.4,
+   "b": 14.06
+  },
+  {
+   "id": "f05",
+   "text": "Está tudo pronto, esperando pelos primeiros habitantes.",
+   "a": 14.77,
+   "b": 18.09
+  },
+  {
+   "id": "f06",
+   "text": "E é aqui que você entra.",
+   "a": 19.1,
+   "b": 20.52
+  },
+  {
+   "id": "f07",
+   "text": "A partir de hoje, cada novo seguidor poderá se tornar um cidadão da SegueCity.",
+   "a": 21.36,
+   "b": 26.2
+  },
+  {
+   "id": "f08",
+   "text": "Você poderá escolher seu nome, sua profissão e acompanhar seu personagem vivendo dentro dessa cidade.",
+   "a": 26.92,
+   "b": 32.94
+  },
+  {
+   "id": "f09",
+   "text": "Quer ser médico, policial, empresário, mecânico ou professor?",
+   "a": 33.63,
+   "b": 37.75
+  },
+  {
+   "id": "f10",
+   "text": "Nossa cidade precisa de pessoas de todas as profissões.",
+   "a": 38.62,
+   "b": 41.81
+  },
+  {
+   "id": "f11",
+   "text": "Conforme nossa população crescer, novos bairros serão construídos, empresas serão abertas e acontecimentos poderão mudar o destino da cidade.",
+   "a": 42.61,
+   "b": 51.07
+  },
+  {
+   "id": "f12",
+   "text": "Quando chegarmos aos cem seguidores, vamos liberar nossa primeira eleição.",
+   "a": 52.09,
+   "b": 56.35
+  },
+  {
+   "id": "f13",
+   "text": "E vocês poderão escolher quem vai governar a SegueCity.",
+   "a": 57.0,
+   "b": 60.07
+  },
+  {
+   "id": "f14",
+   "text": "Hoje começa nossa história.",
+   "a": 61.33,
+   "b": 63.0
+  },
+  {
+   "id": "f15",
+   "text": "Comente seu nome e sua profissão.",
+   "a": 63.65,
+   "b": 65.46
+  },
+  {
+   "id": "f16",
+   "text": "Quem será o primeiro morador da SegueCity?",
+   "a": 66.12,
+   "b": 68.57
+  }
+ ],
+ "palavras": [
+  {
+   "w": "Eu",
+   "a": 0.15,
+   "b": 0.31,
+   "key": false,
+   "phrase": "f01"
+  },
+  {
+   "w": "construí",
+   "a": 0.31,
+   "b": 0.565,
+   "key": false,
+   "phrase": "f01"
+  },
+  {
+   "w": "uma",
+   "a": 0.565,
+   "b": 1.04,
+   "key": false,
+   "phrase": "f01"
+  },
+  {
+   "w": "cidade",
+   "a": 1.04,
+   "b": 1.695,
+   "key": true,
+   "phrase": "f01"
+  },
+  {
+   "w": "inteira",
+   "a": 1.695,
+   "b": 2.175,
+   "key": true,
+   "phrase": "f01"
+  },
+  {
+   "w": "do",
+   "a": 2.175,
+   "b": 2.245,
+   "key": false,
+   "phrase": "f01"
+  },
+  {
+   "w": "zero.",
+   "a": 2.245,
+   "b": 2.81,
+   "key": true,
+   "phrase": "f01"
+  },
+  {
+   "w": "Mas",
+   "a": 3.5,
+   "b": 3.695,
+   "key": false,
+   "phrase": "f02"
+  },
+  {
+   "w": "existe",
+   "a": 3.695,
+   "b": 4.34,
+   "key": false,
+   "phrase": "f02"
+  },
+  {
+   "w": "um",
+   "a": 4.34,
+   "b": 4.575,
+   "key": false,
+   "phrase": "f02"
+  },
+  {
+   "w": "pequeno",
+   "a": 4.575,
+   "b": 4.99,
+   "key": false,
+   "phrase": "f02"
+  },
+  {
+   "w": "problema…",
+   "a": 4.99,
+   "b": 5.84,
+   "key": true,
+   "phrase": "f02"
+  },
+  {
+   "w": "Ninguém",
+   "a": 6.84,
+   "b": 7.18,
+   "key": true,
+   "phrase": "f03"
+  },
+  {
+   "w": "mora",
+   "a": 7.18,
+   "b": 7.595,
+   "key": true,
+   "phrase": "f03"
+  },
+  {
+   "w": "nela.",
+   "a": 7.595,
+   "b": 8.0,
+   "key": false,
+   "phrase": "f03"
+  },
+  {
+   "w": "Tem",
+   "a": 9.4,
+   "b": 9.58,
+   "key": false,
+   "phrase": "f04"
+  },
+  {
+   "w": "casas,",
+   "a": 9.58,
+   "b": 10.175,
+   "key": true,
+   "phrase": "f04"
+  },
+  {
+   "w": "escola,",
+   "a": 10.175,
+   "b": 10.995,
+   "key": true,
+   "phrase": "f04"
+  },
+  {
+   "w": "hospital,",
+   "a": 10.995,
+   "b": 11.495,
+   "key": true,
+   "phrase": "f04"
+  },
+  {
+   "w": "comércio",
+   "a": 11.495,
+   "b": 12.1,
+   "key": true,
+   "phrase": "f04"
+  },
+  {
+   "w": "e",
+   "a": 12.1,
+   "b": 12.37,
+   "key": false,
+   "phrase": "f04"
+  },
+  {
+   "w": "até",
+   "a": 12.37,
+   "b": 12.8,
+   "key": false,
+   "phrase": "f04"
+  },
+  {
+   "w": "uma",
+   "a": 12.8,
+   "b": 13.1,
+   "key": false,
+   "phrase": "f04"
+  },
+  {
+   "w": "prefeitura.",
+   "a": 13.1,
+   "b": 14.06,
+   "key": true,
+   "phrase": "f04"
+  },
+  {
+   "w": "Está",
+   "a": 14.77,
+   "b": 15.055,
+   "key": false,
+   "phrase": "f05"
+  },
+  {
+   "w": "tudo",
+   "a": 15.055,
+   "b": 15.47,
+   "key": false,
+   "phrase": "f05"
+  },
+  {
+   "w": "pronto,",
+   "a": 15.47,
+   "b": 15.78,
+   "key": true,
+   "phrase": "f05"
+  },
+  {
+   "w": "esperando",
+   "a": 15.78,
+   "b": 16.625,
+   "key": false,
+   "phrase": "f05"
+  },
+  {
+   "w": "pelos",
+   "a": 16.625,
+   "b": 16.93,
+   "key": false,
+   "phrase": "f05"
+  },
+  {
+   "w": "primeiros",
+   "a": 16.93,
+   "b": 17.32,
+   "key": false,
+   "phrase": "f05"
+  },
+  {
+   "w": "habitantes.",
+   "a": 17.32,
+   "b": 18.09,
+   "key": true,
+   "phrase": "f05"
+  },
+  {
+   "w": "E",
+   "a": 19.1,
+   "b": 19.28,
+   "key": false,
+   "phrase": "f06"
+  },
+  {
+   "w": "é",
+   "a": 19.28,
+   "b": 19.48,
+   "key": false,
+   "phrase": "f06"
+  },
+  {
+   "w": "aqui",
+   "a": 19.48,
+   "b": 19.745,
+   "key": false,
+   "phrase": "f06"
+  },
+  {
+   "w": "que",
+   "a": 19.745,
+   "b": 19.815,
+   "key": false,
+   "phrase": "f06"
+  },
+  {
+   "w": "você",
+   "a": 19.815,
+   "b": 20.1,
+   "key": true,
+   "phrase": "f06"
+  },
+  {
+   "w": "entra.",
+   "a": 20.1,
+   "b": 20.52,
+   "key": true,
+   "phrase": "f06"
+  },
+  {
+   "w": "A",
+   "a": 21.36,
+   "b": 21.45,
+   "key": false,
+   "phrase": "f07"
+  },
+  {
+   "w": "partir",
+   "a": 21.45,
+   "b": 21.815,
+   "key": false,
+   "phrase": "f07"
+  },
+  {
+   "w": "de",
+   "a": 21.815,
+   "b": 22.15,
+   "key": false,
+   "phrase": "f07"
+  },
+  {
+   "w": "hoje,",
+   "a": 22.15,
+   "b": 22.42,
+   "key": true,
+   "phrase": "f07"
+  },
+  {
+   "w": "cada",
+   "a": 22.42,
+   "b": 22.855,
+   "key": false,
+   "phrase": "f07"
+  },
+  {
+   "w": "novo",
+   "a": 22.855,
+   "b": 23.23,
+   "key": false,
+   "phrase": "f07"
+  },
+  {
+   "w": "seguidor",
+   "a": 23.23,
+   "b": 23.705,
+   "key": true,
+   "phrase": "f07"
+  },
+  {
+   "w": "poderá",
+   "a": 23.705,
+   "b": 24.195,
+   "key": false,
+   "phrase": "f07"
+  },
+  {
+   "w": "se",
+   "a": 24.195,
+   "b": 24.345,
+   "key": false,
+   "phrase": "f07"
+  },
+  {
+   "w": "tornar",
+   "a": 24.345,
+   "b": 24.665,
+   "key": false,
+   "phrase": "f07"
+  },
+  {
+   "w": "um",
+   "a": 24.665,
+   "b": 24.915,
+   "key": false,
+   "phrase": "f07"
+  },
+  {
+   "w": "cidadão",
+   "a": 24.915,
+   "b": 25.47,
+   "key": true,
+   "phrase": "f07"
+  },
+  {
+   "w": "da",
+   "a": 25.47,
+   "b": 25.55,
+   "key": false,
+   "phrase": "f07"
+  },
+  {
+   "w": "SegueCity.",
+   "a": 25.55,
+   "b": 26.2,
+   "key": true,
+   "phrase": "f07"
+  },
+  {
+   "w": "Você",
+   "a": 26.92,
+   "b": 27.165,
+   "key": true,
+   "phrase": "f08"
+  },
+  {
+   "w": "poderá",
+   "a": 27.165,
+   "b": 27.615,
+   "key": false,
+   "phrase": "f08"
+  },
+  {
+   "w": "escolher",
+   "a": 27.615,
+   "b": 28.105,
+   "key": false,
+   "phrase": "f08"
+  },
+  {
+   "w": "seu",
+   "a": 28.105,
+   "b": 28.395,
+   "key": false,
+   "phrase": "f08"
+  },
+  {
+   "w": "nome,",
+   "a": 28.395,
+   "b": 28.85,
+   "key": true,
+   "phrase": "f08"
+  },
+  {
+   "w": "sua",
+   "a": 28.85,
+   "b": 29.015,
+   "key": false,
+   "phrase": "f08"
+  },
+  {
+   "w": "profissão",
+   "a": 29.015,
+   "b": 29.585,
+   "key": true,
+   "phrase": "f08"
+  },
+  {
+   "w": "e",
+   "a": 29.585,
+   "b": 29.66,
+   "key": false,
+   "phrase": "f08"
+  },
+  {
+   "w": "acompanhar",
+   "a": 29.66,
+   "b": 30.34,
+   "key": false,
+   "phrase": "f08"
+  },
+  {
+   "w": "seu",
+   "a": 30.34,
+   "b": 30.53,
+   "key": false,
+   "phrase": "f08"
+  },
+  {
+   "w": "personagem",
+   "a": 30.53,
+   "b": 31.225,
+   "key": true,
+   "phrase": "f08"
+  },
+  {
+   "w": "vivendo",
+   "a": 31.225,
+   "b": 31.705,
+   "key": true,
+   "phrase": "f08"
+  },
+  {
+   "w": "dentro",
+   "a": 31.705,
+   "b": 32.055,
+   "key": false,
+   "phrase": "f08"
+  },
+  {
+   "w": "dessa",
+   "a": 32.055,
+   "b": 32.39,
+   "key": false,
+   "phrase": "f08"
+  },
+  {
+   "w": "cidade.",
+   "a": 32.39,
+   "b": 32.94,
+   "key": true,
+   "phrase": "f08"
+  },
+  {
+   "w": "Quer",
+   "a": 33.63,
+   "b": 33.755,
+   "key": false,
+   "phrase": "f09"
+  },
+  {
+   "w": "ser",
+   "a": 33.755,
+   "b": 33.985,
+   "key": false,
+   "phrase": "f09"
+  },
+  {
+   "w": "médico,",
+   "a": 33.985,
+   "b": 34.66,
+   "key": true,
+   "phrase": "f09"
+  },
+  {
+   "w": "policial,",
+   "a": 34.66,
+   "b": 35.405,
+   "key": true,
+   "phrase": "f09"
+  },
+  {
+   "w": "empresário,",
+   "a": 35.405,
+   "b": 36.28,
+   "key": true,
+   "phrase": "f09"
+  },
+  {
+   "w": "mecânico",
+   "a": 36.28,
+   "b": 36.865,
+   "key": true,
+   "phrase": "f09"
+  },
+  {
+   "w": "ou",
+   "a": 36.865,
+   "b": 37.065,
+   "key": false,
+   "phrase": "f09"
+  },
+  {
+   "w": "professor?",
+   "a": 37.065,
+   "b": 37.75,
+   "key": true,
+   "phrase": "f09"
+  },
+  {
+   "w": "Nossa",
+   "a": 38.62,
+   "b": 38.94,
+   "key": false,
+   "phrase": "f10"
+  },
+  {
+   "w": "cidade",
+   "a": 38.94,
+   "b": 39.385,
+   "key": true,
+   "phrase": "f10"
+  },
+  {
+   "w": "precisa",
+   "a": 39.385,
+   "b": 39.885,
+   "key": false,
+   "phrase": "f10"
+  },
+  {
+   "w": "de",
+   "a": 39.885,
+   "b": 40.115,
+   "key": false,
+   "phrase": "f10"
+  },
+  {
+   "w": "pessoas",
+   "a": 40.115,
+   "b": 40.535,
+   "key": false,
+   "phrase": "f10"
+  },
+  {
+   "w": "de",
+   "a": 40.535,
+   "b": 40.645,
+   "key": false,
+   "phrase": "f10"
+  },
+  {
+   "w": "todas",
+   "a": 40.645,
+   "b": 41.08,
+   "key": false,
+   "phrase": "f10"
+  },
+  {
+   "w": "as",
+   "a": 41.08,
+   "b": 41.16,
+   "key": false,
+   "phrase": "f10"
+  },
+  {
+   "w": "profissões.",
+   "a": 41.16,
+   "b": 41.81,
+   "key": true,
+   "phrase": "f10"
+  },
+  {
+   "w": "Conforme",
+   "a": 42.61,
+   "b": 43.225,
+   "key": false,
+   "phrase": "f11"
+  },
+  {
+   "w": "nossa",
+   "a": 43.225,
+   "b": 43.445,
+   "key": false,
+   "phrase": "f11"
+  },
+  {
+   "w": "população",
+   "a": 43.445,
+   "b": 44.095,
+   "key": false,
+   "phrase": "f11"
+  },
+  {
+   "w": "crescer,",
+   "a": 44.095,
+   "b": 44.5,
+   "key": false,
+   "phrase": "f11"
+  },
+  {
+   "w": "novos",
+   "a": 44.5,
+   "b": 45.04,
+   "key": false,
+   "phrase": "f11"
+  },
+  {
+   "w": "bairros",
+   "a": 45.04,
+   "b": 45.305,
+   "key": true,
+   "phrase": "f11"
+  },
+  {
+   "w": "serão",
+   "a": 45.305,
+   "b": 45.69,
+   "key": false,
+   "phrase": "f11"
+  },
+  {
+   "w": "construídos,",
+   "a": 45.69,
+   "b": 46.225,
+   "key": false,
+   "phrase": "f11"
+  },
+  {
+   "w": "empresas",
+   "a": 46.225,
+   "b": 46.775,
+   "key": true,
+   "phrase": "f11"
+  },
+  {
+   "w": "serão",
+   "a": 46.775,
+   "b": 47.18,
+   "key": false,
+   "phrase": "f11"
+  },
+  {
+   "w": "abertas",
+   "a": 47.18,
+   "b": 47.485,
+   "key": false,
+   "phrase": "f11"
+  },
+  {
+   "w": "e",
+   "a": 47.485,
+   "b": 47.735,
+   "key": false,
+   "phrase": "f11"
+  },
+  {
+   "w": "acontecimentos",
+   "a": 47.735,
+   "b": 48.635,
+   "key": true,
+   "phrase": "f11"
+  },
+  {
+   "w": "poderão",
+   "a": 48.635,
+   "b": 49.13,
+   "key": false,
+   "phrase": "f11"
+  },
+  {
+   "w": "mudar",
+   "a": 49.13,
+   "b": 49.66,
+   "key": false,
+   "phrase": "f11"
+  },
+  {
+   "w": "o",
+   "a": 49.66,
+   "b": 49.73,
+   "key": false,
+   "phrase": "f11"
+  },
+  {
+   "w": "destino",
+   "a": 49.73,
+   "b": 50.245,
+   "key": true,
+   "phrase": "f11"
+  },
+  {
+   "w": "da",
+   "a": 50.245,
+   "b": 50.315,
+   "key": false,
+   "phrase": "f11"
+  },
+  {
+   "w": "cidade.",
+   "a": 50.315,
+   "b": 51.07,
+   "key": true,
+   "phrase": "f11"
+  },
+  {
+   "w": "Quando",
+   "a": 52.09,
+   "b": 52.475,
+   "key": false,
+   "phrase": "f12"
+  },
+  {
+   "w": "chegarmos",
+   "a": 52.475,
+   "b": 52.955,
+   "key": false,
+   "phrase": "f12"
+  },
+  {
+   "w": "aos",
+   "a": 52.955,
+   "b": 53.065,
+   "key": false,
+   "phrase": "f12"
+  },
+  {
+   "w": "cem",
+   "a": 53.065,
+   "b": 53.325,
+   "key": true,
+   "phrase": "f12"
+  },
+  {
+   "w": "seguidores,",
+   "a": 53.325,
+   "b": 54.155,
+   "key": false,
+   "phrase": "f12"
+  },
+  {
+   "w": "vamos",
+   "a": 54.155,
+   "b": 54.385,
+   "key": false,
+   "phrase": "f12"
+  },
+  {
+   "w": "liberar",
+   "a": 54.385,
+   "b": 54.915,
+   "key": false,
+   "phrase": "f12"
+  },
+  {
+   "w": "nossa",
+   "a": 54.915,
+   "b": 55.235,
+   "key": false,
+   "phrase": "f12"
+  },
+  {
+   "w": "primeira",
+   "a": 55.235,
+   "b": 55.705,
+   "key": false,
+   "phrase": "f12"
+  },
+  {
+   "w": "eleição.",
+   "a": 55.705,
+   "b": 56.35,
+   "key": true,
+   "phrase": "f12"
+  },
+  {
+   "w": "E",
+   "a": 57.0,
+   "b": 57.1,
+   "key": false,
+   "phrase": "f13"
+  },
+  {
+   "w": "vocês",
+   "a": 57.1,
+   "b": 57.605,
+   "key": false,
+   "phrase": "f13"
+  },
+  {
+   "w": "poderão",
+   "a": 57.605,
+   "b": 58.075,
+   "key": false,
+   "phrase": "f13"
+  },
+  {
+   "w": "escolher",
+   "a": 58.075,
+   "b": 58.445,
+   "key": false,
+   "phrase": "f13"
+  },
+  {
+   "w": "quem",
+   "a": 58.445,
+   "b": 58.515,
+   "key": false,
+   "phrase": "f13"
+  },
+  {
+   "w": "vai",
+   "a": 58.515,
+   "b": 58.775,
+   "key": false,
+   "phrase": "f13"
+  },
+  {
+   "w": "governar",
+   "a": 58.775,
+   "b": 59.2,
+   "key": true,
+   "phrase": "f13"
+  },
+  {
+   "w": "a",
+   "a": 59.2,
+   "b": 59.5,
+   "key": false,
+   "phrase": "f13"
+  },
+  {
+   "w": "SegueCity.",
+   "a": 59.5,
+   "b": 60.07,
+   "key": true,
+   "phrase": "f13"
+  },
+  {
+   "w": "Hoje",
+   "a": 61.33,
+   "b": 61.74,
+   "key": true,
+   "phrase": "f14"
+  },
+  {
+   "w": "começa",
+   "a": 61.74,
+   "b": 62.165,
+   "key": false,
+   "phrase": "f14"
+  },
+  {
+   "w": "nossa",
+   "a": 62.165,
+   "b": 62.45,
+   "key": false,
+   "phrase": "f14"
+  },
+  {
+   "w": "história.",
+   "a": 62.45,
+   "b": 63.0,
+   "key": true,
+   "phrase": "f14"
+  },
+  {
+   "w": "Comente",
+   "a": 63.65,
+   "b": 64.08,
+   "key": true,
+   "phrase": "f15"
+  },
+  {
+   "w": "seu",
+   "a": 64.08,
+   "b": 64.26,
+   "key": false,
+   "phrase": "f15"
+  },
+  {
+   "w": "nome",
+   "a": 64.26,
+   "b": 64.585,
+   "key": true,
+   "phrase": "f15"
+  },
+  {
+   "w": "e",
+   "a": 64.585,
+   "b": 64.795,
+   "key": false,
+   "phrase": "f15"
+  },
+  {
+   "w": "sua",
+   "a": 64.795,
+   "b": 64.935,
+   "key": false,
+   "phrase": "f15"
+  },
+  {
+   "w": "profissão.",
+   "a": 64.935,
+   "b": 65.46,
+   "key": true,
+   "phrase": "f15"
+  },
+  {
+   "w": "Quem",
+   "a": 66.12,
+   "b": 66.35,
+   "key": false,
+   "phrase": "f16"
+  },
+  {
+   "w": "será",
+   "a": 66.35,
+   "b": 66.67,
+   "key": false,
+   "phrase": "f16"
+  },
+  {
+   "w": "o",
+   "a": 66.67,
+   "b": 66.87,
+   "key": false,
+   "phrase": "f16"
+  },
+  {
+   "w": "primeiro",
+   "a": 66.87,
+   "b": 67.265,
+   "key": true,
+   "phrase": "f16"
+  },
+  {
+   "w": "morador",
+   "a": 67.265,
+   "b": 67.755,
+   "key": true,
+   "phrase": "f16"
+  },
+  {
+   "w": "da",
+   "a": 67.755,
+   "b": 67.865,
+   "key": false,
+   "phrase": "f16"
+  },
+  {
+   "w": "SegueCity?",
+   "a": 67.865,
+   "b": 68.57,
+   "key": true,
+   "phrase": "f16"
+  }
+ ]
+}

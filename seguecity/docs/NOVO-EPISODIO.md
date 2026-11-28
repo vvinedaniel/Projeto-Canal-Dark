@@ -3,9 +3,10 @@
 O Ep. 01 (`src/scenes/ep01/`) é o modelo. Um episódio tem quatro partes. Só a primeira muda de verdade
 a cada vez; o resto é reaproveitado.
 
-1. **Roteiro** (`narration.ts`): frases com início e fim provisórios dentro da janela de cada cena. O tempo
-   de cada palavra sai das sílabas. Quando a voz chegar, `narration-fit` grava os tempos reais em
-   `narration-timing.json`.
+1. **Roteiro e voz** (`narration.ts` + `words.json`):
+   - `scripts/ep01-narracao.py` monta a voz na linha do tempo, com respiros e sem acelerar;
+   - ele também grava o início e o fim de cada palavra;
+   - passo a passo para um episódio novo em `docs/DIA-02.md`.
 2. **Direção** (`EpXX.tsx`):
    - **Câmera:** planos (`Key[][]`) com alvo em tiles (i, j), altura `z` e `zoom`. Entre os quadros-chave
      de um plano o movimento é contínuo (Catmull-Rom com deriva leve). Do primeiro quadro de um plano
