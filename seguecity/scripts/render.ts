@@ -13,6 +13,7 @@ const opt = (k: string, d?: string) => { const i = args.indexOf(k); return i >= 
 const TARGETS: Record<string, { id: string; file: string }> = {
   demo: { id: 'CityDemo', file: 'seguecity-demo-cidade.mp4' },
   ep01: { id: 'Ep01', file: 'seguecity-ep01.mp4' },
+  ep02: { id: 'Ep02', file: 'seguecity-ep02.mp4' },
 };
 const target = TARGETS[args[0] ?? 'demo'] ?? { id: args[0], file: `${args[0]}.mp4` };
 const frames = opt('--frames');

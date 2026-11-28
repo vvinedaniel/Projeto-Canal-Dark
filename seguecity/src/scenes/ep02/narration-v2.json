@@ -1,0 +1,196 @@
+{
+ "fonte": "public/audio/ep02/narracao-original.mp3 (10_pessoas.mp3, voz ElevenLabs do Ep. 01; 72,59 s, mono 44,1 kHz, -20,5 LUFS, pico -1,2 dBTP)",
+ "medicao": "silencedetect -35 dB / 0,22 s: 27 falas separadas por 26 pausas",
+ "transcricao": "Whisper small local (sherpa-onnx, sem serviço externo); nomes e grafias corrigidos pelo cadastro (campo asr = saída bruta)",
+ "frases": [
+  {
+   "id": "f01",
+   "texto": "Dez pessoas decidiram morar na minha cidade.",
+   "asr": "10 pessoas decidiram morar na minha cidade.",
+   "de": 0.0,
+   "ate": 2.654
+  },
+  {
+   "id": "f02",
+   "texto": "E uma delas escolheu ser coveiro numa cidade que nem tem cemitério.",
+   "asr": "E uma delas escolheu ser coveiro numa cidade que nem tem cemitério.",
+   "de": 3.093,
+   "ate": 7.169
+  },
+  {
+   "id": "f03",
+   "texto": "Ontem, a SegueCity tinha zero moradores.",
+   "asr": "Ontem, a SEG City tinha zero moradores.",
+   "de": 7.752,
+   "ate": 10.525
+  },
+  {
+   "id": "f04",
+   "texto": "Hoje…",
+   "asr": "Hoje...",
+   "de": 10.943,
+   "ate": 11.272
+  },
+  {
+   "id": "f05",
+   "texto": "As primeiras dez casas ganharam seus donos.",
+   "asr": "As primeiras 10 casas ganharam seus donos.",
+   "de": 11.513,
+   "ate": 14.078
+  },
+  {
+   "id": "f06",
+   "texto": "Mateus, médico, foi o primeiro a chegar.",
+   "asr": "Mateus, médico, foi o primeiro a chegar.",
+   "de": 14.552,
+   "ate": 17.171
+  },
+  {
+   "id": "f07",
+   "texto": "Nosso morador número um.",
+   "asr": "Nosso morador número 1.",
+   "de": 17.486,
+   "ate": 19.121
+  },
+  {
+   "id": "f08",
+   "texto": "Davi assumiu a profissão de policial.",
+   "asr": "Davi assumiu a profissão de policial.",
+   "de": 19.568,
+   "ate": 21.906
+  },
+  {
+   "id": "f09",
+   "texto": "Gabriel e Juan ficaram responsáveis pela oficina mecânica.",
+   "asr": "Gabriel e Juan ficaram responsáveis pela oficina mecânica.",
+   "de": 22.313,
+   "ate": 25.722
+  },
+  {
+   "id": "f10",
+   "texto": "Mari chegou como neurocirurgiã.",
+   "asr": "Máris chegou como Neurocirurgia.",
+   "de": 26.12,
+   "ate": 28.16
+  },
+  {
+   "id": "f11",
+   "texto": "Alicia e Muri escolheram ser empresários.",
+   "asr": "Alice e Mury escolheram ser empresários.",
+   "de": 28.463,
+   "ate": 30.963
+  },
+  {
+   "id": "f12",
+   "texto": "Gabrielly será nossa advogada.",
+   "asr": "Gabriele será nossa advogada.",
+   "de": 31.254,
+   "ate": 33.015
+  },
+  {
+   "id": "f13",
+   "texto": "Jorge, nosso comerciante.",
+   "asr": "Jorge, nosso comerciante.",
+   "de": 33.328,
+   "ate": 34.991
+  },
+  {
+   "id": "f14",
+   "texto": "E Roberto…",
+   "asr": "e Roberto",
+   "de": 35.299,
+   "ate": 36.185
+  },
+  {
+   "id": "f15",
+   "texto": "nosso primeiro coveiro.",
+   "asr": "nosso primeiro coveiro.",
+   "de": 36.432,
+   "ate": 37.918
+  },
+  {
+   "id": "f16",
+   "texto": "Mas temos um problema.",
+   "asr": "mas temos um problema.",
+   "de": 38.386,
+   "ate": 39.659
+  },
+  {
+   "id": "f17",
+   "texto": "Onde o Roberto vai trabalhar?",
+   "asr": "Onde o Roberto vai trabalhar?",
+   "de": 40.103,
+   "ate": 41.425
+  },
+  {
+   "id": "f18",
+   "texto": "Vamos reservar um terreno para construir o primeiro cemitério da cidade.",
+   "asr": "Vamos reservar um terreno para construir o primeiro cemitério da cidade.",
+   "de": 41.907,
+   "ate": 45.657
+  },
+  {
+   "id": "f19",
+   "texto": "E outro para o escritório de advocacia da Gabrielly.",
+   "asr": "e outro para o escritório de Advocacia da Gabriele.",
+   "de": 45.986,
+   "ate": 48.612
+  },
+  {
+   "id": "f20",
+   "texto": "Os primeiros carros começaram a circular.",
+   "asr": "Os primeiros carros começaram a circular.",
+   "de": 49.047,
+   "ate": 51.255
+  },
+  {
+   "id": "f21",
+   "texto": "E cinco serviços abriram suas portas.",
+   "asr": "E cinco serviços abriram suas portas.",
+   "de": 51.567,
+   "ate": 53.919
+  },
+  {
+   "id": "f22",
+   "texto": "Esses dez moradores receberão um distintivo dourado de fundador para sempre.",
+   "asr": "Esses 10 moradores receberão um distintivo dourado de fundador para sempre.",
+   "de": 54.228,
+   "ate": 59.166
+  },
+  {
+   "id": "f23",
+   "texto": "Agora começa uma nova missão:",
+   "asr": "Agora começa uma nova missão.",
+   "de": 59.625,
+   "ate": 61.581
+  },
+  {
+   "id": "f24",
+   "texto": "encontrar nossos primeiros moradores pioneiros.",
+   "asr": "encontrar nossos primeiros moradores pioneiros.",
+   "de": 61.989,
+   "ate": 64.849
+  },
+  {
+   "id": "f25",
+   "texto": "Ainda temos catorze casas disponíveis.",
+   "asr": "Ainda temos 14 casas disponíveis.",
+   "de": 65.19,
+   "ate": 67.609
+  },
+  {
+   "id": "f26",
+   "texto": "Comente seu nome e sua profissão.",
+   "asr": "Comente seu nome e sua profissão.",
+   "de": 67.932,
+   "ate": 69.684
+  },
+  {
+   "id": "f27",
+   "texto": "Quem será o próximo cidadão da SegueCity?",
+   "asr": "Quem será o próximo cidadão da SEGCITY?",
+   "de": 70.004,
+   "ate": 72.56
+  }
+ ]
+}

@@ -4,6 +4,7 @@
 import { Biquad, OnePole, Rng, SR, Stereo, clamp, db, filterStereo, nm, s2n, saturate, tapeStop } from './dsp';
 import * as I from './instruments';
 import EP01_WORDS from '../../src/scenes/ep01/words.json';
+import EP02_WORDS from '../../src/scenes/ep02/words.json';
 
 // ------------------------------------------------------------------------------------
 // grade rítmica
@@ -424,6 +425,215 @@ export function renderEp01(): Stereo {
 function FUTURE_BUILD_TIMES(): number[] {
   const b = WORD('bairros'), c = WORD('construídos'.replace(/[^a-zà-ü]/g, '')), e = WORD('empresas');
   return [b + 0.05, b + 0.3, c, e + 0.05];
+}
+
+// ====================================================================================
+// EP02 (75 s) — "Os primeiros moradores chegaram!", narração oficial (10_pessoas.mp3)
+// Seções e acentos saem de src/scenes/ep02/words.json; cortes iguais aos de src/scenes/ep02/Ep02.tsx → T.
+// ====================================================================================
+const W2 = (w: string, after = 0): number => {
+  const x = EP02_WORDS.palavras.find((p) => p.a >= after && p.w.toLowerCase().replace(/[^a-zà-ü]/g, '').startsWith(w));
+  if (!x) throw new Error(`palavra ${w}`);
+  return x.a;
+};
+const CUT2 = { rob: 3.1, ontem: 7.74, hoje: 10.94, mateus: 14.55, iMari: 26.12, roberto: 35.3, problema: 38.62, cemit: 42.16, carros: 49.3, fund: 54.48, missao: 60.06, casas: 65.64, comente: 68.38, fim: 71.3 };
+export const EP02_VOICE: [number, number][] = EP02_WORDS.frases.map((f) => [f.a, f.b]);
+export const EP02_SECTIONS = [
+  { t0: 0, t1: CUT2.rob, name: 'gancho: 10 casas acendem' },
+  { t0: CUT2.rob, t1: CUT2.ontem, name: 'o coveiro sem cemitério (para no "cemitério")' },
+  { t0: CUT2.ontem, t1: CUT2.hoje, name: 'lembrança do Dia 01 (abafada)' },
+  { t0: CUT2.hoje, t1: CUT2.mateus, name: 'hoje: as casas ganham donos' },
+  { t0: CUT2.mateus, t1: CUT2.roberto, name: 'chamada dos fundadores (acento em cada nome)' },
+  { t0: CUT2.roberto, t1: CUT2.problema, name: 'Roberto, o primeiro coveiro (a música para)' },
+  { t0: CUT2.problema, t1: CUT2.cemit, name: 'o problema (tensão)' },
+  { t0: CUT2.cemit, t1: CUT2.carros, name: 'os dois projetos da cidade' },
+  { t0: CUT2.carros, t1: CUT2.fund, name: 'a cidade ganha vida' },
+  { t0: CUT2.fund, t1: CUT2.missao, name: 'fundadores para sempre (hino)' },
+  { t0: CUT2.missao, t1: CUT2.comente, name: 'nova missão: pioneiros' },
+  { t0: CUT2.comente, t1: CUT2.fim, name: 'convite' },
+  { t0: CUT2.fim, t1: 75, name: 'logo' },
+];
+export const EP02_INFO: { accents: number[]; tempos: { t0: number; t1: number; bpm: number }[] } = { accents: [], tempos: [] };
+
+export function renderEp02(): Stereo {
+  EP02_INFO.accents = [];
+  EP02_INFO.tempos = [];
+  I.resetSeeds(502);
+  const rng = new Rng(5502);
+  const tempo = (g: Grid, t0: number, t1: number) => EP02_INFO.tempos.push({ t0, t1, bpm: g.bpm });
+
+  // ---------------- 0–cemitério: gancho + o coveiro (a música para em "cemitério") ----------------
+  const m1 = new I.Mixer(s2n(75), BUSES);
+  const bell1 = m1.bus('bell');
+  I.crash(m1.bus('fx'), 0.0, { gain: 0.35, decay: 1.2 });
+  I.boom(m1.bus('sub'), 0.0, { f0: 90, f1: 45, decay: 0.5, gain: 0.45 });
+  const g1 = Grid.fit(0, CUT2.rob, 6, 0.06);
+  tempo(g1, 0, CUT2.rob);
+  playBar(m1, g1, 0, { chord: CH.Fmaj7, pad: { cutoff: 1500, gain: 0.85 }, bass: BASS_BOUNCE, kick: [0, 6, 8], kickGain: 0.85, snare: [4, 12], snareGain: 0.6, hats: SIXTEENTHS, hatGain: 0.6, arp: { pat: [0, 1, 2, 3, 4, 3, 2, 1], step: 1, gain: 0.38, cutoff: 1300 } }, rng);
+  playBar(m1, g1, 16, { chord: CH.Bbmaj7, chord2: CH.C, split: 4, beats: 2, pad: { cutoff: 1700, gain: 0.9 }, padHi: 0.3, bass: BASS_DRIVE, kick: [0, 4], kickGain: 0.9, snare: [4], hats: SIXTEENTHS, hatGain: 0.7 }, rng);
+  // uma nota por casa que acende (pentatônica subindo)
+  const pent = ['C5', 'D5', 'F5', 'G5', 'A5', 'C6', 'D6', 'F6', 'G6', 'A6'];
+  pent.forEach((n, k) => I.bell(bell1, Math.max(0.005, -0.1 + k * 0.255), nm(n), { gain: 0.3 + 0.012 * k, decay: 0.45, pan: -0.5 + k * 0.1 }));
+  // o coveiro: baixo saltitante e pizzicato em Ré menor, meio cômico
+  const g2 = Grid.fit(CUT2.rob, CUT2.ontem, 9, 0.12);
+  tempo(g2, CUT2.rob, CUT2.ontem);
+  I.boom(m1.bus('sub'), CUT2.rob, { f0: 120, f1: 50, decay: 0.25, gain: 0.35 });
+  const piz: [number, string][] = [[0, 'D4'], [2, 'F4'], [4, 'A4'], [6, 'G#4'], [8, 'A4'], [10, 'D5'], [12, 'C5'], [14, 'A4'], [16, 'F4'], [18, 'E4'], [20, 'D4'], [22, 'A3']];
+  piz.forEach(([i, n]) => I.pluck(m1.bus('pluck'), g2.s(i), nm(n), { gain: 0.6, pan: i % 4 ? 0.3 : -0.3, cutoff: 1100, envAmt: 1800, decay: 0.12, duty: 0.25 }));
+  [0, 4, 8, 12, 16, 20].forEach((i) => I.bass(m1.bus('bass'), g2.s(i), g2.s16 * 1.6, nm(i % 8 === 0 ? 'D2' : 'A1'), { gain: 0.85 }));
+  [2, 6, 10, 14, 18, 22].forEach((i) => I.tok(m1.bus('perc'), g2.s(i), 700, { gain: 0.45, pan: 0.2 }));
+  I.pad(m1.bus('pad'), CUT2.rob, 3.6, CH.Dm7.pad, { attack: 0.3, release: 0.4, cutoff: 900, gain: 0.45 });
+  I.bell(bell1, W2('coveiro'), nm('A5'), { gain: 0.35, decay: 0.5 });
+  const cem = W2('cemitério');
+  const first = tapeStop(m1.render(MIX), cem + 0.06, 0.5, 1.6);
+
+  // ---------------- o resto do episódio ----------------
+  const m2 = new I.Mixer(s2n(75), BUSES);
+  const pad2 = m2.bus('pad'), fx2 = m2.bus('fx'), bell2 = m2.bus('bell');
+  I.boom(fx2, cem + 0.1, { f0: 140, f1: 32, glide: 0.18, decay: 0.35, gain: 0.32 });
+
+  // Dia 01 (lembrança): pad abafado e um relógio de caixinha
+  I.pad(pad2, CUT2.ontem, CUT2.hoje - CUT2.ontem + 0.2, ['D3', 'A3', 'C4', 'F4'].map(nm), { attack: 0.6, release: 0.5, cutoff: 520, gain: 0.5, width: 0.8, tri: 0.9 });
+  [0, 0.8, 1.6, 2.4].forEach((d, i) => I.keys(m2.bus('keys'), CUT2.ontem + 0.2 + d, nm(['A4', 'F4', 'D4', 'C4'][i]), { gain: 0.18, decay: 1.4, pan: i % 2 ? 0.3 : -0.3 }));
+  I.riser(fx2, CUT2.hoje - 0.9, 0.9, { f0: 300, f1: 6000, gain: 0.35, curve: 2.2 });
+
+  // "Hoje…": abre em Fá com nona; um sino por casa que ganha dono
+  I.crash(fx2, CUT2.hoje, { gain: 0.35, decay: 1.6 });
+  I.swell(fx2, CUT2.hoje, 0.8, { gain: 0.45 });
+  I.pad(pad2, CUT2.hoje, CUT2.mateus - CUT2.hoje + 0.1, CH.Fmaj9.pad, { attack: 0.25, release: 0.4, cutoff: 1900, gain: 0.85, width: 1 });
+  I.bass(m2.bus('bass'), CUT2.hoje, 3.4, nm('F1'), { gain: 0.8, decay: 2.5, sustain: 0.6 });
+  const casas = W2('casas', 11);
+  ['F5', 'G5', 'A5', 'C6', 'D6', 'F6', 'G6', 'A6', 'C7', 'D7'].forEach((n, k) => I.bell(bell2, casas - 0.25 + k * 0.17, nm(n), { gain: 0.26, decay: 0.4, pan: -0.45 + k * 0.1 }));
+  I.riser(fx2, CUT2.mateus - 0.8, 0.8, { f0: 500, f1: 7000, gain: 0.3, curve: 2.4 });
+
+  // chamada dos fundadores: groove alegre; um acento (tok + sino) em cada nome falado
+  const gA = Grid.fit(CUT2.mateus, CUT2.iMari, 20, 0.1);
+  tempo(gA, CUT2.mateus, CUT2.iMari);
+  I.crash(fx2, CUT2.mateus, { gain: 0.32, decay: 1.2 });
+  const sA: [Chord, Chord?][] = [[CH.Fmaj7], [CH.Am7], [CH.Bbmaj7], [CH.Gm7, CH.C7]];
+  sA.forEach(([a, b], k) => playBar(m2, gA, 16 * k, {
+    chord: a, chord2: b, pad: { cutoff: 1500, gain: 0.85 }, bass: k % 2 ? BASS_WALK : BASS_BOUNCE, bassGain: 0.85,
+    kick: [0, 6, 8], kickGain: 0.85, snare: [4, 12], snareGain: 0.7, ghost: [15], hats: [...EIGHTHS, 3, 11], hatGain: 0.8,
+    counter: k ? { gain: 0.55, pan: 0.35 } : undefined,
+  }, rng));
+  playBar(m2, gA, 64, { chord: CH.Fmaj7, pad: { cutoff: 1500, gain: 0.85 }, bass: BASS_BOUNCE, kick: [0, 6, 8], snare: [4, 12], hats: EIGHTHS, hatGain: 0.8 }, rng);
+  const gB = Grid.fit(CUT2.iMari, CUT2.roberto, 16, 0.1);
+  tempo(gB, CUT2.iMari, CUT2.roberto);
+  const sB: [Chord, Chord?][] = [[CH.Dm7], [CH.Bbmaj7], [CH.Fmaj7], [CH.Csus4, CH.C]];
+  sB.forEach(([a, b], k) => playBar(m2, gB, 16 * k, {
+    chord: a, chord2: b, pad: { cutoff: 1650, gain: 0.9 }, padHi: 0.25, bass: BASS_WALK, bassGain: 0.9,
+    kick: [0, 6, 8], kickGain: 0.88, snare: [4, 12], snareGain: 0.75, ghost: [7, 15], hats: SIXTEENTHS, hatGain: 0.7, shaker: [2, 6, 10, 14],
+    arp: { pat: [0, 1, 2, 3, 2, 1, 3, 1], step: 2, gain: 0.36, cutoff: 1150, pan: -0.4 },
+  }, rng));
+  const names = ['mateus', 'davi', 'gabriel', 'juan', 'mari', 'alicia', 'muri', 'gabrielly', 'jorge'].map((w) => W2(w));
+  const accN = ['C6', 'D6', 'E6', 'F6', 'G6', 'A6', 'C7', 'D7', 'E7'];
+  names.forEach((tt, i) => {
+    const g = tt < CUT2.iMari ? gA : gB;
+    const t = g.q(tt);
+    EP02_INFO.accents.push(t);
+    I.tok(m2.bus('perc'), t, 820 + i * 30, { gain: 0.75, pan: i % 2 ? 0.3 : -0.3 });
+    I.bell(bell2, t, nm(accN[i]) - 12, { gain: 0.36, decay: 0.32, index: 1.3, pan: i % 2 ? -0.35 : 0.35 });
+  });
+
+  // Roberto: a música para; só um sino grave e o carimbo
+  const rob = W2('roberto', 35);
+  I.boom(m2.bus('sub'), CUT2.roberto, { f0: 80, f1: 40, decay: 0.6, gain: 0.5 });
+  I.bell(bell2, rob, nm('D5'), { gain: 0.4, decay: 1.2, ratio: 3.5 });
+  I.pad(pad2, CUT2.roberto + 0.2, CUT2.problema - CUT2.roberto - 0.1, ['D3', 'A3', 'F4'].map(nm), { attack: 0.8, release: 0.4, cutoff: 650, gain: 0.35, tri: 0.9 });
+  I.boom(m2.bus('sub'), W2('coveiro', 36), { f0: 95, f1: 50, decay: 0.3, gain: 0.45 });
+
+  // o problema: tensão (Ré menor, tons graves, sobe para os projetos)
+  I.pad(pad2, CUT2.problema, CUT2.cemit - CUT2.problema + 0.2, CH.Dm7.pad, { attack: 0.2, release: 0.4, cutoff: (t) => 700 + 700 * clamp((t - CUT2.problema) / 3.5, 0, 1), gain: 0.75 });
+  I.bass(m2.bus('bass'), CUT2.problema, 3.5, nm('D1'), { gain: 0.8, decay: 2.5, sustain: 0.6 });
+  [0, 0.88, 1.76, 2.64].forEach((d, i) => I.tom(m2.bus('perc'), CUT2.problema + 0.05 + d, 125 - i * 6, { gain: 0.5 + 0.06 * i, pan: i % 2 ? 0.3 : -0.3 }));
+  I.boom(m2.bus('sub'), W2('problema'), { f0: 70, f1: 38, decay: 0.7, gain: 0.5 });
+  I.riser(fx2, CUT2.cemit - 1.2, 1.2, { f0: 400, f1: 6500, gain: 0.35, curve: 2.4 });
+
+  // os dois projetos: groove de "construção", esperançoso
+  const gC = Grid.fit(CUT2.cemit, CUT2.carros, 14, 0.08);
+  tempo(gC, CUT2.cemit, CUT2.carros);
+  I.crash(fx2, CUT2.cemit, { gain: 0.38, decay: 1.3 });
+  const sC: [Chord, Chord?, number?][] = [[CH.Bbmaj7], [CH.Fmaj7], [CH.Gm7, CH.C7sus4], [CH.Bbmaj7, CH.C, 2]];
+  sC.forEach(([a, b, beats], k) => playBar(m2, gC, 16 * k, {
+    chord: a, chord2: b, beats, pad: { cutoff: 1600, gain: 0.9 }, padHi: 0.28, bass: BASS_BOUNCE, bassGain: 0.9,
+    kick: [0, 6, 8], kickGain: 0.88, snare: [4, 12], snareGain: 0.72, hats: [...EIGHTHS, 3, 11], hatGain: 0.75,
+    arp: { pat: [0, 1, 2, 3, 4, 3, 2, 1], step: 2, gain: 0.38, cutoff: 1250 },
+  }, rng));
+  ['reservar', 'terreno', 'construir'].forEach((w, i) => I.tok(m2.bus('perc'), gC.q(W2(w)), 600 + i * 80, { gain: 0.6 }));
+  [[W2('cemitério', 44), ['F5', 'A5', 'C6', 'F6']], [W2('advocacia'), ['G5', 'Bb5', 'D6', 'G6']]].forEach(([t0, ns]) =>
+    (ns as string[]).forEach((n, i) => I.bell(bell2, (t0 as number) + i * gC.s16, nm(n), { gain: 0.3 + 0.03 * i, decay: 0.35, pan: -0.3 + 0.2 * i })));
+  I.riser(fx2, CUT2.carros - 1.0, 1.0, { f0: 500, f1: 7000, gain: 0.32, curve: 2.4 });
+
+  // a cidade ganha vida: groove mais cheio
+  const gD = Grid.fit(CUT2.carros, CUT2.fund, 10, 0.06);
+  tempo(gD, CUT2.carros, CUT2.fund);
+  I.crash(fx2, CUT2.carros, { gain: 0.42, decay: 1.4 });
+  [CH.Fmaj7, CH.Am7].forEach((ch, k) => playBar(m2, gD, 16 * k, {
+    chord: ch, pad: { cutoff: 1900, gain: 0.95 }, padHi: 0.32, bass: BASS_DRIVE, bassGain: 0.95,
+    kick: [0, 4, 8, 12], kickGain: 0.9, snare: [4, 12], snareGain: 0.8, hats: SIXTEENTHS, hatGain: 0.8, open: [2, 6, 10, 14], shaker: [2, 6, 10, 14],
+    arp: { pat: [0, 1, 2, 3, 4, 3, 2, 1], step: 1, gain: 0.4, cutoff: 1400 }, counter: { gain: 0.5, pan: 0.4 },
+  }, rng));
+  playBar(m2, gD, 32, { chord: CH.Bbmaj7, chord2: CH.C, split: 4, beats: 2, pad: { cutoff: 2000, gain: 0.95 }, bass: BASS_DRIVE, kick: [0, 4], hats: SIXTEENTHS, hatGain: 0.8 }, rng);
+  for (let j = 0; j < 6; j++) I.snare(m2.bus('snare'), gD.s(34 + j), { gain: 0.3 + 0.08 * j, decay: 0.08 });
+
+  // fundadores para sempre: hino com sinos (e uma estrela por fundador em "dourado")
+  const gE = Grid.fit(CUT2.fund, CUT2.missao, 10, 0.0);
+  tempo(gE, CUT2.fund, CUT2.missao);
+  I.crash(fx2, CUT2.fund, { gain: 0.45, decay: 1.8 });
+  I.boom(m2.bus('sub'), CUT2.fund, { f0: 80, f1: 43, decay: 0.7, gain: 0.45 });
+  const sE: [Chord, Chord?][] = [[CH.Bbmaj7], [CH.Fmaj7, CH.C], [CH.Bbmaj7, CH.C7sus4]];
+  [0, 16].forEach((b16, k) => playBar(m2, gE, b16, {
+    chord: sE[k][0], chord2: sE[k][1], pad: { cutoff: 1900, gain: 1.0, attack: 0.2, width: 0.9 }, padHi: 0.36, bass: BASS_LONG, bassGain: 1.0,
+    kick: [0, 7, 10], kickGain: 0.9, snare: [8], snareGain: 0.9, hats: EIGHTHS, hatGain: 0.75, open: [14],
+  }, rng));
+  playBar(m2, gE, 32, { chord: sE[2][0], chord2: sE[2][1], split: 4, beats: 2, pad: { cutoff: 1900, gain: 1.0 }, bass: BASS_LONG, kick: [0], hats: [0, 2, 4, 6], hatGain: 0.7 }, rng);
+  const hymn: [number, string][] = [[0, 'F5'], [4, 'G5'], [8, 'A5'], [12, 'C6'], [16, 'A5'], [20, 'G5'], [24, 'F5'], [28, 'G5'], [32, 'C6'], [36, 'D6']];
+  hymn.forEach(([i, n], j) => I.bell(bell2, gE.s(i), nm(n), { gain: 0.36, decay: 1.0, index: 1.1, ratio: 3.5, pan: j % 2 ? 0.25 : -0.25 }));
+  const dourado = W2('dourado');
+  for (let k = 0; k < 10; k++) I.bell(bell2, dourado - 0.15 + k * 0.09, nm(['C6', 'D6', 'F6', 'G6', 'A6', 'C7', 'D7', 'F7', 'G7', 'A7'][k]), { gain: 0.2, decay: 0.3, pan: -0.45 + k * 0.1 });
+  I.riser(fx2, CUT2.missao - 1.0, 1.0, { f0: 500, f1: 8000, gain: 0.35, curve: 2.4 });
+
+  // nova missão: aventura (andamento mais rápido, baixo que corre)
+  const gF = Grid.fit(CUT2.missao, CUT2.comente, 16, 0.04);
+  tempo(gF, CUT2.missao, CUT2.comente);
+  I.crash(fx2, CUT2.missao, { gain: 0.48, decay: 1.6 });
+  I.boom(m2.bus('sub'), CUT2.missao, { f0: 85, f1: 43, decay: 0.6, gain: 0.5 });
+  const sF: [Chord, Chord?][] = [[CH.Dm7], [CH.Bbmaj7], [CH.Fmaj7], [CH.C7sus4, CH.C7]];
+  sF.forEach(([a, b], k) => playBar(m2, gF, 16 * k, {
+    chord: a, chord2: b, pad: { cutoff: 1800 + 120 * k, gain: 0.95, width: 0.9 }, padHi: 0.34, bass: k >= 2 ? BASS_DRIVE : BASS_BOUNCE, bassGain: 0.95,
+    kick: k >= 2 ? [0, 4, 8, 12] : [0, 6, 8, 11], kickGain: 0.92, snare: [4, 12], snareGain: 0.82, hats: SIXTEENTHS, hatGain: 0.78,
+    open: k >= 1 ? [2, 6, 10, 14] : undefined, shaker: [2, 6, 10, 14], arp: { pat: [0, 1, 2, 3, 4, 3, 2, 1], step: 1, gain: 0.4, cutoff: 1400 },
+    counter: k < 3 ? { gain: 0.5, pan: 0.4 } : undefined,
+  }, rng));
+  const pio = gF.q(W2('pioneiros'));
+  EP02_INFO.accents.push(pio);
+  ['A5', 'C6', 'E6', 'A6'].forEach((n, i) => I.bell(bell2, pio + i * gF.s16, nm(n), { gain: 0.34 + 0.03 * i, decay: 0.45, pan: -0.3 + 0.2 * i }));
+  I.boom(m2.bus('sub'), pio, { f0: 95, f1: 55, decay: 0.2, gain: 0.4 });
+
+  // convite: segura em Si bemol e sobe para a logo
+  const gG = Grid.fit(CUT2.comente, CUT2.fim, 6, 0.04);
+  tempo(gG, CUT2.comente, CUT2.fim);
+  playBar(m2, gG, 0, { chord: CH.Bbmaj7, chord2: CH.C7sus4, split: 12, beats: 6, pad: { cutoff: 2100, gain: 1.0 }, padHi: 0.38, bass: [[0, 4, 0], [4, 4, 0], [8, 4, 0], [12, 4, 0], [16, 4, 0], [20, 4, 0]], bassGain: 0.9, kick: [0, 4, 8, 12, 16, 20], kickGain: 0.85, hats: SIXTEENTHS, hatGain: 0.7, arp: { pat: [0, 1, 2, 3, 4, 5, 6, 7], step: 1, gain: 0.42, cutoff: 1600 } }, rng);
+  for (let j = 0; j < 10; j++) I.snare(m2.bus('snare'), j < 4 ? gG.s(14 + 2 * j) : gG.s(18 + j * 0.6), { gain: 0.26 + 0.06 * j, decay: 0.08 });
+  I.riser(fx2, CUT2.fim - 1.5, 1.5, { f0: 600, f1: 8000, gain: 0.35, curve: 2.6 });
+  I.swell(fx2, CUT2.fim, 1.3, { gain: 0.55, curve: 2.4 });
+
+  // logo: o acorde que resolve (Fmaj9) e brilhos descendo
+  const hit = CUT2.fim;
+  I.pad(pad2, hit, 3.6, CH.Fmaj9.pad, { attack: 0.015, decay: 1.4, sustain: 0.7, release: 1.0, cutoff: (t) => 2600 - 1200 * clamp((t - hit) / 3.5, 0, 1), gain: 1.35, width: 1 });
+  I.bass(m2.bus('bass'), hit, 3.2, nm('F1'), { gain: 1.0, decay: 1.4, sustain: 0.6 });
+  I.kick(m2.bus('kick'), hit, { gain: 1.1, decay: 0.3 });
+  m2.kickTimes.push(hit);
+  I.boom(m2.bus('sub'), hit, { f0: 85, f1: 43, decay: 0.9, gain: 0.7 });
+  I.crash(fx2, hit, { gain: 0.8, decay: 2.2 });
+  ['F5', 'A5', 'C6', 'E6', 'G6'].forEach((n, j) => I.bell(bell2, hit + j * 0.012, nm(n), { gain: 0.4 - 0.04 * j, decay: 1.5, index: 1.4, pan: -0.5 + j * 0.25 }));
+  ['C7', 'A6', 'F6', 'E6', 'C6'].forEach((n, j) => I.bell(bell2, W2('seguecity', 72) + j * 0.32, nm(n), { gain: 0.22 - 0.02 * j, decay: 0.9, pan: j % 2 ? 0.4 : -0.4 }));
+
+  const main = m2.render(MIX);
+  main.mix(first, 1.0);
+  voicePocket(main, EP02_VOICE, 3, 0.18);
+  master(main, 1.0);
+  return fadeOut(main, 74.0, 74.97);
 }
 
 // ====================================================================================

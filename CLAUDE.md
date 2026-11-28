@@ -340,6 +340,23 @@ e `tools/bench-cap.cjs` (métodos de captura). Resultados em `out/bench.jsonl`.
   - `fila:atualizar` e `moradores:profissao` trocam a profissão no mesmo registro, com histórico; morador
     no elenco de episódio sem snapshot oficial não troca;
   - o usuário do TikTok é dado pessoal: não vai para vídeo, capa nem snapshot.
+- **Ep. 02 (narração 10_pessoas.mp3, 72,6 s de voz em 75 s):**
+  - **Transcrição local:** Whisper small (sherpa-onnx). O modelo vem dos *releases* do sherpa-onnx no GitHub,
+    que é acessível; o Hugging Face está bloqueado. Transcreve por trecho, separado pelas pausas.
+    - Corrija os nomes pelo cadastro ("Alice/Mury/Gabriele" → Alicia, Muri, Gabrielly) e guarde a saída
+      bruta no campo `asr`.
+  - **Voz longa:** com 72,6 s de voz, os respiros extras são mínimos e a logo entra junto da palavra
+    "SegueCity" da última frase. São ~3,7 s de marca, não 10.
+  - **Números congelados:** em `episodes.json → ep02.estado` (vagas totais, ocupadas e livres; casas;
+    serviços). O vídeo lê esse bloco, não o estado vivo.
+  - **Só o Nº 1 confirmado aparece numerado.** Nos dados, os fundadores 2–10 têm `numeroProvisorio: true`.
+    O snapshot grava `numero: null` e `numeroProvisorio: N` até a ordem ser confirmada.
+  - **Placas "EM BREVE" sobre os lotes que viram projeto:** esconda-as (`hidden`). Ficavam por baixo da
+    planta holográfica e do "terreno vazio".
+  - **Plano de carros:** a câmera acompanha um veículo da frota, com posição tirada de `vehiclesAt(t +
+    timeOffset)`, e desenha um anel nele. Em plano aberto os carros somem.
+  - **`pgrep -f` de novo:** um laço de espera com o padrão no próprio texto travou. Espere pelo aviso da
+    tarefa em segundo plano ou pelo arquivo final.
 - **Fontes pixel não têm "º":** Jersey cai em "o" ("No 1") e Silkscreen mostra um asterisco. Use
   `<Numero n={1} />` (`components/hud/Numero.tsx`).
 - **Episódio publicado lê o snapshot do dia dele**, não o estado vivo (o Ep. 01 passaria a mostrar 58

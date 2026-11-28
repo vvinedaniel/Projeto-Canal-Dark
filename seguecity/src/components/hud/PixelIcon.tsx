@@ -25,6 +25,11 @@ const ICONS: Record<string, { rows: string[]; pal: Record<string, string> }> = {
   pin: { rows: ['.aaa.', 'aabaa', 'aaaaa', '.aaa.', '..a..'], pal: { a: '#ff4a6a', b: '#ffffff' } },
   sparkle: { rows: ['...a...', '...a...', '..aba..', 'aabbbaa', '..aba..', '...a...', '...a...'], pal: { a: '#5af2ff', b: '#ffffff' } },
   lock: { rows: ['.aaa.', 'a...a', 'a...a', 'bbbbb', 'bbcbb', 'bbbbb'], pal: { a: '#cfd6e6', b: '#ffd84a', c: '#7a4a10' } },
+  car: { rows: ['..aaaa..', '.abbbba.', 'aaaaaaaa', 'acaaaaca', '.d....d.'], pal: { a: '#ff6a5a', b: '#bfe4ff', c: '#ffd84a', d: '#1a1a22' } },
+  shovel: { rows: ['...a', '..a.', '.a..', 'bb..', 'bbb.', '.b..'].map((r) => r.padEnd(4, '.')), pal: { a: '#c48a4a', b: '#cfd6e6' } },
+  scales: { rows: ['...a...', 'aaaaaaa', 'b..a..b', 'bb.a.bb', '...a...', '.aaaaa.'], pal: { a: '#ffd84a', b: '#cfd6e6' } },
+  search: { rows: ['.aaa...', 'a...a..', 'a...a..', 'a...a..', '.aaab..', '....bb.', '.....bb'], pal: { a: '#cfd6e6', b: '#c48a4a' } },
+  flag: { rows: ['abbbb..', 'abbbbb.', 'abbbb..', 'a......', 'a......', 'a......'], pal: { a: '#cfd6e6', b: '#5af2ff' } },
   chef: { rows: ['.aaaaa.', 'aaaaaaa', '.aaaaa.', '.bbbbb.'], pal: { a: '#ffffff', b: '#cfd6e6' } },
 };
 

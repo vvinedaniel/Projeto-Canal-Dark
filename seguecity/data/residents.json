@@ -77,7 +77,8 @@
     "distintivo": "fundador-ouro",
     "confirmadoParaDia": 2,
     "numero": 2,
-    "categoria": "FUNDADOR"
+    "categoria": "FUNDADOR",
+    "numeroProvisorio": true
   },
   {
     "id": "m0003",
@@ -117,7 +118,8 @@
     "distintivo": "fundador-ouro",
     "confirmadoParaDia": 2,
     "numero": 3,
-    "categoria": "FUNDADOR"
+    "categoria": "FUNDADOR",
+    "numeroProvisorio": true
   },
   {
     "id": "m0004",
@@ -157,7 +159,8 @@
     "distintivo": "fundador-ouro",
     "confirmadoParaDia": 2,
     "numero": 4,
-    "categoria": "FUNDADOR"
+    "categoria": "FUNDADOR",
+    "numeroProvisorio": true
   },
   {
     "id": "m0005",
@@ -197,7 +200,8 @@
     "distintivo": "fundador-ouro",
     "confirmadoParaDia": 2,
     "numero": 5,
-    "categoria": "FUNDADOR"
+    "categoria": "FUNDADOR",
+    "numeroProvisorio": true
   },
   {
     "id": "m0006",
@@ -237,7 +241,8 @@
     "distintivo": "fundador-ouro",
     "confirmadoParaDia": 2,
     "numero": 6,
-    "categoria": "FUNDADOR"
+    "categoria": "FUNDADOR",
+    "numeroProvisorio": true
   },
   {
     "id": "m0007",
@@ -277,7 +282,8 @@
     "distintivo": "fundador-ouro",
     "confirmadoParaDia": 2,
     "numero": 7,
-    "categoria": "FUNDADOR"
+    "categoria": "FUNDADOR",
+    "numeroProvisorio": true
   },
   {
     "id": "m0008",
@@ -317,7 +323,8 @@
     "distintivo": "fundador-ouro",
     "confirmadoParaDia": 2,
     "numero": 8,
-    "categoria": "FUNDADOR"
+    "categoria": "FUNDADOR",
+    "numeroProvisorio": true
   },
   {
     "id": "m0009",
@@ -357,7 +364,8 @@
     "distintivo": "fundador-ouro",
     "confirmadoParaDia": 2,
     "numero": 9,
-    "categoria": "FUNDADOR"
+    "categoria": "FUNDADOR",
+    "numeroProvisorio": true
   },
   {
     "id": "m0010",
@@ -397,6 +405,7 @@
     "distintivo": "fundador-ouro",
     "confirmadoParaDia": 2,
     "numero": 10,
-    "categoria": "FUNDADOR"
+    "categoria": "FUNDADOR",
+    "numeroProvisorio": true
   }
 ]

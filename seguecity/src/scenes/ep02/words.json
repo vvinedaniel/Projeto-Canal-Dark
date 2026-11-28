@@ -1,0 +1,1289 @@
+{
+ "fonte": "scripts/ep02-narracao.py",
+ "frases": [
+  {
+   "id": "f01",
+   "text": "Dez pessoas decidiram morar na minha cidade.",
+   "a": 0.08,
+   "b": 2.734
+  },
+  {
+   "id": "f02",
+   "text": "E uma delas escolheu ser coveiro numa cidade que nem tem cemitério.",
+   "a": 3.173,
+   "b": 7.249
+  },
+  {
+   "id": "f03",
+   "text": "Ontem, a SegueCity tinha zero moradores.",
+   "a": 7.832,
+   "b": 10.605
+  },
+  {
+   "id": "f04",
+   "text": "Hoje…",
+   "a": 11.023,
+   "b": 11.352
+  },
+  {
+   "id": "f05",
+   "text": "As primeiras dez casas ganharam seus donos.",
+   "a": 11.593,
+   "b": 14.158
+  },
+  {
+   "id": "f06",
+   "text": "Mateus, médico, foi o primeiro a chegar.",
+   "a": 14.632,
+   "b": 17.251
+  },
+  {
+   "id": "f07",
+   "text": "Nosso morador número um.",
+   "a": 17.566,
+   "b": 19.201
+  },
+  {
+   "id": "f08",
+   "text": "Davi assumiu a profissão de policial.",
+   "a": 19.648,
+   "b": 21.986
+  },
+  {
+   "id": "f09",
+   "text": "Gabriel e Juan ficaram responsáveis pela oficina mecânica.",
+   "a": 22.393,
+   "b": 25.802
+  },
+  {
+   "id": "f10",
+   "text": "Mari chegou como neurocirurgiã.",
+   "a": 26.2,
+   "b": 28.24
+  },
+  {
+   "id": "f11",
+   "text": "Alicia e Muri escolheram ser empresários.",
+   "a": 28.543,
+   "b": 31.043
+  },
+  {
+   "id": "f12",
+   "text": "Gabrielly será nossa advogada.",
+   "a": 31.334,
+   "b": 33.095
+  },
+  {
+   "id": "f13",
+   "text": "Jorge, nosso comerciante.",
+   "a": 33.408,
+   "b": 35.071
+  },
+  {
+   "id": "f14",
+   "text": "E Roberto…",
+   "a": 35.379,
+   "b": 36.265
+  },
+  {
+   "id": "f15",
+   "text": "nosso primeiro coveiro.",
+   "a": 36.512,
+   "b": 37.998
+  },
+  {
+   "id": "f16",
+   "text": "Mas temos um problema.",
+   "a": 38.716,
+   "b": 39.989
+  },
+  {
+   "id": "f17",
+   "text": "Onde o Roberto vai trabalhar?",
+   "a": 40.433,
+   "b": 41.755
+  },
+  {
+   "id": "f18",
+   "text": "Vamos reservar um terreno para construir o primeiro cemitério da cidade.",
+   "a": 42.237,
+   "b": 45.987
+  },
+  {
+   "id": "f19",
+   "text": "E outro para o escritório de advocacia da Gabrielly.",
+   "a": 46.316,
+   "b": 48.942
+  },
+  {
+   "id": "f20",
+   "text": "Os primeiros carros começaram a circular.",
+   "a": 49.377,
+   "b": 51.585
+  },
+  {
+   "id": "f21",
+   "text": "E cinco serviços abriram suas portas.",
+   "a": 51.897,
+   "b": 54.249
+  },
+  {
+   "id": "f22",
+   "text": "Esses dez moradores receberão um distintivo dourado de fundador para sempre.",
+   "a": 54.558,
+   "b": 59.496
+  },
+  {
+   "id": "f23",
+   "text": "Agora começa uma nova missão:",
+   "a": 60.155,
+   "b": 62.111
+  },
+  {
+   "id": "f24",
+   "text": "encontrar nossos primeiros moradores pioneiros.",
+   "a": 62.519,
+   "b": 65.379
+  },
+  {
+   "id": "f25",
+   "text": "Ainda temos catorze casas disponíveis.",
+   "a": 65.72,
+   "b": 68.139
+  },
+  {
+   "id": "f26",
+   "text": "Comente seu nome e sua profissão.",
+   "a": 68.462,
+   "b": 70.214
+  },
+  {
+   "id": "f27",
+   "text": "Quem será o próximo cidadão da SegueCity?",
+   "a": 70.534,
+   "b": 73.09
+  }
+ ],
+ "palavras": [
+  {
+   "w": "Dez",
+   "a": 0.08,
+   "b": 0.15,
+   "key": true,
+   "phrase": "f01"
+  },
+  {
+   "w": "pessoas",
+   "a": 0.15,
+   "b": 0.47,
+   "key": true,
+   "phrase": "f01"
+  },
+  {
+   "w": "decidiram",
+   "a": 0.47,
+   "b": 1.21,
+   "key": false,
+   "phrase": "f01"
+  },
+  {
+   "w": "morar",
+   "a": 1.21,
+   "b": 1.58,
+   "key": true,
+   "phrase": "f01"
+  },
+  {
+   "w": "na",
+   "a": 1.58,
+   "b": 1.745,
+   "key": false,
+   "phrase": "f01"
+  },
+  {
+   "w": "minha",
+   "a": 1.745,
+   "b": 2.08,
+   "key": false,
+   "phrase": "f01"
+  },
+  {
+   "w": "cidade.",
+   "a": 2.08,
+   "b": 2.734,
+   "key": false,
+   "phrase": "f01"
+  },
+  {
+   "w": "E",
+   "a": 3.173,
+   "b": 3.36,
+   "key": false,
+   "phrase": "f02"
+  },
+  {
+   "w": "uma",
+   "a": 3.36,
+   "b": 3.545,
+   "key": false,
+   "phrase": "f02"
+  },
+  {
+   "w": "delas",
+   "a": 3.545,
+   "b": 4.1,
+   "key": false,
+   "phrase": "f02"
+  },
+  {
+   "w": "escolheu",
+   "a": 4.1,
+   "b": 4.575,
+   "key": false,
+   "phrase": "f02"
+  },
+  {
+   "w": "ser",
+   "a": 4.575,
+   "b": 4.645,
+   "key": false,
+   "phrase": "f02"
+  },
+  {
+   "w": "coveiro",
+   "a": 4.645,
+   "b": 5.135,
+   "key": true,
+   "phrase": "f02"
+  },
+  {
+   "w": "numa",
+   "a": 5.135,
+   "b": 5.495,
+   "key": false,
+   "phrase": "f02"
+  },
+  {
+   "w": "cidade",
+   "a": 5.495,
+   "b": 5.835,
+   "key": false,
+   "phrase": "f02"
+  },
+  {
+   "w": "que",
+   "a": 5.835,
+   "b": 6.065,
+   "key": false,
+   "phrase": "f02"
+  },
+  {
+   "w": "nem",
+   "a": 6.065,
+   "b": 6.33,
+   "key": false,
+   "phrase": "f02"
+  },
+  {
+   "w": "tem",
+   "a": 6.33,
+   "b": 6.505,
+   "key": false,
+   "phrase": "f02"
+  },
+  {
+   "w": "cemitério.",
+   "a": 6.505,
+   "b": 7.249,
+   "key": true,
+   "phrase": "f02"
+  },
+  {
+   "w": "Ontem,",
+   "a": 7.832,
+   "b": 8.29,
+   "key": false,
+   "phrase": "f03"
+  },
+  {
+   "w": "a",
+   "a": 8.29,
+   "b": 8.435,
+   "key": false,
+   "phrase": "f03"
+  },
+  {
+   "w": "SegueCity",
+   "a": 8.435,
+   "b": 9.125,
+   "key": true,
+   "phrase": "f03"
+  },
+  {
+   "w": "tinha",
+   "a": 9.125,
+   "b": 9.445,
+   "key": false,
+   "phrase": "f03"
+  },
+  {
+   "w": "zero",
+   "a": 9.445,
+   "b": 9.635,
+   "key": true,
+   "phrase": "f03"
+  },
+  {
+   "w": "moradores.",
+   "a": 9.635,
+   "b": 10.605,
+   "key": true,
+   "phrase": "f03"
+  },
+  {
+   "w": "Hoje…",
+   "a": 11.023,
+   "b": 11.352,
+   "key": true,
+   "phrase": "f04"
+  },
+  {
+   "w": "As",
+   "a": 11.593,
+   "b": 11.76,
+   "key": false,
+   "phrase": "f05"
+  },
+  {
+   "w": "primeiras",
+   "a": 11.76,
+   "b": 12.26,
+   "key": false,
+   "phrase": "f05"
+  },
+  {
+   "w": "dez",
+   "a": 12.26,
+   "b": 12.635,
+   "key": true,
+   "phrase": "f05"
+  },
+  {
+   "w": "casas",
+   "a": 12.635,
+   "b": 12.885,
+   "key": true,
+   "phrase": "f05"
+  },
+  {
+   "w": "ganharam",
+   "a": 12.885,
+   "b": 13.535,
+   "key": false,
+   "phrase": "f05"
+  },
+  {
+   "w": "seus",
+   "a": 13.535,
+   "b": 13.725,
+   "key": false,
+   "phrase": "f05"
+  },
+  {
+   "w": "donos.",
+   "a": 13.725,
+   "b": 14.158,
+   "key": true,
+   "phrase": "f05"
+  },
+  {
+   "w": "Mateus,",
+   "a": 14.632,
+   "b": 15.235,
+   "key": true,
+   "phrase": "f06"
+  },
+  {
+   "w": "médico,",
+   "a": 15.235,
+   "b": 15.73,
+   "key": true,
+   "phrase": "f06"
+  },
+  {
+   "w": "foi",
+   "a": 15.73,
+   "b": 15.94,
+   "key": false,
+   "phrase": "f06"
+  },
+  {
+   "w": "o",
+   "a": 15.94,
+   "b": 16.005,
+   "key": false,
+   "phrase": "f06"
+  },
+  {
+   "w": "primeiro",
+   "a": 16.005,
+   "b": 16.54,
+   "key": true,
+   "phrase": "f06"
+  },
+  {
+   "w": "a",
+   "a": 16.54,
+   "b": 16.83,
+   "key": false,
+   "phrase": "f06"
+  },
+  {
+   "w": "chegar.",
+   "a": 16.83,
+   "b": 17.251,
+   "key": false,
+   "phrase": "f06"
+  },
+  {
+   "w": "Nosso",
+   "a": 17.566,
+   "b": 17.9,
+   "key": false,
+   "phrase": "f07"
+  },
+  {
+   "w": "morador",
+   "a": 17.9,
+   "b": 18.4,
+   "key": false,
+   "phrase": "f07"
+  },
+  {
+   "w": "número",
+   "a": 18.4,
+   "b": 18.775,
+   "key": true,
+   "phrase": "f07"
+  },
+  {
+   "w": "um.",
+   "a": 18.775,
+   "b": 19.201,
+   "key": false,
+   "phrase": "f07"
+  },
+  {
+   "w": "Davi",
+   "a": 19.648,
+   "b": 20.1,
+   "key": true,
+   "phrase": "f08"
+  },
+  {
+   "w": "assumiu",
+   "a": 20.1,
+   "b": 20.49,
+   "key": false,
+   "phrase": "f08"
+  },
+  {
+   "w": "a",
+   "a": 20.49,
+   "b": 20.705,
+   "key": false,
+   "phrase": "f08"
+  },
+  {
+   "w": "profissão",
+   "a": 20.705,
+   "b": 21.22,
+   "key": true,
+   "phrase": "f08"
+  },
+  {
+   "w": "de",
+   "a": 21.22,
+   "b": 21.335,
+   "key": false,
+   "phrase": "f08"
+  },
+  {
+   "w": "policial.",
+   "a": 21.335,
+   "b": 21.986,
+   "key": true,
+   "phrase": "f08"
+  },
+  {
+   "w": "Gabriel",
+   "a": 22.393,
+   "b": 22.64,
+   "key": true,
+   "phrase": "f09"
+  },
+  {
+   "w": "e",
+   "a": 22.64,
+   "b": 22.895,
+   "key": false,
+   "phrase": "f09"
+  },
+  {
+   "w": "Juan",
+   "a": 22.895,
+   "b": 23.015,
+   "key": true,
+   "phrase": "f09"
+  },
+  {
+   "w": "ficaram",
+   "a": 23.015,
+   "b": 23.51,
+   "key": false,
+   "phrase": "f09"
+  },
+  {
+   "w": "responsáveis",
+   "a": 23.51,
+   "b": 24.195,
+   "key": false,
+   "phrase": "f09"
+  },
+  {
+   "w": "pela",
+   "a": 24.195,
+   "b": 24.535,
+   "key": false,
+   "phrase": "f09"
+  },
+  {
+   "w": "oficina",
+   "a": 24.535,
+   "b": 25.085,
+   "key": true,
+   "phrase": "f09"
+  },
+  {
+   "w": "mecânica.",
+   "a": 25.085,
+   "b": 25.802,
+   "key": true,
+   "phrase": "f09"
+  },
+  {
+   "w": "Mari",
+   "a": 26.2,
+   "b": 26.59,
+   "key": true,
+   "phrase": "f10"
+  },
+  {
+   "w": "chegou",
+   "a": 26.59,
+   "b": 26.96,
+   "key": false,
+   "phrase": "f10"
+  },
+  {
+   "w": "como",
+   "a": 26.96,
+   "b": 27.23,
+   "key": false,
+   "phrase": "f10"
+  },
+  {
+   "w": "neurocirurgiã.",
+   "a": 27.23,
+   "b": 28.24,
+   "key": true,
+   "phrase": "f10"
+  },
+  {
+   "w": "Alicia",
+   "a": 28.543,
+   "b": 28.92,
+   "key": true,
+   "phrase": "f11"
+  },
+  {
+   "w": "e",
+   "a": 28.92,
+   "b": 29.15,
+   "key": false,
+   "phrase": "f11"
+  },
+  {
+   "w": "Muri",
+   "a": 29.15,
+   "b": 29.47,
+   "key": true,
+   "phrase": "f11"
+  },
+  {
+   "w": "escolheram",
+   "a": 29.47,
+   "b": 30.095,
+   "key": false,
+   "phrase": "f11"
+  },
+  {
+   "w": "ser",
+   "a": 30.095,
+   "b": 30.32,
+   "key": false,
+   "phrase": "f11"
+  },
+  {
+   "w": "empresários.",
+   "a": 30.32,
+   "b": 31.043,
+   "key": true,
+   "phrase": "f11"
+  },
+  {
+   "w": "Gabrielly",
+   "a": 31.334,
+   "b": 31.56,
+   "key": true,
+   "phrase": "f12"
+  },
+  {
+   "w": "será",
+   "a": 31.56,
+   "b": 31.93,
+   "key": false,
+   "phrase": "f12"
+  },
+  {
+   "w": "nossa",
+   "a": 31.93,
+   "b": 32.25,
+   "key": false,
+   "phrase": "f12"
+  },
+  {
+   "w": "advogada.",
+   "a": 32.25,
+   "b": 33.095,
+   "key": true,
+   "phrase": "f12"
+  },
+  {
+   "w": "Jorge,",
+   "a": 33.408,
+   "b": 34.015,
+   "key": true,
+   "phrase": "f13"
+  },
+  {
+   "w": "nosso",
+   "a": 34.015,
+   "b": 34.355,
+   "key": false,
+   "phrase": "f13"
+  },
+  {
+   "w": "comerciante.",
+   "a": 34.355,
+   "b": 35.071,
+   "key": true,
+   "phrase": "f13"
+  },
+  {
+   "w": "E",
+   "a": 35.379,
+   "b": 35.61,
+   "key": false,
+   "phrase": "f14"
+  },
+  {
+   "w": "Roberto…",
+   "a": 35.61,
+   "b": 36.265,
+   "key": true,
+   "phrase": "f14"
+  },
+  {
+   "w": "nosso",
+   "a": 36.512,
+   "b": 36.945,
+   "key": false,
+   "phrase": "f15"
+  },
+  {
+   "w": "primeiro",
+   "a": 36.945,
+   "b": 37.225,
+   "key": true,
+   "phrase": "f15"
+  },
+  {
+   "w": "coveiro.",
+   "a": 37.225,
+   "b": 37.998,
+   "key": true,
+   "phrase": "f15"
+  },
+  {
+   "w": "Mas",
+   "a": 38.716,
+   "b": 38.995,
+   "key": false,
+   "phrase": "f16"
+  },
+  {
+   "w": "temos",
+   "a": 38.995,
+   "b": 39.28,
+   "key": false,
+   "phrase": "f16"
+  },
+  {
+   "w": "um",
+   "a": 39.28,
+   "b": 39.44,
+   "key": false,
+   "phrase": "f16"
+  },
+  {
+   "w": "problema.",
+   "a": 39.44,
+   "b": 39.989,
+   "key": true,
+   "phrase": "f16"
+  },
+  {
+   "w": "Onde",
+   "a": 40.433,
+   "b": 40.62,
+   "key": false,
+   "phrase": "f17"
+  },
+  {
+   "w": "o",
+   "a": 40.62,
+   "b": 40.735,
+   "key": false,
+   "phrase": "f17"
+  },
+  {
+   "w": "Roberto",
+   "a": 40.735,
+   "b": 41.07,
+   "key": true,
+   "phrase": "f17"
+  },
+  {
+   "w": "vai",
+   "a": 41.07,
+   "b": 41.28,
+   "key": false,
+   "phrase": "f17"
+  },
+  {
+   "w": "trabalhar?",
+   "a": 41.28,
+   "b": 41.755,
+   "key": true,
+   "phrase": "f17"
+  },
+  {
+   "w": "Vamos",
+   "a": 42.237,
+   "b": 42.485,
+   "key": false,
+   "phrase": "f18"
+  },
+  {
+   "w": "reservar",
+   "a": 42.485,
+   "b": 43.035,
+   "key": false,
+   "phrase": "f18"
+  },
+  {
+   "w": "um",
+   "a": 43.035,
+   "b": 43.21,
+   "key": false,
+   "phrase": "f18"
+  },
+  {
+   "w": "terreno",
+   "a": 43.21,
+   "b": 43.515,
+   "key": true,
+   "phrase": "f18"
+  },
+  {
+   "w": "para",
+   "a": 43.515,
+   "b": 43.705,
+   "key": false,
+   "phrase": "f18"
+  },
+  {
+   "w": "construir",
+   "a": 43.705,
+   "b": 44.165,
+   "key": false,
+   "phrase": "f18"
+  },
+  {
+   "w": "o",
+   "a": 44.165,
+   "b": 44.305,
+   "key": false,
+   "phrase": "f18"
+  },
+  {
+   "w": "primeiro",
+   "a": 44.305,
+   "b": 44.78,
+   "key": true,
+   "phrase": "f18"
+  },
+  {
+   "w": "cemitério",
+   "a": 44.78,
+   "b": 45.16,
+   "key": true,
+   "phrase": "f18"
+  },
+  {
+   "w": "da",
+   "a": 45.16,
+   "b": 45.42,
+   "key": false,
+   "phrase": "f18"
+  },
+  {
+   "w": "cidade.",
+   "a": 45.42,
+   "b": 45.987,
+   "key": false,
+   "phrase": "f18"
+  },
+  {
+   "w": "E",
+   "a": 46.316,
+   "b": 46.425,
+   "key": false,
+   "phrase": "f19"
+  },
+  {
+   "w": "outro",
+   "a": 46.425,
+   "b": 46.81,
+   "key": false,
+   "phrase": "f19"
+  },
+  {
+   "w": "para",
+   "a": 46.81,
+   "b": 47.075,
+   "key": false,
+   "phrase": "f19"
+  },
+  {
+   "w": "o",
+   "a": 47.075,
+   "b": 47.265,
+   "key": false,
+   "phrase": "f19"
+  },
+  {
+   "w": "escritório",
+   "a": 47.265,
+   "b": 47.73,
+   "key": true,
+   "phrase": "f19"
+  },
+  {
+   "w": "de",
+   "a": 47.73,
+   "b": 47.92,
+   "key": false,
+   "phrase": "f19"
+  },
+  {
+   "w": "advocacia",
+   "a": 47.92,
+   "b": 48.43,
+   "key": true,
+   "phrase": "f19"
+  },
+  {
+   "w": "da",
+   "a": 48.43,
+   "b": 48.555,
+   "key": false,
+   "phrase": "f19"
+  },
+  {
+   "w": "Gabrielly.",
+   "a": 48.555,
+   "b": 48.942,
+   "key": true,
+   "phrase": "f19"
+  },
+  {
+   "w": "Os",
+   "a": 49.377,
+   "b": 49.515,
+   "key": false,
+   "phrase": "f20"
+  },
+  {
+   "w": "primeiros",
+   "a": 49.515,
+   "b": 50.005,
+   "key": false,
+   "phrase": "f20"
+  },
+  {
+   "w": "carros",
+   "a": 50.005,
+   "b": 50.385,
+   "key": true,
+   "phrase": "f20"
+  },
+  {
+   "w": "começaram",
+   "a": 50.385,
+   "b": 50.75,
+   "key": false,
+   "phrase": "f20"
+  },
+  {
+   "w": "a",
+   "a": 50.75,
+   "b": 51.1,
+   "key": false,
+   "phrase": "f20"
+  },
+  {
+   "w": "circular.",
+   "a": 51.1,
+   "b": 51.585,
+   "key": false,
+   "phrase": "f20"
+  },
+  {
+   "w": "E",
+   "a": 51.897,
+   "b": 52.08,
+   "key": false,
+   "phrase": "f21"
+  },
+  {
+   "w": "cinco",
+   "a": 52.08,
+   "b": 52.365,
+   "key": true,
+   "phrase": "f21"
+  },
+  {
+   "w": "serviços",
+   "a": 52.365,
+   "b": 52.91,
+   "key": true,
+   "phrase": "f21"
+  },
+  {
+   "w": "abriram",
+   "a": 52.91,
+   "b": 53.54,
+   "key": false,
+   "phrase": "f21"
+  },
+  {
+   "w": "suas",
+   "a": 53.54,
+   "b": 53.745,
+   "key": false,
+   "phrase": "f21"
+  },
+  {
+   "w": "portas.",
+   "a": 53.745,
+   "b": 54.249,
+   "key": false,
+   "phrase": "f21"
+  },
+  {
+   "w": "Esses",
+   "a": 54.558,
+   "b": 54.9,
+   "key": false,
+   "phrase": "f22"
+  },
+  {
+   "w": "dez",
+   "a": 54.9,
+   "b": 55.16,
+   "key": true,
+   "phrase": "f22"
+  },
+  {
+   "w": "moradores",
+   "a": 55.16,
+   "b": 55.775,
+   "key": true,
+   "phrase": "f22"
+  },
+  {
+   "w": "receberão",
+   "a": 55.775,
+   "b": 56.61,
+   "key": false,
+   "phrase": "f22"
+  },
+  {
+   "w": "um",
+   "a": 56.61,
+   "b": 56.8,
+   "key": false,
+   "phrase": "f22"
+  },
+  {
+   "w": "distintivo",
+   "a": 56.8,
+   "b": 57.405,
+   "key": true,
+   "phrase": "f22"
+  },
+  {
+   "w": "dourado",
+   "a": 57.405,
+   "b": 57.92,
+   "key": true,
+   "phrase": "f22"
+  },
+  {
+   "w": "de",
+   "a": 57.92,
+   "b": 57.99,
+   "key": false,
+   "phrase": "f22"
+  },
+  {
+   "w": "fundador",
+   "a": 57.99,
+   "b": 58.71,
+   "key": true,
+   "phrase": "f22"
+  },
+  {
+   "w": "para",
+   "a": 58.71,
+   "b": 58.965,
+   "key": false,
+   "phrase": "f22"
+  },
+  {
+   "w": "sempre.",
+   "a": 58.965,
+   "b": 59.496,
+   "key": true,
+   "phrase": "f22"
+  },
+  {
+   "w": "Agora",
+   "a": 60.155,
+   "b": 60.62,
+   "key": false,
+   "phrase": "f23"
+  },
+  {
+   "w": "começa",
+   "a": 60.62,
+   "b": 61.035,
+   "key": false,
+   "phrase": "f23"
+  },
+  {
+   "w": "uma",
+   "a": 61.035,
+   "b": 61.365,
+   "key": false,
+   "phrase": "f23"
+  },
+  {
+   "w": "nova",
+   "a": 61.365,
+   "b": 61.61,
+   "key": false,
+   "phrase": "f23"
+  },
+  {
+   "w": "missão:",
+   "a": 61.61,
+   "b": 62.111,
+   "key": true,
+   "phrase": "f23"
+  },
+  {
+   "w": "encontrar",
+   "a": 62.519,
+   "b": 63.085,
+   "key": false,
+   "phrase": "f24"
+  },
+  {
+   "w": "nossos",
+   "a": 63.085,
+   "b": 63.44,
+   "key": false,
+   "phrase": "f24"
+  },
+  {
+   "w": "primeiros",
+   "a": 63.44,
+   "b": 63.98,
+   "key": false,
+   "phrase": "f24"
+  },
+  {
+   "w": "moradores",
+   "a": 63.98,
+   "b": 64.67,
+   "key": true,
+   "phrase": "f24"
+  },
+  {
+   "w": "pioneiros.",
+   "a": 64.67,
+   "b": 65.379,
+   "key": true,
+   "phrase": "f24"
+  },
+  {
+   "w": "Ainda",
+   "a": 65.72,
+   "b": 66.015,
+   "key": false,
+   "phrase": "f25"
+  },
+  {
+   "w": "temos",
+   "a": 66.015,
+   "b": 66.535,
+   "key": false,
+   "phrase": "f25"
+  },
+  {
+   "w": "catorze",
+   "a": 66.535,
+   "b": 67.025,
+   "key": true,
+   "phrase": "f25"
+  },
+  {
+   "w": "casas",
+   "a": 67.025,
+   "b": 67.405,
+   "key": true,
+   "phrase": "f25"
+  },
+  {
+   "w": "disponíveis.",
+   "a": 67.405,
+   "b": 68.139,
+   "key": false,
+   "phrase": "f25"
+  },
+  {
+   "w": "Comente",
+   "a": 68.462,
+   "b": 68.865,
+   "key": true,
+   "phrase": "f26"
+  },
+  {
+   "w": "seu",
+   "a": 68.865,
+   "b": 69.045,
+   "key": false,
+   "phrase": "f26"
+  },
+  {
+   "w": "nome",
+   "a": 69.045,
+   "b": 69.365,
+   "key": true,
+   "phrase": "f26"
+  },
+  {
+   "w": "e",
+   "a": 69.365,
+   "b": 69.55,
+   "key": false,
+   "phrase": "f26"
+  },
+  {
+   "w": "sua",
+   "a": 69.55,
+   "b": 69.69,
+   "key": false,
+   "phrase": "f26"
+  },
+  {
+   "w": "profissão.",
+   "a": 69.69,
+   "b": 70.214,
+   "key": true,
+   "phrase": "f26"
+  },
+  {
+   "w": "Quem",
+   "a": 70.534,
+   "b": 70.675,
+   "key": false,
+   "phrase": "f27"
+  },
+  {
+   "w": "será",
+   "a": 70.675,
+   "b": 71.115,
+   "key": false,
+   "phrase": "f27"
+  },
+  {
+   "w": "o",
+   "a": 71.115,
+   "b": 71.18,
+   "key": false,
+   "phrase": "f27"
+  },
+  {
+   "w": "próximo",
+   "a": 71.18,
+   "b": 71.76,
+   "key": true,
+   "phrase": "f27"
+  },
+  {
+   "w": "cidadão",
+   "a": 71.76,
+   "b": 72.235,
+   "key": true,
+   "phrase": "f27"
+  },
+  {
+   "w": "da",
+   "a": 72.235,
+   "b": 72.48,
+   "key": false,
+   "phrase": "f27"
+  },
+  {
+   "w": "SegueCity?",
+   "a": 72.48,
+   "b": 73.09,
+   "key": true,
+   "phrase": "f27"
+  }
+ ]
+}

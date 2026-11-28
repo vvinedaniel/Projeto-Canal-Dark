@@ -1,14 +1,34 @@
 {
   "snapshot": "SegueCity — estado em RASCUNHO (aguardando aprovação) do Dia 02",
   "dia": 2,
-  "registradoEm": "2026-11-28T18:28:30.028Z",
+  "registradoEm": "2026-11-28T19:36:31.383Z",
   "episodio": [
     {
       "id": "ep02",
       "titulo": "EPISÓDIO 02 — OS PRIMEIROS MORADORES CHEGARAM!",
       "estado": {
         "moradores": 10,
-        "empregos": 48
+        "empregos": 48,
+        "vagas": {
+          "total": 58,
+          "ocupadas": 10,
+          "livres": 48,
+          "emPredioPlanejado": {
+            "total": 5,
+            "ocupadas": 2
+          }
+        },
+        "casas": {
+          "total": 24,
+          "ocupadas": 10,
+          "livres": 14
+        },
+        "servicosAbertos": 5,
+        "obrasPlanejadas": [
+          "cemiterio",
+          "futuro-3"
+        ],
+        "seguidores": null
       },
       "lista": {
         "encerrada": true,
@@ -818,10 +838,12 @@
       "ocupadas": 2
     }
   ],
+  "numeracao": "Nº 1 confirmado (Mateus, 1º comentário). Fundadores 2 a 10: número provisório (ordem da mensagem do dono do canal) até a ordem dos comentários ser confirmada; o id técnico (m0002…m0010) é estável.",
   "moradores": [
     {
       "id": "m0001",
       "numero": 1,
+      "numeroProvisorio": null,
       "categoria": "FUNDADOR",
       "nome": "Mateus",
       "profissao": "medico",
@@ -843,7 +865,8 @@
     },
     {
       "id": "m0002",
-      "numero": 2,
+      "numero": null,
+      "numeroProvisorio": 2,
       "categoria": "FUNDADOR",
       "nome": "Davi",
       "profissao": "policial",
@@ -865,7 +888,8 @@
     },
     {
       "id": "m0003",
-      "numero": 3,
+      "numero": null,
+      "numeroProvisorio": 3,
       "categoria": "FUNDADOR",
       "nome": "Gabriel",
       "profissao": "mecanico",
@@ -887,7 +911,8 @@
     },
     {
       "id": "m0004",
-      "numero": 4,
+      "numero": null,
+      "numeroProvisorio": 4,
       "categoria": "FUNDADOR",
       "nome": "Juan",
       "profissao": "mecanico",
@@ -909,7 +934,8 @@
     },
     {
       "id": "m0005",
-      "numero": 5,
+      "numero": null,
+      "numeroProvisorio": 5,
       "categoria": "FUNDADOR",
       "nome": "Mari",
       "profissao": "neurocirurgiao",
@@ -931,7 +957,8 @@
     },
     {
       "id": "m0006",
-      "numero": 6,
+      "numero": null,
+      "numeroProvisorio": 6,
       "categoria": "FUNDADOR",
       "nome": "Roberto",
       "profissao": "coveiro",
@@ -953,7 +980,8 @@
     },
     {
       "id": "m0007",
-      "numero": 7,
+      "numero": null,
+      "numeroProvisorio": 7,
       "categoria": "FUNDADOR",
       "nome": "Alicia",
       "profissao": "empresario",
@@ -975,7 +1003,8 @@
     },
     {
       "id": "m0008",
-      "numero": 8,
+      "numero": null,
+      "numeroProvisorio": 8,
       "categoria": "FUNDADOR",
       "nome": "Gabrielly",
       "profissao": "advogado",
@@ -997,7 +1026,8 @@
     },
     {
       "id": "m0009",
-      "numero": 9,
+      "numero": null,
+      "numeroProvisorio": 9,
       "categoria": "FUNDADOR",
       "nome": "Jorge",
       "profissao": "comerciante",
@@ -1019,7 +1049,8 @@
     },
     {
       "id": "m0010",
-      "numero": 10,
+      "numero": null,
+      "numeroProvisorio": 10,
       "categoria": "FUNDADOR",
       "nome": "Muri",
       "profissao": "empresario",
@@ -1073,8 +1104,8 @@
     "city-state.json": "b0b8681de63062670c11bb8d1ac1c293198372a37aaf36832eff399cb71f7b63",
     "buildings.json": "b5018fa7fe56f63088a7471bae61ae30fba3142ac8b3560b78a47bcc92159438",
     "jobs.json": "1a20a98400b0964490a71bf9faf224b7dce4bd2bf55f6087201649fc98792fee",
-    "residents.json": "425beb4f6f1eea464ecf6cd6bc7c4ef5d6c1816b9efc0d8f10000788340302cd",
-    "episodes.json": "de7f9353a6afc17ed939479a3ff5ef29f3e86999c4839080e08715aa5b669627",
+    "residents.json": "46777086c8d3aaa55fabc6ebd85b57f3ae91b3db5be5ba25253c06883946b562",
+    "episodes.json": "2510f30a7fe0f52ee598306e483d0d0abfc13b420b55b3fa70bf80f4d965d561",
     "mapa.json": "c48c6d7d4574e72c49f22bfa8fdfaf1b2f2602b3f11088d2ce31359f5d676a20",
     "pending-residents.json": "51ecafd52eaaf2f9c83089d12ff8b3aa0f46e50bd77708a6177f849b01cceabd"
   }

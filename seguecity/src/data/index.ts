@@ -37,7 +37,7 @@ export interface CityState {
   conquistas?: { id: string; nome: string; dia: number; data: string }[];
 }
 export interface Episode {
-  episodio: number; id: string; titulo: string; duracao: number; data: string | null; resumo: string; status: string; estado: { moradores: number; empregos: number };
+  episodio: number; id: string; titulo: string; duracao: number; data: string | null; resumo: string; status: string; estado: { moradores: number; empregos: number; vagas?: { total: number; ocupadas: number; livres: number }; casas?: { total: number; ocupadas: number; livres: number }; servicosAbertos?: number; seguidores?: number | null };
   lista?: { encerrada: boolean; moradores: string[]; encerradaEm: string }; // elenco fechado do episódio (não muda depois)
 }
 // fila de entrada (data/pending-residents.json): comentários reais aguardando virar moradores — ver scripts/fila.ts

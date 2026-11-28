@@ -11,6 +11,7 @@ sonoros saem de funções determinísticas. O mesmo instante `t` sempre gera o m
 |---|---|---|---|
 | Fase 1: demo da cidade | `CityDemo` | `out/seguecity-demo-cidade.mp4` | 15 s |
 | Fase 2: Ep. 01, "DIA 01 — Construí uma cidade inteira, mas ninguém mora nela" | `Ep01` | `out/seguecity-ep01.mp4` (+ `-leve.mp4`) | 75 s |
+| Ep. 02, "OS PRIMEIROS MORADORES CHEGARAM!" | `Ep02` | `out/seguecity-ep02.mp4` (+ `-leve.mp4`) | 75 s |
 
 Formato de saída: 1080×1920 (9:16), 30 fps, H.264 High, yuv420p (faixa limitada BT.709), AAC 48 kHz
 192 kb/s, moov no início (faststart), loudness −14 LUFS e pico verdadeiro ≤ −1 dBTP.
@@ -71,6 +72,18 @@ A voz oficial é `public/audio/ep01/narracao-original.mp3` (Cidade.mp3: 62 s de 
 
 Todos os eventos visuais e sonoros são ancorados em palavras da fala (`W('cidadão')`), nunca em números
 soltos. Storyboard: `docs/STORYBOARD-EP01.md`. Próximo dia: `docs/DIA-02.md`.
+
+## Ep. 02 (narração oficial 10_pessoas.mp3)
+
+1. `python3 scripts/ep02-narracao.py`: mesmo método do Ep. 01. A voz (72,6 s) vai para a linha do tempo de 75 s
+   sem acelerar, e o script grava `src/scenes/ep02/words.json`. O texto de cada frase está em
+   `src/scenes/ep02/narration-v2.json`, transcrito localmente e com os nomes corrigidos pelo cadastro.
+2. `npx tsx scripts/audio/synth.ts ep02` gera a trilha. As seções e os acentos de cada nome vêm do `words.json`.
+3. `npx tsx scripts/render.ts ep02`, depois `npx tsx scripts/srt.ts src/scenes/ep02/words.json out/seguecity-ep02.srt`.
+4. Capas: `npm run stills -- Ep02Capa 0 --scale 1 --props '{"v":"A"}'` (também `B` e `C`).
+
+Storyboard: `docs/STORYBOARD-EP02.md`. Relatório de qualidade: `docs/RELATORIO-EP02.md`. Os números da tela
+vêm de `data/episodes.json → ep02.estado`.
 
 ## Cidade e moradores (persistência local em `data/`)
 

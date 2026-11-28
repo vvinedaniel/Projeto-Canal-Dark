@@ -9,11 +9,15 @@ import { Ep01, EP01_SECONDS } from './scenes/ep01/Ep01';
 import { Capa } from './scenes/ep01/Capas';
 import { FichaFundadores, FichaFundador } from './scenes/ep02/Fundadores';
 import { Dia02Preview } from './scenes/ep02/Preview';
+import { Ep02, EP02_SECONDS } from './scenes/ep02/Ep02';
+import { CapaEp02 } from './scenes/ep02/Capas';
 
 const FPS = 30;
 export const Root: React.FC = () => (
   <>
     <Composition id="Ep01" component={Ep01} width={1080} height={1920} fps={FPS} durationInFrames={EP01_SECONDS * FPS} />
+    <Composition id="Ep02" component={Ep02} width={1080} height={1920} fps={FPS} durationInFrames={EP02_SECONDS * FPS} />
+    <Composition id="Ep02Capa" component={CapaEp02} width={1080} height={1920} fps={FPS} durationInFrames={1} defaultProps={{ v: 'A' as 'A' | 'B' | 'C' }} />
     <Composition id="Fundadores" component={FichaFundadores} width={1080} height={1920} fps={FPS} durationInFrames={30} />
     <Composition id="FichaFundador" component={FichaFundador} width={1080} height={1080} fps={FPS} durationInFrames={30} defaultProps={{ id: 'm0001' }} />
     <Composition id="Dia02Preview" component={Dia02Preview} width={1080} height={1920} fps={FPS} durationInFrames={300} defaultProps={{ shot: 0 }} />

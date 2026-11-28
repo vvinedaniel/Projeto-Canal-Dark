@@ -40,12 +40,12 @@ export const SpriteCidade: React.FC<{ r: Resident; px: number; t: number }> = ({
   return <canvas ref={ref} width={W} height={H} style={{ width: W * px, height: H * px, imageRendering: 'pixelated', display: 'block' }} />;
 };
 
-const trabalhoTexto = (r: Resident) => {
+export const trabalhoTexto = (r: Resident) => {
   const b = buildings.find((x) => x.id === r.trabalho);
   return b?.status === 'planejado' ? `${b.nome.toUpperCase()} (EM PROJETO)` : nomeTrabalho(r).toUpperCase();
 };
 
-const Selo: React.FC<{ size?: number }> = ({ size = 20 }) => (
+export const Selo: React.FC<{ size?: number }> = ({ size = 20 }) => (
   <span style={{ display: 'inline-flex', alignItems: 'center', gap: 8, fontFamily: F.hud, fontWeight: 700, fontSize: size, color: '#2a1a00', background: 'linear-gradient(#ffe27a, #f2b330)', padding: '4px 10px', boxShadow: 'inset 0 -3px 0 #c8901a, 3px 3px 0 rgba(0,0,0,0.5)', letterSpacing: 1 }}>
     <PixelIcon name="star" px={Math.max(2, Math.round(size / 8))} shadow={false} /> MORADOR FUNDADOR
   </span>

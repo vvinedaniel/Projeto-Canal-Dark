@@ -147,7 +147,8 @@ export function sync(db: DB) {
     // lista fechada: só estes ids são fundadores, para sempre (o título é reaplicado se alguém apagar à mão)
     for (const r of residents) {
       const f = F.ids.includes(r.id);
-      if (f) { r.fundador = true; r.categoria = 'FUNDADOR'; r.titulos = [...new Set([...(r.titulos ?? []), F.titulo])]; r.distintivo = F.distintivo; if (r.aparencia) r.aparencia.insignia = 'fundador'; }
+      if (f) { r.fundador = true; r.categoria = 'FUNDADOR'; if (r.ordemConfirmada) delete r.numeroProvisorio; else r.numeroProvisorio = true; // ordem a confirmar: o número é provisório
+        r.titulos = [...new Set([...(r.titulos ?? []), F.titulo])]; r.distintivo = F.distintivo; if (r.aparencia) r.aparencia.insignia = 'fundador'; }
       else if (r.fundador || (r.titulos ?? []).includes(F.titulo)) {
         delete r.fundador; r.titulos = (r.titulos ?? []).filter((x: string) => x !== F.titulo); if (r.distintivo === F.distintivo) delete r.distintivo; if (r.aparencia?.insignia === 'fundador') delete r.aparencia.insignia;
       }

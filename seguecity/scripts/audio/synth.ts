@@ -5,7 +5,7 @@
 import { dirname, join, relative, resolve } from 'node:path';
 import { SR, Stereo, toDb } from './dsp';
 import { normalizeLoudness, normalizePeak, truePeakDb } from './loudness';
-import { EP01_INFO, renderDemo, renderEp01 } from './music';
+import { EP01_INFO, EP02_INFO, renderDemo, renderEp01, renderEp02 } from './music';
 import * as F from './sfx';
 import { writeWav16 } from './wav';
 
@@ -29,6 +29,7 @@ const AMB: Norm = { kind: 'lufs', target: -30, ceiling: -6 };
 const ITEMS: Item[] = [
   { id: 'demo', file: 'music/demo.wav', render: renderDemo, norm: MUSIC, exact: 15 },
   { id: 'ep01', file: 'music/ep01.wav', render: renderEp01, norm: MUSIC, exact: 75 },
+  { id: 'ep02', file: 'music/ep02.wav', render: renderEp02, norm: MUSIC, exact: 75 },
   { id: 'ui-blip', file: 'sfx/ui-blip.wav', render: F.uiBlip, norm: SFX },
   { id: 'ui-move', file: 'sfx/ui-move.wav', render: F.uiMove, norm: SFX },
   { id: 'popup', file: 'sfx/popup.wav', render: F.popup, norm: SFX },
@@ -81,6 +82,10 @@ function main(): void {
   if (!want.size || want.has('ep01')) {
     console.log(`ep01: andamentos ${EP01_INFO.tempos.map((t) => `${t.t0}–${t.t1} s ${t.bpm.toFixed(2)} BPM`).join(', ')}`);
     console.log(`ep01: acentos das profissões em ${EP01_INFO.accents.map((t) => t.toFixed(3)).join(', ')} s`);
+  }
+  if (want.has('ep02') || !want.size) {
+    console.log(`ep02: andamentos ${EP02_INFO.tempos.map((t) => `${t.t0}–${t.t1} s ${t.bpm.toFixed(2)} BPM`).join(', ')}`);
+    console.log(`ep02: acentos dos nomes em ${EP02_INFO.accents.map((t) => t.toFixed(3)).join(', ')} s`);
   }
   console.log(`total: ${((Date.now() - t0) / 1000).toFixed(1)} s`);
 }

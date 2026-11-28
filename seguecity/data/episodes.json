@@ -32,11 +32,31 @@
     "titulo": "EPISÓDIO 02 — OS PRIMEIROS MORADORES CHEGARAM!",
     "duracao": 75,
     "data": null,
-    "resumo": "Os 10 primeiros pedidos reais viram moradores fundadores (Mateus, o 1º comentário, é o Morador Nº 1). A cidade acende, ganha os primeiros carros e serviços; Roberto, coveiro, gera o pedido de um cemitério e Gabrielly, advogada, o de um escritório de advocacia — as duas obras entram no mapa.",
-    "status": "pré-produção (roteiro, storyboard e fichas aguardando aprovação)",
+    "resumo": "Dez pessoas reais viraram os moradores fundadores. Uma delas, Roberto, escolheu ser coveiro numa cidade sem cemitério. As 10 casas ganham donos; cada fundador aparece com nome, profissão, casa e trabalho (só o Mateus é numerado: Nº 1, confirmado). A administração da cidade reserva terrenos para dois projetos futuros, o cemitério e o escritório de advocacia (ainda não construídos). Chegam os primeiros carros, cinco serviços abrem, os fundadores ganham o distintivo dourado e começa a missão dos PIONEIROS (moradores 11 a 100).",
+    "status": "em produção (narração oficial recebida; roteiro, fundadores, obras e categoria PIONEIRO aprovados)",
     "estado": {
       "moradores": 10,
-      "empregos": 48
+      "empregos": 48,
+      "vagas": {
+        "total": 58,
+        "ocupadas": 10,
+        "livres": 48,
+        "emPredioPlanejado": {
+          "total": 5,
+          "ocupadas": 2
+        }
+      },
+      "casas": {
+        "total": 24,
+        "ocupadas": 10,
+        "livres": 14
+      },
+      "servicosAbertos": 5,
+      "obrasPlanejadas": [
+        "cemiterio",
+        "futuro-3"
+      ],
+      "seguidores": null
     },
     "snapshot": "data/snapshots/dia-02.rascunho.json",
     "lista": {
@@ -54,6 +74,7 @@
         "m0010"
       ],
       "encerradaEm": "2026-11-28"
-    }
+    },
+    "narracao": "public/audio/ep02/narracao-original.mp3 (10_pessoas.mp3, voz ElevenLabs do Ep. 01, 72,6 s, sem aceleração)"
   }
 ]
