@@ -1,7 +1,7 @@
 {
   "snapshot": "SegueCity — estado em RASCUNHO (aguardando aprovação) do Dia 02",
   "dia": 2,
-  "registradoEm": "2026-11-28T18:13:33.020Z",
+  "registradoEm": "2026-11-28T18:28:30.028Z",
   "episodio": [
     {
       "id": "ep02",
@@ -88,7 +88,39 @@
         "dia": 2,
         "data": "2026-11-28"
       }
-    ]
+    ],
+    "indicadores": {
+      "atualizadoEm": "2026-11-28",
+      "moradia": {
+        "capacidade": 24,
+        "ocupadas": 10,
+        "livres": 14,
+        "ocupacaoPct": 41.7,
+        "ocupacaoProjetadaPct": 41.7,
+        "unidadesDeApartamento": 0
+      },
+      "empregos": {
+        "total": 58,
+        "ocupados": 10,
+        "livres": 48
+      },
+      "fila": {
+        "emEspera": 0,
+        "agendados": 0,
+        "aguardandoMoradia": 0,
+        "aguardandoProfissao": 0,
+        "incorporados": 0,
+        "recusados": 0
+      },
+      "demandaReprimida": {
+        "total": 0,
+        "semMoradia": 0,
+        "semProfissao": 0,
+        "deficitDeMoradia": 0
+      },
+      "alerta": null
+    },
+    "alertas": []
   },
   "predios": {
     "prontos": 41,
@@ -789,6 +821,8 @@
   "moradores": [
     {
       "id": "m0001",
+      "numero": 1,
+      "categoria": "FUNDADOR",
       "nome": "Mateus",
       "profissao": "medico",
       "titulo": "Médico",
@@ -804,10 +838,13 @@
       ],
       "distintivo": "fundador-ouro",
       "fonte": "comentário no TikTok",
+      "historicoProfissoes": [],
       "ficticio": false
     },
     {
       "id": "m0002",
+      "numero": 2,
+      "categoria": "FUNDADOR",
       "nome": "Davi",
       "profissao": "policial",
       "titulo": "Policial",
@@ -823,10 +860,13 @@
       ],
       "distintivo": "fundador-ouro",
       "fonte": "comentário no TikTok",
+      "historicoProfissoes": [],
       "ficticio": false
     },
     {
       "id": "m0003",
+      "numero": 3,
+      "categoria": "FUNDADOR",
       "nome": "Gabriel",
       "profissao": "mecanico",
       "titulo": "Mecânico",
@@ -842,10 +882,13 @@
       ],
       "distintivo": "fundador-ouro",
       "fonte": "comentário no TikTok",
+      "historicoProfissoes": [],
       "ficticio": false
     },
     {
       "id": "m0004",
+      "numero": 4,
+      "categoria": "FUNDADOR",
       "nome": "Juan",
       "profissao": "mecanico",
       "titulo": "Mecânico",
@@ -861,10 +904,13 @@
       ],
       "distintivo": "fundador-ouro",
       "fonte": "comentário no TikTok",
+      "historicoProfissoes": [],
       "ficticio": false
     },
     {
       "id": "m0005",
+      "numero": 5,
+      "categoria": "FUNDADOR",
       "nome": "Mari",
       "profissao": "neurocirurgiao",
       "titulo": "Neurocirurgiã",
@@ -880,10 +926,13 @@
       ],
       "distintivo": "fundador-ouro",
       "fonte": "comentário no TikTok",
+      "historicoProfissoes": [],
       "ficticio": false
     },
     {
       "id": "m0006",
+      "numero": 6,
+      "categoria": "FUNDADOR",
       "nome": "Roberto",
       "profissao": "coveiro",
       "titulo": "Coveiro",
@@ -899,10 +948,13 @@
       ],
       "distintivo": "fundador-ouro",
       "fonte": "comentário no TikTok",
+      "historicoProfissoes": [],
       "ficticio": false
     },
     {
       "id": "m0007",
+      "numero": 7,
+      "categoria": "FUNDADOR",
       "nome": "Alicia",
       "profissao": "empresario",
       "titulo": "Empresária",
@@ -918,10 +970,13 @@
       ],
       "distintivo": "fundador-ouro",
       "fonte": "comentário no TikTok",
+      "historicoProfissoes": [],
       "ficticio": false
     },
     {
       "id": "m0008",
+      "numero": 8,
+      "categoria": "FUNDADOR",
       "nome": "Gabrielly",
       "profissao": "advogado",
       "titulo": "Advogada",
@@ -937,10 +992,13 @@
       ],
       "distintivo": "fundador-ouro",
       "fonte": "comentário no TikTok",
+      "historicoProfissoes": [],
       "ficticio": false
     },
     {
       "id": "m0009",
+      "numero": 9,
+      "categoria": "FUNDADOR",
       "nome": "Jorge",
       "profissao": "comerciante",
       "titulo": "Comerciante",
@@ -956,10 +1014,13 @@
       ],
       "distintivo": "fundador-ouro",
       "fonte": "comentário no TikTok",
+      "historicoProfissoes": [],
       "ficticio": false
     },
     {
       "id": "m0010",
+      "numero": 10,
+      "categoria": "FUNDADOR",
       "nome": "Muri",
       "profissao": "empresario",
       "titulo": "Empresário",
@@ -975,13 +1036,17 @@
       ],
       "distintivo": "fundador-ouro",
       "fonte": "comentário no TikTok",
+      "historicoProfissoes": [],
       "ficticio": false
     }
   ],
   "fila": {
+    "capacidadePorEpisodio": 10,
+    "capacidadePorEpisodioEspecifica": {},
     "emEspera": 0,
     "agendados": 0,
     "aguardandoMoradia": 0,
+    "aguardandoProfissao": 0,
     "incorporados": 0,
     "recusados": 0
   },
@@ -1005,12 +1070,12 @@
     "observacao": "lista fechada: título e distintivo exclusivos e permanentes destes 10 moradores"
   },
   "arquivos": {
-    "city-state.json": "9837a3b235241d4ca28b74fcc1a9c596dd8bf7e0a7142343b2caa0ce6d4f0edb",
+    "city-state.json": "b0b8681de63062670c11bb8d1ac1c293198372a37aaf36832eff399cb71f7b63",
     "buildings.json": "b5018fa7fe56f63088a7471bae61ae30fba3142ac8b3560b78a47bcc92159438",
     "jobs.json": "1a20a98400b0964490a71bf9faf224b7dce4bd2bf55f6087201649fc98792fee",
-    "residents.json": "fdb024b5460bb597c5d4d1d93e813495687e94ac1f5f94976aa062edd00786ee",
+    "residents.json": "425beb4f6f1eea464ecf6cd6bc7c4ef5d6c1816b9efc0d8f10000788340302cd",
     "episodes.json": "de7f9353a6afc17ed939479a3ff5ef29f3e86999c4839080e08715aa5b669627",
     "mapa.json": "c48c6d7d4574e72c49f22bfa8fdfaf1b2f2602b3f11088d2ce31359f5d676a20",
-    "pending-residents.json": "7c2e72b860e58b51dfd68c9d11dbb47ff34cde572d6635c9149f367d3adf2ffb"
+    "pending-residents.json": "51ecafd52eaaf2f9c83089d12ff8b3aa0f46e50bd77708a6177f849b01cceabd"
   }
 }

@@ -44,10 +44,16 @@ npm run validate -- out/seguecity-ep01.mp4 --dur 75
   antes × depois em `out/comparativo/`. São elas: ilha em 4K (composição `Poster4K`), closes, personagem
   de exemplo, interiores (`Interiores`) e estados de luz e clima.
 - Relatório do upgrade gráfico V2: `docs/RELATORIO-V2.md`.
-- **Fila de entrada de moradores:** `npm run fila`, `fila:add`, `fila:recusar` e `fila:incorporar`.
+- **Fila de entrada de moradores:** `npm run fila`, `fila:add`, `fila:atualizar`, `fila:config`,
+  `fila:recusar` e `fila:incorporar`.
   - Os comentários reais aguardam em `data/pending-residents.json` até um episódio incorporá-los.
-  - A fila barra duplicados, respeita a capacidade, nunca altera episódio em produção e preserva os 10
-    fundadores.
+  - A fila identifica cada pessoa pelo usuário do TikTok e pelo comentário, barra duplicados e aceita
+    homônimos legítimos.
+  - O limite por episódio é configurável (padrão 10), e nenhum pedido se perde por falta de casa ou de
+    profissão.
+  - Categorias: os 10 FUNDADORES, os nº 11–100 PIONEIROS e os nº 101 em diante CIDADÃOS.
+  - Mostra indicadores de moradia e demanda reprimida e alerta em 80% de ocupação, sem construir nada.
+  - `npm run test:fila` roda 54 verificações numa cópia dos dados.
   - Detalhes em `docs/FILA-DE-MORADORES.md`.
 
 ## Narração do Ep. 01 (oficial)
@@ -80,7 +86,8 @@ soltos. Storyboard: `docs/STORYBOARD-EP01.md`. Próximo dia: `docs/DIA-02.md`.
 ```bash
 npm run city:status                                  # resumo
 npm run city:moradores -- 12                         # muda só o contador da HUD
-npm run fila:add -- --nome "Lia" --profissao "Dentista" --data 2026-11-29   # comentário real → fila de entrada
+npm run fila:add -- --nome "Lia" --profissao "Dentista" --data 2026-11-29 --tiktok usuario   # comentário real → fila
+npm run moradores:profissao -- --id m0012 --profissao "Médica"   # troca de profissão (mesmo registro)
 npm run fila:incorporar -- --episodio ep03            # os agendados do episódio viram moradores
 npm run residents:add -- --nome "Teste" --profissao medico --teste   # só personagem de TESTE
 npm run residents:seed -- 5                          # 5 personagens fictícios de teste

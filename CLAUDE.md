@@ -325,7 +325,21 @@ e `tools/bench-cap.cjs` (métodos de captura). Resultados em `out/bench.jsonl`.
   - os 10 fundadores formam uma lista fechada em `city-state.fundadores`, e o `sync` reaplica ou retira
     o título;
   - o episódio lê o elenco de `episodes.json → lista`, nunca "todos os moradores";
-  - testes rodam numa cópia com `SEGUECITY_DATA=<pasta>`.
+  - testes rodam numa cópia com `SEGUECITY_DATA=<pasta>` (`npm run test:fila`, 54 verificações, confere
+    no fim que os dados reais não mudaram).
+- **Ajustes da fila (aprovados depois do fa4714a):**
+  - identificação por `tiktok_username` (sem @, minúsculas) e pelo comentário antes do nome; homônimo com
+    usuário diferente é legítimo;
+  - `fila:config` muda o limite por episódio (padrão 10) ou abre exceção por episódio; episódio travado
+    não muda;
+  - número permanente e categoria: 1–10 FUNDADOR (lista fechada), 11–100 PIONEIRO, 101+ CIDADÃO;
+  - `city-state.indicadores` traz moradia, empregos, fila e demanda reprimida; o alerta de expansão em 80%
+    (`previsto`/`atingido`) é só aviso e não constrói nada;
+  - sem casa → `aguardando-moradia`, sem profissão → `aguardando-profissao`; o pedido continua na fila e
+    não bloqueia os outros;
+  - `fila:atualizar` e `moradores:profissao` trocam a profissão no mesmo registro, com histórico; morador
+    no elenco de episódio sem snapshot oficial não troca;
+  - o usuário do TikTok é dado pessoal: não vai para vídeo, capa nem snapshot.
 - **Fontes pixel não têm "º":** Jersey cai em "o" ("No 1") e Silkscreen mostra um asterisco. Use
   `<Numero n={1} />` (`components/hud/Numero.tsx`).
 - **Episódio publicado lê o snapshot do dia dele**, não o estado vivo (o Ep. 01 passaria a mostrar 58

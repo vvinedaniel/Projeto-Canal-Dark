@@ -6,7 +6,7 @@ import { createHash } from 'node:crypto';
 import { existsSync, mkdirSync, readFileSync, writeFileSync } from 'node:fs';
 import path from 'node:path';
 import { ROOT } from './lib/env';
-import { DATA } from './lib/cidade';
+import { DATA, EM_ESPERA } from './lib/cidade';
 
 const D = (f: string) => path.join(DATA, f);
 const raw = (f: string) => readFileSync(D(f), 'utf8');
@@ -28,7 +28,7 @@ const snap = {
   dia,
   registradoEm: new Date().toISOString(),
   episodio: episodes.filter((e) => e.episodio === dia).map((e) => ({ id: e.id, titulo: e.titulo, estado: e.estado, lista: e.lista ?? null })),
-  cidade: { nome: city.nome, slogan: city.slogan, status: city.status, evolucao: city.evolucao, moradores: city.moradores, seguidores: city.seguidores ?? null, casas: city.casas, empregos: city.empregos, metas: city.metas, conquistas: city.conquistas ?? [] },
+  cidade: { nome: city.nome, slogan: city.slogan, status: city.status, evolucao: city.evolucao, moradores: city.moradores, seguidores: city.seguidores ?? null, casas: city.casas, empregos: city.empregos, metas: city.metas, conquistas: city.conquistas ?? [], indicadores: city.indicadores ?? null, alertas: city.alertas ?? [] },
   predios: {
     prontos: count((b) => b.status === 'pronto'),
     emObra: count((b) => b.status === 'em_obra'),
@@ -37,8 +37,9 @@ const snap = {
     lista: buildings.map((b) => ({ id: b.id, tipo: b.tipo, nome: b.nome, status: b.status, posicao: b.posicao, moradores: b.moradores ?? 0 })),
   },
   profissoes: jobs.map((j) => ({ id: j.id, nome: j.nome, predio: j.predio, vagas: j.vagas, ocupadas: j.ocupadas ?? 0 })),
-  moradores: residents.map((r) => ({ id: r.id, nome: r.nome, profissao: r.profissao, titulo: r.titulo ?? null, bairro: r.bairro, casa: r.casa, trabalho: r.trabalho ?? null, entrada: r.entrada ?? null, ordem: r.ordem ?? null, ordemConfirmada: !!r.ordemConfirmada, fundador: !!r.fundador, titulos: r.titulos ?? [], distintivo: r.distintivo ?? null, fonte: r.fonte ?? null, ficticio: !!r.ficticio })),
-  fila: existsSync(D('pending-residents.json')) ? (() => { const q = load('pending-residents.json'); const by = (st: string) => q.pendentes.filter((p: any) => p.status === st).length; return { emEspera: by('pendente') + by('agendado') + by('aguardando-moradia'), agendados: by('agendado'), aguardandoMoradia: by('aguardando-moradia'), incorporados: by('incorporado'), recusados: by('recusado') }; })() : null,
+  // o usuário do TikTok não é copiado para o snapshot (dado pessoal; fica só em residents.json, que o hash cobre)
+  moradores: residents.map((r) => ({ id: r.id, numero: r.numero ?? null, categoria: r.categoria ?? null, nome: r.nome, profissao: r.profissao, titulo: r.titulo ?? null, bairro: r.bairro, casa: r.casa, trabalho: r.trabalho ?? null, entrada: r.entrada ?? null, ordem: r.ordem ?? null, ordemConfirmada: !!r.ordemConfirmada, fundador: !!r.fundador, titulos: r.titulos ?? [], distintivo: r.distintivo ?? null, fonte: r.fonte ?? null, historicoProfissoes: r.historicoProfissoes ?? [], ficticio: !!r.ficticio })),
+  fila: existsSync(D('pending-residents.json')) ? (() => { const q = load('pending-residents.json'); const by = (st: string) => q.pendentes.filter((p: any) => p.status === st).length; return { capacidadePorEpisodio: q.regras.capacidadePorEpisodio, capacidadePorEpisodioEspecifica: q.regras.capacidadePorEpisodioEspecifica ?? {}, emEspera: q.pendentes.filter((p: any) => (EM_ESPERA as string[]).includes(p.status)).length, agendados: by('agendado'), aguardandoMoradia: by('aguardando-moradia'), aguardandoProfissao: by('aguardando-profissao'), incorporados: by('incorporado'), recusados: by('recusado') }; })() : null,
   fundadores: city.fundadores ?? null,
   arquivos: Object.fromEntries(files.map((f) => [f, createHash('sha256').update(raw(f)).digest('hex')])),
 };

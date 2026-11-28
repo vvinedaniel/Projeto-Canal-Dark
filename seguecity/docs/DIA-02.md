@@ -20,11 +20,15 @@ novos vão para a **fila de entrada** e entram a partir do Ep. 03: veja `docs/FI
 
    ```bash
    cd seguecity
-   npm run fila:add -- --nome "Lia" --profissao "Dentista" --data 2026-11-29 --comentario <id do comentário>
+   npm run fila:add -- --nome "Lia" --profissao "Dentista" --data 2026-11-29 --tiktok <usuário> --comentario <id do comentário>
    npm run fila                 # mostra o episódio previsto de cada pedido e a capacidade
    ```
 
-   - A fila barra duplicados e respeita a capacidade: 10 por episódio e as casas livres.
+   - A fila barra duplicados pelo usuário do TikTok, pelo comentário e pelo nome, e aceita homônimos com
+     usuários diferentes.
+   - Respeita a capacidade: 10 por episódio (configurável com `fila:config`) e as casas livres.
+   - Pedido sem casa ou com profissão que ainda não existe fica na fila, aguardando, sem se perder.
+   - O usuário do TikTok nunca aparece no vídeo.
    - Episódios em produção nunca são alterados.
    - Os 10 fundadores do Dia 02 já estão confirmados e a lista do Ep. 02 está encerrada.
    - Ao incorporar (`npm run fila:incorporar -- --episodio ep03`), cada morador recebe casa, trabalho e uma

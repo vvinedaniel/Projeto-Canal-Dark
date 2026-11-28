@@ -22,6 +22,11 @@ export interface Resident {
   trabalho?: string; // id do prédio onde trabalha (de jobs.json → predio)
   fundador?: boolean; titulos?: string[]; distintivo?: string; // os 10 primeiros: MORADOR FUNDADOR + distintivo dourado
   ordem?: number; ordemConfirmada?: boolean; fonte?: string; // ordem de chegada (só confirmada quando o TikTok mostra)
+  numero?: number; // número permanente do morador (1–10 fundadores)
+  categoria?: 'FUNDADOR' | 'PIONEIRO' | 'CIDADÃO'; // 1–10 · 11–100 · 101+
+  tiktok_username?: string; // identificação interna (dado pessoal: nunca aparece no vídeo)
+  confirmadoParaDia?: number;
+  historicoProfissoes?: { data: string; campo: string; de: string | null; para: string; fonte: string }[];
 }
 export interface CityState {
   nome: string; slogan: string; dia: number; moradores: number;
@@ -38,8 +43,9 @@ export interface Episode {
 // fila de entrada (data/pending-residents.json): comentários reais aguardando virar moradores — ver scripts/fila.ts
 export interface PendingResident {
   id: string; nome: string; profissao: string; profissaoId: string | null; dataSolicitacao: string;
-  status: 'pendente' | 'agendado' | 'aguardando-moradia' | 'incorporado' | 'recusado'; episodioPrevisto: string | null;
-  fonte: string; comentarioId?: string; homonimo?: boolean; registradoEm: string; motivo?: string; aviso?: string; moradorId?: string; incorporadoEm?: string;
+  status: 'pendente' | 'agendado' | 'aguardando-moradia' | 'aguardando-profissao' | 'incorporado' | 'recusado'; episodioPrevisto: string | null;
+  fonte: string; tiktok_username?: string; comentarioId?: string; homonimo?: boolean; registradoEm: string; motivo?: string; aviso?: string; moradorId?: string; incorporadoEm?: string;
+  historico?: { data: string; campo: string; de: string | null; para: string; fonte: string }[];
 }
 
 export const buildings = buildingsJson as Building[];
@@ -47,7 +53,7 @@ export const jobs = jobsJson as Job[];
 export const city = cityJson as CityState;
 export const residents = residentsJson as Resident[];
 export const episodes = episodesJson as Episode[];
-export const fila = pendingJson as { regras: { capacidadePorEpisodio: number; moradia: string; ordem: string }; proximoId: number; pendentes: PendingResident[] };
+export const fila = pendingJson as { regras: { capacidadePorEpisodio: number; capacidadePorEpisodioEspecifica?: Record<string, number>; alertaExpansao?: number; moradia: string; ordem: string }; proximoId: number; pendentes: PendingResident[] };
 export const elencoDo = (ep: string) => (episodes.find((e) => e.id === ep)?.lista?.moradores ?? []).map((id) => residents.find((r) => r.id === id)!).filter(Boolean);
 export const mapa = mapaJson as { linhas: string[]; legenda: Record<string, string> };
 

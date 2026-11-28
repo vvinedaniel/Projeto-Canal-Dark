@@ -35,7 +35,9 @@
       "MORADOR FUNDADOR"
     ],
     "distintivo": "fundador-ouro",
-    "confirmadoParaDia": 2
+    "confirmadoParaDia": 2,
+    "numero": 1,
+    "categoria": "FUNDADOR"
   },
   {
     "id": "m0002",
@@ -73,7 +75,9 @@
       "MORADOR FUNDADOR"
     ],
     "distintivo": "fundador-ouro",
-    "confirmadoParaDia": 2
+    "confirmadoParaDia": 2,
+    "numero": 2,
+    "categoria": "FUNDADOR"
   },
   {
     "id": "m0003",
@@ -111,7 +115,9 @@
       "MORADOR FUNDADOR"
     ],
     "distintivo": "fundador-ouro",
-    "confirmadoParaDia": 2
+    "confirmadoParaDia": 2,
+    "numero": 3,
+    "categoria": "FUNDADOR"
   },
   {
     "id": "m0004",
@@ -149,7 +155,9 @@
       "MORADOR FUNDADOR"
     ],
     "distintivo": "fundador-ouro",
-    "confirmadoParaDia": 2
+    "confirmadoParaDia": 2,
+    "numero": 4,
+    "categoria": "FUNDADOR"
   },
   {
     "id": "m0005",
@@ -187,7 +195,9 @@
       "MORADOR FUNDADOR"
     ],
     "distintivo": "fundador-ouro",
-    "confirmadoParaDia": 2
+    "confirmadoParaDia": 2,
+    "numero": 5,
+    "categoria": "FUNDADOR"
   },
   {
     "id": "m0006",
@@ -225,7 +235,9 @@
       "MORADOR FUNDADOR"
     ],
     "distintivo": "fundador-ouro",
-    "confirmadoParaDia": 2
+    "confirmadoParaDia": 2,
+    "numero": 6,
+    "categoria": "FUNDADOR"
   },
   {
     "id": "m0007",
@@ -263,7 +275,9 @@
       "MORADOR FUNDADOR"
     ],
     "distintivo": "fundador-ouro",
-    "confirmadoParaDia": 2
+    "confirmadoParaDia": 2,
+    "numero": 7,
+    "categoria": "FUNDADOR"
   },
   {
     "id": "m0008",
@@ -301,7 +315,9 @@
       "MORADOR FUNDADOR"
     ],
     "distintivo": "fundador-ouro",
-    "confirmadoParaDia": 2
+    "confirmadoParaDia": 2,
+    "numero": 8,
+    "categoria": "FUNDADOR"
   },
   {
     "id": "m0009",
@@ -339,7 +355,9 @@
       "MORADOR FUNDADOR"
     ],
     "distintivo": "fundador-ouro",
-    "confirmadoParaDia": 2
+    "confirmadoParaDia": 2,
+    "numero": 9,
+    "categoria": "FUNDADOR"
   },
   {
     "id": "m0010",
@@ -377,6 +395,8 @@
       "MORADOR FUNDADOR"
     ],
     "distintivo": "fundador-ouro",
-    "confirmadoParaDia": 2
+    "confirmadoParaDia": 2,
+    "numero": 10,
+    "categoria": "FUNDADOR"
   }
 ]

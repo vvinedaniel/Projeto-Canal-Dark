@@ -79,5 +79,37 @@
     "distintivo": "fundador-ouro",
     "encerradoEm": "2026-11-28",
     "observacao": "lista fechada: título e distintivo exclusivos e permanentes destes 10 moradores"
-  }
+  },
+  "indicadores": {
+    "atualizadoEm": "2026-11-28",
+    "moradia": {
+      "capacidade": 24,
+      "ocupadas": 10,
+      "livres": 14,
+      "ocupacaoPct": 41.7,
+      "ocupacaoProjetadaPct": 41.7,
+      "unidadesDeApartamento": 0
+    },
+    "empregos": {
+      "total": 58,
+      "ocupados": 10,
+      "livres": 48
+    },
+    "fila": {
+      "emEspera": 0,
+      "agendados": 0,
+      "aguardandoMoradia": 0,
+      "aguardandoProfissao": 0,
+      "incorporados": 0,
+      "recusados": 0
+    },
+    "demandaReprimida": {
+      "total": 0,
+      "semMoradia": 0,
+      "semProfissao": 0,
+      "deficitDeMoradia": 0
+    },
+    "alerta": null
+  },
+  "alertas": []
 }
