@@ -27,6 +27,8 @@ export interface FrameParams {
   bloom?: number;
   vignette?: number;
   tilt?: number; // 0..1: desfoque de maquete (tilt-shift) no alto e embaixo do quadro
+  dawn?: number; // 0..1: amanhecer (céu, sol nascendo e luz ambiente)
+  weather?: { rain?: number; fog?: number }; // estados reutilizáveis de clima
 }
 
 type C2D = OffscreenCanvasRenderingContext2D;
@@ -71,7 +73,7 @@ export class Renderer {
     const g = this.world.ground;
     // fundo: mar de nuvens e ilhotas flutuantes (paralaxe), atrás da ilha
     const bd = backdrop();
-    const lampOn0 = smooth((p.night - 0.45) / 0.35);
+    const lampOn0 = smooth((p.night - 0.45) / 0.35) * (1 - 0.7 * (p.dawn ?? 0));
     for (const s of [...bd.back, ...bd.islets]) {
       const q = bgPos(s, p.cam.x, p.cam.y, p.t);
       const X = Math.round(q.x - rx), Y = Math.round(q.y - ry);
@@ -89,9 +91,11 @@ export class Renderer {
     // 2) água e cascata animadas
     this.drawWater(p.t, rx, ry, rw, rh);
     alb.drawImage(this.cv.wat, 0, 0, rw, rh, 0, 0, rw, rh);
+    // brilhos da lua na água (coluna sob a lua, em espaço de tela), na emissão antes dos objetos
+    if (p.night > 0.6) this.moonGlints(p, rx, ry, rw, rh, z);
 
     // 3) objetos (estáticos + dinâmicos) visíveis
-    const lampOn = smooth((p.night - 0.45) / 0.35);
+    const lampOn = smooth((p.night - 0.45) / 0.35) * (1 - 0.7 * (p.dawn ?? 0));
     // reflexos das luzes na água (desenhados primeiro na emissão; objetos na frente os apagam)
     if (p.refl && lampOn > 0) {
       emi.globalCompositeOperation = 'source-over';
@@ -156,7 +160,8 @@ export class Renderer {
           const c = L.kind === 'pool' ? lig : emi;
           c.globalCompositeOperation = 'lighter';
           c.globalAlpha = Math.min(1, L.a * lv);
-          c.drawImage(spr, Math.round(L.x + (o.dx ?? 0) - rx - (spr.width - 1) / 2), Math.round(L.y + (o.dy ?? 0) - ry - (spr.height - 1) / 2));
+          // luzes já vêm em coordenadas de mundo; só o deslocamento de cena (prédio brotando) as move
+          c.drawImage(spr, Math.round(L.x - rx - (spr.width - 1) / 2), Math.round(L.y + (ov?.dy ?? 0) - ry - (spr.height - 1) / 2));
           c.globalAlpha = 1;
         }
       }
@@ -178,6 +183,26 @@ export class Renderer {
       const Y = Math.round(mf.y - 18 - ph * 26 - ry);
       alb.globalAlpha = 0.75 * Math.sin(Math.PI * ph); alb.drawImage(m, X, Y); alb.globalAlpha = 1;
     }
+    // cristais das encostas da ilha pulsando
+    const cr = this.world.ground.crystals;
+    for (let k = 0; k < cr.length; k += 2) {
+      const X = cr[k] - rx, Y = cr[k + 1] - ry;
+      if (X < 0 || Y < 0 || X >= rw || Y >= rh) continue;
+      const a = 0.45 + 0.55 * Math.max(0, Math.sin(p.t * 1.3 + cr[k] * 0.7));
+      emi.fillStyle = `rgba(120,240,255,${(a * 0.9).toFixed(3)})`; emi.fillRect(X, Y, 1, 1);
+      emi.fillStyle = `rgba(90,200,255,${(a * 0.3).toFixed(3)})`; emi.fillRect(X - 1, Y, 3, 1); emi.fillRect(X, Y - 1, 1, 3);
+    }
+    // respingos no alto e no pé da cascata
+    const fb = this.world.fallBottom, ft = this.world.fallTop;
+    for (let k = 0; k < 26; k++) {
+      const u = (p.t * (0.9 + (k % 5) * 0.12) + k * 0.137) % 1;
+      const top = k < 10;
+      const bx = (top ? ft.x : fb.x) + (hash2(k, 3) - 0.5) * (top ? 40 : 54);
+      const by = (top ? ft.y : fb.y - 6) - u * (top ? 6 : 16) + u * u * (top ? 14 : 22);
+      const X = Math.round(bx + (hash2(k, 4) - 0.5) * u * 20 - rx), Y = Math.round(by - ry);
+      if (X < 0 || Y < 0 || X >= rw || Y >= rh) continue;
+      alb.fillStyle = `rgba(220,240,255,${(0.85 * (1 - u)).toFixed(3)})`; alb.fillRect(X, Y, 1, 1);
+    }
     // vaga-lumes (depois dos objetos: são pequenos demais para precisar de oclusão)
     if (p.fireflies && lampOn > 0) for (const f of p.fireflies) {
       const X = Math.round(f.x - rx), Y = Math.round(f.y - ry);
@@ -187,7 +212,7 @@ export class Renderer {
     }
 
     // 4) luz: ambiente + poças; albedo × luz (preservando alfa)
-    const amb = ambientFor(p.night);
+    const amb = ambientFor(p.night, p.dawn ?? 0).map((v) => v * (1 - 0.18 * (p.weather?.rain ?? 0))) as [number, number, number];
     lf.globalCompositeOperation = 'source-over';
     lf.fillStyle = `rgb(${amb.map((v) => Math.round(v * 255)).join(',')})`;
     lf.fillRect(0, 0, rw, rh);
@@ -221,7 +246,10 @@ export class Renderer {
 
     // 6) saída: céu em espaço de tela + mundo ampliado
     out.save();
-    drawSky(out, W, H, p.night, p.t, p.cam.x);
+    drawSky(out, W, H, p.night, p.t, p.cam.x, p.dawn ?? 0, p.cam.y);
+    // chuva: céu encoberto (some a lua e as estrelas) antes de desenhar a cidade
+    const overcast = p.weather?.rain ?? 0;
+    if (overcast > 0.01) { out.fillStyle = `rgba(36,40,64,${Math.min(0.88, overcast * 0.88)})`; out.fillRect(0, 0, W, H); }
     const k = Math.max(1, Math.floor(z));
     out.imageSmoothingEnabled = true;
     out.imageSmoothingQuality = 'low';
@@ -252,6 +280,26 @@ export class Renderer {
       ts.ctx.fillStyle = gr; ts.ctx.fillRect(0, 0, tw, th);
       out.imageSmoothingEnabled = true;
       out.drawImage(ts.cv, 0, 0, tw, th, 0, 0, W, H);
+    }
+    // clima: neblina (véu mais denso embaixo) e chuva (riscos em diagonal na escala dos pixels)
+    const fog = p.weather?.fog ?? 0, rain = p.weather?.rain ?? 0;
+    if (fog > 0.01) {
+      const gr = out.createLinearGradient(0, 0, 0, H);
+      gr.addColorStop(0, `rgba(150,160,205,${0.18 * fog})`); gr.addColorStop(0.55, `rgba(150,160,205,${0.32 * fog})`); gr.addColorStop(1, `rgba(170,178,220,${0.6 * fog})`);
+      out.fillStyle = gr; out.fillRect(0, 0, W, H);
+    }
+    if (rain > 0.01) {
+      const n = Math.round(650 * rain), u = 4;
+      out.fillStyle = `rgba(200,220,255,${0.62 * rain})`;
+      for (let k = 0; k < n; k++) {
+        const x0 = hash2(k, 1) * (W + 200), sp = 1400 + hash2(k, 2) * 600;
+        const y = ((hash2(k, 3) * H + p.t * sp) % (H + 60)) - 30;
+        const x = (x0 - p.t * sp * 0.25) % (W + 200);
+        for (let q = 0; q < 6; q++) out.fillRect(Math.round((x - q * 1.2) / u) * u, Math.round((y - q * u * 1.6) / u) * u, u, u);
+      }
+      // respingos no chão
+      out.fillStyle = `rgba(200,220,255,${0.35 * rain})`;
+      for (let k = 0; k < n / 3; k++) { if (hash2(k, Math.floor(p.t * 12), 7) > 0.5) continue; out.fillRect(Math.round(hash2(k, 8) * W / u) * u, Math.round((0.35 + hash2(k, 9) * 0.6) * H / u) * u, u, u); }
     }
     // vinheta
     const vg = p.vignette ?? 0.35;
@@ -304,6 +352,25 @@ export class Renderer {
       c.lineTo(X(i0, j1) - 2, -9999);
       c.closePath();
     };
+  }
+
+  moonGlints(p: FrameParams, rx: number, ry: number, rw: number, rh: number, z: number) {
+    const emi = this.cx.emi;
+    const mx = p.cam.x + (0.8 - 0.5) * (this.W / z);
+    const { water, waterRows } = this.world;
+    const a = Math.min(1, (p.night - 0.6) / 0.3);
+    const y0 = Math.max(0, ry), y1 = Math.min(WORLD_H - 1, ry + rh);
+    for (let py = y0; py <= y1; py++) {
+      for (let k = waterRows[py]; k < waterRows[py + 1]; k += 5) {
+        const px = water[k];
+        const dx = Math.abs(px - mx);
+        if (dx > 7 || px < rx || px >= rx + rw) continue;
+        const hsh = hash2(px, Math.floor(py / 2) + Math.floor(p.t * 5), 77);
+        if (hsh > 0.55 - (7 - dx) * 0.03) continue;
+        emi.fillStyle = `rgba(230,236,255,${(a * (0.9 - dx * 0.1)).toFixed(3)})`;
+        emi.fillRect(px - rx, py - ry, dx < 2 ? 2 : 1, 1);
+      }
+    }
   }
 
   drawWater(t: number, rx: number, ry: number, rw: number, rh: number) {

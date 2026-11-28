@@ -130,7 +130,7 @@ export function lamp(i: number, j: number, style: 'street' | 'plaza' | 'bridge' 
     m.box(li - 0.07, lj - 0.07, H - 3, li + 0.07, lj + 0.07, H, (h, px, py, o) => { o.c = pick(P.metal, lum(h) + 0.2, px, py); if (h.face !== 'T' && row(h) === 0) { o.c = hex('#fff6d0'); o.e = E.lamp; } });
     lz = H - 3;
   }
-  const lights: Light[] = [pool(li, lj, style === 'plaza' ? 1.25 : 1.55, E.lampWarm, 0.85), halo(li, lj, lz, 0.42, E.lamp, 0.85)];
+  const lights: Light[] = [pool(li, lj, style === 'plaza' ? 1.4 : 1.8, style === 'plaza' ? hex('#ffe0a8') : hex('#ffb866'), 1), halo(li, lj, lz, 0.4, style === 'plaza' ? E.lamp : hex('#ffd28a'), 0.8)];
   void lampCache;
   return mkObj('poste', [i - 0.05, j - 0.05, i + 0.05, j + 0.05], m.render({ edge: false }), lights);
 }
@@ -311,4 +311,96 @@ export function festoon(ci: number, cj: number, posts: [number, number][], postZ
   for (const p of pts) { alb.set(p.x, p.y, COLS[p.k]); emi.set(p.x, p.y, COLS[p.k]); alb.set(p.x, p.y + 1, scale(COLS[p.k], 0.6)); emi.set(p.x, p.y + 1, scale(COLS[p.k], 0.5)); }
   const lights: Light[] = [halo(ci, cj, topZ - 6, 1.6, hex('#ffcf8a'), 0.22)];
   return mkObj('varal', [ci + 2.38, cj + 2.38, ci + 2.42, cj + 2.42], toSprite(alb, emi), lights, 'civic');
+}
+
+// --- monumento da fundação: base em degraus, placa "DIA 01" e coluna com a estrela da SegueCity
+export function monument(i: number, j: number): Obj {
+  const m = new Model();
+  const st = (k: number): Shader => (h, px, py, o) => { o.c = pick(P.stone, lum(h) + k + (h.face === 'T' ? 0.08 : 0) + (hash2(px, py, 3) - 0.5) * 0.05, px, py); };
+  m.box(i - 0.62, j - 0.4, 0, i + 0.62, j + 0.4, 2, st(0.05));
+  m.box(i - 0.5, j - 0.3, 2, i + 0.5, j + 0.3, 4, st(0.1));
+  const plaque: Sign = { text: 'DIA', face: 'L', vTop: 12.5, fg: hex('#ffe08a'), bg: null, glow: hex('#ffd34a') };
+  const plaque2: Sign = { text: '01', face: 'L', vTop: 6.5, fg: hex('#ffe08a'), bg: null, glow: hex('#ffd34a') };
+  const pc = Math.round(0.84 * 16);
+  m.box(i - 0.42, j - 0.22, 4, i + 0.42, j + 0.22, 16, (h, px, py, o) => {
+    if (h.face === 'T') { o.c = pick(P.stone, 0.85, px, py); return; }
+    if (signPixel(o, h, px, py, plaque, pc) || signPixel(o, h, px, py, plaque2, pc)) return;
+    const r = row(h), c = col(h);
+    o.c = pick(P.stone, lum(h) + 0.12 + (r === 11 || r === 0 ? -0.15 : 0) + (c === 0 || c === pc - 1 ? 0.08 : 0), px, py);
+  });
+  m.add(new Cyl(i, j, 0.12, 16, 40, (h, px, py, o) => { o.c = pick(P.white, lum(h) + 0.05 + ((Math.round(h.u * 6) & 1) ? 0.04 : -0.03), px, py); }));
+  m.add(new Cyl(i, j, 0.17, 40, 42, st(0.15)));
+  m.add(new Dome(i, j, 46, 0.16, (h, px, py, o) => { o.c = hex('#ffd84a'); o.e = hex('#ffcf3a'); }));
+  const lights: Light[] = [pool(i, j + 0.5, 1.2, hex('#ffd9a0'), 0.9), halo(i, j, 46, 0.6, hex('#ffd34a'), 0.7), halo(i, j + 0.25, 10, 0.7, hex('#ffd34a'), 0.25)];
+  return mkObj('monumento', [i - 0.62, j - 0.4, i + 0.62, j + 0.4], m.render(), lights, 'civic');
+}
+
+// --- coreto da praça (espaço de eventos): base octogonal, colunas, cúpula e luzinhas
+export function coreto(i: number, j: number): Obj {
+  const m = new Model();
+  const R = 0.44;
+  m.add(new Cyl(i, j, R + 0.05, 0, 3, (h, px, py, o) => { o.c = pick(P.white, lum(h) + (h.face === 'T' ? -0.15 : 0.05), px, py); }));
+  for (let k = 0; k < 6; k++) {
+    const a = (k / 6) * Math.PI * 2 + 0.3;
+    m.add(new Cyl(i + Math.cos(a) * R * 0.85, j + Math.sin(a) * R * 0.85, 0.03, 3, 14, solid(P.white, 0.15)));
+  }
+  m.add(new Cyl(i, j, R + 0.06, 14, 15.5, (h, px, py, o) => { o.c = pick(P.white, lum(h) + 0.1, px, py); if (h.face !== 'T' && col(h) % 3 === 0) { o.c = hex('#ffe9a8'); o.e = hex('#ffd98a'); } }));
+  m.add(new Dome(i, j, 15.5, R + 0.04, (h, px, py, o) => { o.c = pick(P.red, lum(h) + 0.1 + ((Math.floor(Math.atan2(h.ny, h.nx) * 4)) & 1 ? 0.05 : -0.05), px, py); }, 15.5));
+  m.add(new Cyl(i, j, 0.025, 22, 26, solid(P.yellow, 0.3)));
+  const lights: Light[] = [pool(i, j, 1.4, hex('#ffd9a0'), 0.8), halo(i, j, 12, 0.9, hex('#ffcf8a'), 0.3)];
+  return mkObj('coreto', [i - R - 0.05, j - R - 0.05, i + R + 0.05, j + R + 0.05], m.render(), lights, 'civic');
+}
+
+// --- relógio público de quatro faces num poste
+export function streetClock(i: number, j: number): Obj {
+  const m = new Model();
+  m.add(new Cyl(i, j, 0.035, 0, 22, solid(P.black, 0.35)));
+  m.box(i - 0.12, j - 0.12, 22, i + 0.12, j + 0.12, 28, (h, px, py, o) => {
+    if (h.face === 'T') { o.c = pick(P.black, 0.6, px, py); return; }
+    const c = col(h), r = row(h);
+    const dx = c - 1.5, dy = r - 3;
+    const d = Math.hypot(dx, dy);
+    if (d < 1.9) { o.c = (dx === -0.5 && dy >= 0) || (dy === 0 && dx > 0) ? hex('#1b1b24') : hex('#fff6dc'); o.e = d < 1.9 && !((dx === -0.5 && dy >= 0) || (dy === 0 && dx > 0)) ? hex('#fff0c0') : 0; return; }
+    o.c = pick(P.black, lum(h) + 0.2, px, py);
+  });
+  m.add(new Dome(i, j, 28, 0.1, solid(P.yellow, 0.25), 28));
+  return mkObj('relogio', [i - 0.12, j - 0.12, i + 0.12, j + 0.12], m.render(), [halo(i, j, 25, 0.45, hex('#fff0c0'), 0.6)], 'civic');
+}
+
+// --- canteiro redondo de flores
+export function flowerBed(i: number, j: number, r = 0.26): Obj {
+  const m = new Model();
+  m.add(new Cyl(i, j, r, 0, 2.5, (h, px, py, o) => {
+    if (h.face !== 'T') { o.c = pick(P.stone, lum(h) + 0.1, px, py); return; }
+    const q = Math.hypot(h.u, h.v);
+    if (q > 0.86) { o.c = pick(P.stone, 0.8, px, py); return; }
+    o.c = hash2(px, py, 9) > 0.5 ? hex(['#f25a7a', '#f7d046', '#ffffff', '#c58cff', '#ff9b4a'][Math.floor(hash2(px, py, 10) * 5)]) : pick(P.foliage, 0.45 + hash2(px, py) * 0.3, px, py);
+  }));
+  return mkObj('canteiro', [i - r, j - r, i + r, j + r], m.render());
+}
+
+// --- lixeira, hidrante e placa de PARE
+export function trashBin(i: number, j: number): Obj {
+  const m = new Model();
+  m.add(new Cyl(i, j, 0.012, 0, 6, solid(P.metal, 0.3)));
+  m.add(new Cyl(i, j, 0.07, 6, 11, (h, px, py, o) => { o.c = h.face === 'T' ? pick(P.black, 0.3, px, py) : pick(P.green, lum(h) + 0.1 + (row(h) === 4 ? 0.15 : 0), px, py); }));
+  return mkObj('lixeira', [i - 0.07, j - 0.07, i + 0.07, j + 0.07], m.render({ edge: false }));
+}
+export function hydrant(i: number, j: number): Obj {
+  const m = new Model();
+  m.add(new Cyl(i, j, 0.06, 0, 6, (h, px, py, o) => { o.c = pick(P.red, lum(h) + 0.15 + (row(h) === 4 ? 0.2 : 0), px, py); }));
+  m.add(new Dome(i, j, 6, 0.06, solid(P.red, 0.2), 6));
+  m.box(i - 0.1, j - 0.02, 3, i + 0.1, j + 0.02, 4.5, solid(P.red, 0.1));
+  return mkObj('hidrante', [i - 0.06, j - 0.06, i + 0.06, j + 0.06], m.render({ edge: false }));
+}
+export function stopSign(i: number, j: number): Obj {
+  const m = new Model();
+  m.add(new Cyl(i, j, 0.015, 0, 14, solid(P.metal, 0.3)));
+  m.box(i - 0.1, j - 0.01, 13, i + 0.1, j + 0.02, 19, (h, px, py, o) => {
+    const c = col(h), r = row(h);
+    const corner = (c === 0 || c === 2) && (r === 0 || r === 5);
+    if (corner && h.face !== 'T') { o.c = 0; return; }
+    o.c = r === 2 || r === 3 ? hex('#ffffff') : hex('#d8303a');
+  });
+  return mkObj('pare', [i - 0.1, j - 0.02, i + 0.1, j + 0.02], m.render({ edge: false }));
 }

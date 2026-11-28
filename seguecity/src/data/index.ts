@@ -14,7 +14,8 @@ export interface Building {
   frente?: 'i+' | 'j+' | 'i-' | 'j-'; bairro?: string; moradores?: number; letreiro?: boolean;
 }
 export interface Job { id: string; nome: string; predio: string; vagas: number; ocupadas: number; roupa: { camisa: string; calca: string; extra?: string; eleicao?: boolean } }
-export interface Resident { id: string; nome: string; profissao: string; bairro: string; casa?: string; entrada: string; ficticio?: boolean; episodio?: number }
+import type { Appearance } from '../engine/characters';
+export interface Resident { id: string; nome: string; profissao: string; bairro: string; casa?: string; entrada: string; ficticio?: boolean; episodio?: number; aparencia?: Appearance }
 export interface CityState {
   nome: string; slogan: string; dia: number; moradores: number;
   empregos: { total: number; ocupados: number }; casas: { total: number; ocupadas: number };

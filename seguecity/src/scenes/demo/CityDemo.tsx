@@ -1,6 +1,9 @@
-// FASE 1 — Demo da cidade (15 s): a câmera desce do céu (ilhotas e lua) até a ilha enquanto o entardecer
-// vira noite e as luzes acendem; mergulha na praça (o cursor do jogo seleciona a fonte), desliza pelo rio,
-// seleciona a prefeitura e termina no plano geral de maquete.
+// FASE 1 (V2) — Demo cinematográfica da cidade (15 s), coerente com o estado real (0 moradores):
+// 1. gancho: a ilha inteira à noite, ruas vazias, "MORADORES 0"            (nível 1 — ilha)
+// 2. travelling pela Vila Nova: casas apagadas com marcadores de VAGA       (nível 2 — bairro)
+// 3. MODO DEMONSTRAÇÃO (rotulado): praça viva, trânsito parando no sinal    (nível 2 — praça)
+// 4. close: o cursor seleciona a moradora de exemplo e abre a ficha         (nível 3 — personagem)
+// 5. recuo até a ilha inteira enquanto amanhece; marca e chamada            (nível 1 — ilha)
 import React from 'react';
 import { AbsoluteFill, Audio, interpolate, useCurrentFrame, useVideoConfig } from 'remotion';
 import { CityCanvas } from '../../components/CityCanvas';
@@ -9,132 +12,163 @@ import { Logo } from '../../components/hud/Logo';
 import { WorldLabel } from '../../components/hud/WorldLabel';
 import { Minimap } from '../../components/hud/Minimap';
 import { Cursor, cursorAt } from '../../components/hud/Cursor';
+import { CharacterCard } from '../../components/hud/CharacterCard';
+import { BigCounter, SimTag } from '../../components/hud/Panels';
 import { FxLayer } from '../../components/fx/FxLayer';
-import { selection } from '../../components/fx/fx';
+import { marker, selection, tileWipe, sparkles } from '../../components/fx/fx';
 import { Sfx } from '../../components/Sfx';
 import { C, F } from '../../components/theme';
 import { useFonts } from '../../hooks/useFonts';
-import { cameraAt, type Key } from '../../utils/camera';
+import { cameraCuts, cutTimes, type Key } from '../../utils/camera';
 import { clamp, smooth, win, easeOut } from '../../utils/easing';
 import { asset } from '../../utils/audio';
 import { stage, autoTilt } from '../../series/stage';
 import { personObj, rectWalk } from '../../engine/dynamics';
-import { hex } from '../../engine/color';
-import { sx, sy } from '../../engine/iso';
+import { lookOf } from '../../engine/sprites/people';
+import { hash2 } from '../../engine/rng';
 import { city, jobs, residents } from '../../data';
+import { EXEMPLOS, jobName } from '../../data/exemplos';
+import type { Obj } from '../../engine/types';
 
 export const DEMO_SECONDS = 15;
-
-const KEYS: Key[] = [
-  { t: 0.0, i: 14.6, j: 13.4, z: 470, zoom: 1.12 },
-  { t: 2.9, i: 15.0, j: 14.6, z: 14, zoom: 1.32 },
-  { t: 5.0, i: 12.7, j: 13.7, z: 2, zoom: 4.2 },
-  { t: 6.4, i: 13.4, j: 13.0, z: 4, zoom: 4.0 },
-  { t: 7.4, i: 21.2, j: 10.9, z: -4, zoom: 3.5 },
-  { t: 9.0, i: 22.9, j: 13.6, z: -4, zoom: 3.4 },
-  { t: 10.2, i: 13.4, j: 8.4, z: 26, zoom: 3.2 },
-  { t: 12.1, i: 13.9, j: 8.6, z: 26, zoom: 3.0 },
-  { t: 13.7, i: 15.4, j: 14.6, z: 10, zoom: 1.36 },
-  { t: 15.0, i: 15.6, j: 15.2, z: 10, zoom: 1.24 },
+const CUT = { rua: 2.75, demo: 4.95, close: 8.65, fim: 11.7 };
+const SHOTS: Key[][] = [
+  [{ t: 0, i: 16.2, j: 15.2, z: -30, zoom: 1.55 }, { t: CUT.rua, i: 13.6, j: 18.8, z: -6, zoom: 1.95 }],
+  [{ t: CUT.rua, i: 6.2, j: 27.3, z: 8, zoom: 3.6 }, { t: CUT.demo, i: 11.8, j: 27.3, z: 8, zoom: 3.75 }],
+  [{ t: CUT.demo, i: 11.0, j: 15.6, z: 6, zoom: 4.7 }, { t: 6.8, i: 12.0, j: 14.6, z: 6, zoom: 4.3 }, { t: CUT.close, i: 13.2, j: 13.6, z: 6, zoom: 4.0 }],
+  [{ t: CUT.close, i: 6.7, j: 27.7, z: 16, zoom: 6.2 }, { t: CUT.fim, i: 7.9, j: 27.8, z: 16, zoom: 6.8 }],
+  [{ t: CUT.fim, i: 9.0, j: 25.0, z: 10, zoom: 2.8 }, { t: 13.4, i: 15.0, j: 16.4, z: -14, zoom: 1.65 }, { t: 15, i: 16.0, j: 15.6, z: -24, zoom: 1.5 }],
 ];
-const vagasEm = (predio: string) => jobs.filter((j) => j.predio === predio).reduce((s, j) => s + j.vagas, 0);
+const CUTS = cutTimes(SHOTS);
+const ANA = EXEMPLOS[0];
 
 export const CityDemo: React.FC = () => {
   useFonts();
   const f = useCurrentFrame();
   const { fps } = useVideoConfig();
   const t = f / fps;
-  const night = interpolate(t, [0, 3.2], [0.56, 1], { extrapolateLeft: 'clamp', extrapolateRight: 'clamp' });
+  const demo = t >= CUT.demo && t < CUT.fim; // modo demonstração (cidade com moradores de exemplo)
+  const dawn = smooth((t - 12.2) / 2.4);
+  const night = 1 - 0.15 * dawn;
 
-  // moradores cadastrados (data/residents.json) passeiam pela praça com plaquinha de nome
-  const extra = residents.slice(0, 6).map((r, k) => {
-    const job = jobs.find((j) => j.id === r.profissao);
-    const look = { skin: hex(['#f2c9a0', '#d9a273', '#b0774c', '#8a5634'][k % 4]), hair: hex('#2a1d18'), shirt: hex(job?.roupa.camisa ?? '#e25a4a'), pants: hex(job?.roupa.calca ?? '#2a3a6a'), shoes: hex('#1a1a20'), hat: null, long: k % 2 === 1 };
-    const w = rectWalk(10.95, 11.95, 14.05, 15.05, k * 2.07 + t * 0.4, k % 2 === 1);
-    return { r, job, w, obj: personObj(`res-${r.id}`, look, `res-${r.id}`, w.i, w.j, w.dir, Math.floor(t * 4 + k) % 4, 1, 0.6) };
+  // moradores de exemplo: na praça (plano 3) e a Ana em close (plano 4)
+  const extra: Obj[] = [];
+  const tags: { i: number; j: number; nome: string; prof: string }[] = [];
+  if (demo && t < CUT.close) EXEMPLOS.forEach((e, k) => {
+    const w = rectWalk(11.05, 12.05, 13.95, 14.95, k * 2.6 + (t - CUT.demo) * 0.42, k % 2 === 1);
+    extra.push(personObj(`ex-${e.id}`, lookOf(e.aparencia), e.id, w.i, w.j, w.dir, Math.floor(t * 4 + k) % 4, 1, 0.5));
+    tags.push({ i: w.i, j: w.j, nome: e.nome, prof: e.titulo });
+  });
+  const anaPos = { i: 6.85 + (t - CUT.close) * 0.42, j: 27.83 };
+  const anaStop = t > 9.4;
+  if (t >= CUT.close && t < CUT.fim) {
+    const ii = anaStop ? 6.85 + (9.4 - CUT.close) * 0.42 + Math.max(0, t - 10.6) * 0.42 : anaPos.i;
+    anaPos.i = ii;
+    const waving = t > 9.5 && t < 10.6;
+    extra.push(personObj('ana', lookOf(ANA.aparencia), ANA.id, anaPos.i, anaPos.j, 0, waving ? Math.floor(t * 6) % 2 : Math.floor(t * 4) % 4, 2, 0.95, waving ? 'wave' : 'walk'));
+  }
+  // moradores cadastrados de verdade (data/residents.json), se houver, passeiam na praça com plaquinha
+  residents.slice(0, 4).forEach((r, k) => {
+    if (!r.aparencia || !demo) return;
+    const w = rectWalk(10.95, 11.95, 14.05, 15.05, k * 3.1 + t * 0.4, k % 2 === 0);
+    extra.push(personObj(`res-${r.id}`, lookOf(r.aparencia), `res-${r.id}`, w.i, w.j, w.dir, Math.floor(t * 4 + k) % 4, 1, 0.5));
+    tags.push({ i: w.i, j: w.j, nome: r.nome, prof: jobName(r.profissao) });
   });
 
-  const zoomNow = cameraAt(KEYS, t).zoom;
-  const S = stage({ t, shots: KEYS, night, people: 1, traffic: 1, extra: extra.map((e) => e.obj), tilt: autoTilt(zoomNow) * 0.9, timeOffset: 20 });
-  const { cam, anchor, corners, scr } = S;
-  const fountain = scr(12.5, 13.5, 24);
-  const pref = anchor('prefeitura'), hosp = anchor('hospital');
+  const zoomNow = cameraCuts(SHOTS, t).zoom;
+  const S = stage({
+    t, shots: SHOTS, frameY: t >= CUT.close && t < CUT.fim ? 0.62 : 0.46, night, dawn,
+    people: demo ? 1 : 0, traffic: demo ? 1 : 0, homeFrac: demo ? 1.05 : -0.05, extra, tilt: autoTilt(zoomNow) * 0.5, timeOffset: 40,
+  });
+  const { cam, scr, corners, world } = S;
+  const homes = world.objects.filter((o) => o.group === 'home' && !o.planned);
 
-  // cursor do jogador: entra pela direita, clica na fonte, depois na prefeitura
-  const fClick = scr(12.5, 13.5, 6), pClick = scr(12.5, 8.4, 18);
-  const cur = cursorAt([
-    { t: 4.4, x: 1000, y: 1150 },
-    { t: 5.15, x: fClick.x, y: fClick.y, click: true },
-    { t: 6.6, x: fClick.x + 40, y: fClick.y + 30 },
-    { t: 9.4, x: 880, y: 1100 },
-    { t: 10.05, x: pClick.x, y: pClick.y, click: true },
-    { t: 12.4, x: pClick.x + 20, y: pClick.y + 40 },
-  ], t);
-  const curA = win(t, 4.4, 6.9, 0.3, 0.4) + win(t, 9.3, 12.6, 0.3, 0.4);
+  // cursor: entra pela direita e seleciona a Ana; a ficha abre no clique
+  const anaScr = scr(anaPos.i, anaPos.j, 20);
+  const cur = cursorAt([{ t: 8.75, x: 1000, y: 1250 }, { t: 9.25, x: anaScr.x + 10, y: anaScr.y + 30, click: true }, { t: 11.6, x: anaScr.x + 60, y: anaScr.y + 120 }], t);
 
   const music = asset('audio/music/demo.wav');
   const amb = asset('audio/sfx/night-ambience.wav');
   const water = asset('audio/sfx/water.wav');
-  const title = win(t, 0.25, 3.0, 0.5, 0.5);
-  const endA = smooth((t - 13.1) / 0.6);
-  const fountainSel = win(t, 5.15, 6.8, 0.15, 0.3);
-  const prefSel = win(t, 10.05, 12.5, 0.15, 0.3);
-  const fountainFp = [[11.4, 12.4], [13.6, 12.4], [13.6, 14.6], [11.4, 14.6]].map(([i, j]) => scr(i, j, 0));
+  const vagas = city.empregos.total - city.empregos.ocupados;
+  const endA = smooth((t - 13.0) / 0.6);
 
   return (
     <AbsoluteFill style={{ background: '#05060f' }}>
       <CityCanvas params={S.params} />
       <FxLayer draw={(c) => {
         const q = (p: { x: number; y: number }) => ({ x: p.x / 4, y: p.y / 4 });
-        selection(c, fountainFp.map(q), t, fountainSel, '#5af2ff');
-        selection(c, corners('prefeitura').map(q), t, prefSel);
+        // casas vazias: marcador de VAGA (plano 2)
+        if (t > CUT.rua && t < CUT.demo) homes.forEach((o, k) => {
+          const a = smooth((t - (CUT.rua + 0.15 + hash2(k, 4) * 0.8)) / 0.3);
+          const p = q(S.P(o.anchor!.x, o.anchor!.y));
+          marker(c, p.x, p.y - 2, t, a, 'person', '#5af2ff', k);
+        });
+        // seleção da Ana
+        if (t > 9.25 && t < CUT.fim) {
+          const p = scr(anaPos.i, anaPos.j, 0);
+          selection(c, [scr(anaPos.i - 0.22, anaPos.j - 0.22), scr(anaPos.i + 0.22, anaPos.j - 0.22), scr(anaPos.i + 0.22, anaPos.j + 0.22), scr(anaPos.i - 0.22, anaPos.j + 0.22)].map(q), t, win(t, 9.25, CUT.fim, 0.1, 0.1), C.yellow);
+          void p;
+        }
+        if (t > CUT.demo - 0.05 && t < CUT.demo + 1.3) { const p = q(scr(12.5, 13.5, 0)); sparkles(c, p.x, p.y, t, CUT.demo, 1.2, '#ffd84a'); }
       }} />
-      {/* rótulos de jogo */}
-      <WorldLabel x={fountain.x} y={fountain.y} title="PRAÇA CENTRAL" sub="FONTE · BANCOS · PIPOCA" icon="star" a={fountainSel} stem={120} color={C.cyan} />
-      <WorldLabel x={pref.x} y={pref.y} title="PREFEITURA" sub="CORAÇÃO DA CIDADE" icon="crown" a={prefSel} stem={40} />
-      <WorldLabel x={hosp.x} y={hosp.y} title="HOSPITAL" sub={`${vagasEm('hospital')} VAGAS`} icon="cross" a={win(t, 10.7, 12.5, 0.3, 0.3)} stem={30} color={C.red} align="right" />
-      {cam.zoom > 2.6 && extra.map((e, k) => {
-        const g = scr(e.w.i, e.w.j, 18);
+      {/* plaquinhas dos moradores de exemplo (sempre com EXEMPLO) */}
+      {cam.zoom > 3 && tags.map((g, k) => {
+        const p = scr(g.i, g.j, 17);
         return (
-          <div key={k} style={{ position: 'absolute', left: g.x, top: g.y, transform: 'translate(-50%, -100%)', fontFamily: F.hud, fontSize: 18, color: C.white, background: 'rgba(12,14,40,0.85)', padding: '3px 8px', boxShadow: `inset 0 0 0 3px ${e.r.ficticio ? C.yellow : C.cyan}`, whiteSpace: 'nowrap' }}>
-            {e.r.nome.toUpperCase()} · {(e.job?.nome ?? e.r.profissao).toUpperCase()}
+          <div key={k} style={{ position: 'absolute', left: p.x, top: p.y, transform: 'translate(-50%, -100%)', fontFamily: F.hud, fontSize: 17, color: C.white, background: 'rgba(12,14,40,0.88)', padding: '3px 8px', boxShadow: `inset 0 0 0 3px ${C.yellow}`, whiteSpace: 'nowrap' }}>
+            <span style={{ color: C.yellow }}>EXEMPLO</span> · {g.nome.toUpperCase()} · {g.prof.toUpperCase()}
           </div>
         );
       })}
-      {/* título de abertura */}
-      <AbsoluteFill style={{ alignItems: 'center', justifyContent: 'flex-start', paddingTop: 470, opacity: title, transform: `translateY(${(1 - easeOut(clamp(t / 0.8))) * 40}px)` }}>
-        <Logo size={118} />
-        <div style={{ marginTop: 26, fontFamily: F.hud, fontSize: 30, color: C.white, letterSpacing: 3, textShadow: '0 4px 0 #000' }}>VOCÊ SEGUE. VOCÊ MORA. VOCÊ DECIDE.</div>
-      </AbsoluteFill>
+      {/* marcos da praça */}
+      <WorldLabel {...scr(12.5, 16.15, 48)} title="MONUMENTO DA FUNDAÇÃO" icon="star" a={win(t, 5.4, 7.4, 0.3, 0.3)} stem={30} />
+      <WorldLabel {...scr(12.5, 11.55, 26)} title="CORETO" sub="EVENTOS DOS MORADORES" icon="heart" a={win(t, 7.0, 8.5, 0.3, 0.25)} stem={26} color={C.cyan} />
+
+      {/* transições de jogo entre os planos */}
+      <FxLayer draw={(c) => CUTS.forEach((tc) => tileWipe(c, t, tc))} />
+
       {/* HUD */}
-      <Hud moradores={city.moradores} empregos={city.empregos.total - city.empregos.ocupados} dia={city.dia} hora={clock(t)} show={smooth((t - 2.6) / 0.6)} pulseMoradores={win(t, 13.4, 14.4, 0.2, 0.4)} />
-      <Minimap cam={cam} t={t} a={smooth((t - 3.0) / 0.5) * (1 - smooth((t - 13.0) / 0.5))} ping={t < 7 ? { i: 12.5, j: 13.5 } : t > 9.6 && t < 12.6 ? { i: 12.5, j: 7 } : null} />
-      {cur && <Cursor x={cur.x} y={cur.y} press={cur.press} clickAge={cur.clickAge} a={curA} />}
-      {/* fecho */}
-      <AbsoluteFill style={{ alignItems: 'center', justifyContent: 'flex-end', paddingBottom: 430, opacity: endA }}>
-        <div style={{ fontFamily: F.pixel, fontWeight: 400, fontSize: 92, color: C.white, textAlign: 'center', lineHeight: 0.95, textShadow: `0 6px 0 ${C.purpleDark}, 4px 8px 0 #000` }}>
+      <Hud moradores={city.moradores} empregos={vagas} dia={city.dia} hora={clock(t)} show={1} warnMoradores={!demo} pulseMoradores={win(t, 0, 2.4, 0.01, 0.3) * (0.5 + 0.5 * Math.sin(t * 9))} />
+      <Minimap cam={cam} t={t} a={win(t, CUT.rua, CUT.close, 0.3, 0.2)} ping={t < CUT.demo ? { i: 11, j: 26 } : { i: 12.5, j: 13.5 }} />
+      {/* gancho: a premissa em 1 quadro */}
+      <BigCounter a={clamp(0.7 + t * 2) * (1 - smooth((t - 2.45) / 0.3))} value={0} label="MORADORES" sub="A CIDADE ESTÁ PRONTA · NINGUÉM MORA NELA" blink t={t} y={400} />
+      <SimTag a={win(t, CUT.demo + 0.05, CUT.fim - 0.05, 0.25, 0.2)} text="DEMONSTRAÇÃO · MORADORES DE EXEMPLO" />
+      <CharacterCard a={smooth((t - 9.3) / 0.35)} out={smooth((t - 11.45) / 0.25)} t={t} app={ANA.aparencia} id={ANA.id} nome={ANA.nome} profissao={ANA.titulo} linhas={['BAIRRO: VILA NOVA · CASA 14', 'TRABALHA NO HOSPITAL', 'CHEGOU NO DIA 01']} exemplo y={380} px={5} />
+      {cur && <Cursor x={cur.x} y={cur.y} press={cur.press} clickAge={cur.clickAge} a={win(t, 8.75, 11.6, 0.15, 0.2)} />}
+      {/* fecho no amanhecer */}
+      <AbsoluteFill style={{ alignItems: 'center', justifyContent: 'flex-start', paddingTop: 420, opacity: endA, transform: `translateY(${(1 - easeOut(endA)) * 30}px)` }}>
+        <Logo size={112} />
+        <div style={{ marginTop: 24, fontFamily: F.hud, fontWeight: 700, fontSize: 29, color: C.white, letterSpacing: 2, textShadow: '0 4px 0 #000', textAlign: 'center', lineHeight: 1.5 }}>
+          VOCÊ SEGUE. VOCÊ MORA. <span style={{ color: C.yellow }}>VOCÊ DECIDE.</span>
+        </div>
+      </AbsoluteFill>
+      <AbsoluteFill style={{ alignItems: 'center', justifyContent: 'flex-end', paddingBottom: 470, opacity: endA }}>
+        <div style={{ fontFamily: F.pixel, fontSize: 92, color: C.white, textAlign: 'center', lineHeight: 0.95, WebkitTextStroke: `9px ${C.ink}`, paintOrder: 'stroke fill', textShadow: `0 7px 0 ${C.ink}` }}>
           A CIDADE ESTÁ PRONTA.<br /><span style={{ color: C.yellow }}>FALTA VOCÊ.</span>
         </div>
       </AbsoluteFill>
+
       {music && <Audio src={music} volume={0.8} />}
-      {amb && <Audio src={amb} loop volume={(fr) => interpolate(fr, [0, 20, 420, 450], [0, 0.55, 0.55, 0], { extrapolateRight: 'clamp' })} />}
-      {water && <Audio src={water} loop volume={(fr) => 0.7 * Math.max(win(fr / fps, 4.2, 7.0, 0.5, 0.5), win(fr / fps, 6.8, 9.6, 0.5, 0.5))} />}
-      <Sfx at={0.3} name="sparkle" gain={1.4} />
-      <Sfx at={2.9} name="ui-move" gain={1.4} />
-      <Sfx at={4.4} name="ui-blip" gain={1.2} />
-      <Sfx at={5.15} name="popup" gain={1.4} />
-      <Sfx at={6.7} name="ui-move" gain={1.2} />
-      <Sfx at={9.4} name="ui-blip" gain={1.2} />
-      <Sfx at={10.05} name="popup" gain={1.4} />
-      <Sfx at={10.7} name="ui-blip" gain={1.2} />
-      <Sfx at={13.1} name="notify" gain={1.3} />
-      <Sfx at={13.4} name="tick" gain={1.2} />
+      {amb && <Audio src={amb} loop volume={(fr) => interpolate(fr / fps, [0, 0.5, CUT.demo, CUT.demo + 0.5, 14, 15], [0.7, 0.9, 0.9, 0.45, 0.45, 0], { extrapolateRight: 'clamp' })} />}
+      {water && <Audio src={water} loop volume={(fr) => 0.7 * win(fr / fps, CUT.demo, CUT.fim, 0.4, 0.4)} />}
+      <Sfx at={0.05} name="empty" gain={1.2} />
+      <Sfx at={0.15} name="tick" gain={1.2} />
+      {CUTS.map((tc) => <Sfx key={tc} at={tc - 0.18} name="ui-move" gain={1.1} />)}
+      <Sfx at={CUT.rua + 0.2} name="sparkle" gain={1.1} />
+      <Sfx at={CUT.demo + 0.05} name="notify" gain={1.3} />
+      <Sfx at={5.4} name="popup" gain={1.2} />
+      <Sfx at={7.0} name="popup" gain={1.2} />
+      <Sfx at={9.25} name="ui-blip" gain={1.4} />
+      <Sfx at={9.3} name="unlock" gain={1.2} />
+      <Sfx at={12.3} name="sparkle" gain={1.2} />
+      <Sfx at={13.0} name="notify" gain={1.3} />
     </AbsoluteFill>
   );
 };
 
 function clock(t: number) {
-  const m = 21 * 60 + 38 + Math.floor(t / 3);
+  const m = 5 * 60 + 12 + Math.floor(t / 2);
   return `${String(Math.floor(m / 60)).padStart(2, '0')}:${String(m % 60).padStart(2, '0')}`;
 }
-void sx; void sy;
+void jobs;

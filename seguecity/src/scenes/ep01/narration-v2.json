@@ -1,0 +1,23 @@
+{
+  "fonte": "public/audio/ep01/narracao-original.mp3 (62,04 s, mono 44,1 kHz, -20,2 LUFS, pico -1,0 dBFS)",
+  "medicao": "silencedetect -35 dB / 0,3 s: 16 falas separadas por 15 pausas, uma por frase do roteiro",
+  "frases": [
+    { "id": "f01", "texto": "Eu construí uma cidade inteira do zero.", "de": 0.0, "ate": 2.66 },
+    { "id": "f02", "texto": "Mas existe um pequeno problema…", "de": 3.15, "ate": 5.49 },
+    { "id": "f03", "texto": "Ninguém mora nela.", "de": 5.99, "ate": 7.15 },
+    { "id": "f04", "texto": "Tem casas, escola, hospital, comércio e até uma prefeitura.", "de": 7.65, "ate": 12.31 },
+    { "id": "f05", "texto": "Está tudo pronto, esperando pelos primeiros habitantes.", "de": 12.72, "ate": 16.04 },
+    { "id": "f06", "texto": "E é aqui que você entra.", "de": 16.45, "ate": 17.87 },
+    { "id": "f07", "texto": "A partir de hoje, cada novo seguidor poderá se tornar um cidadão da SegueCity.", "de": 18.31, "ate": 23.15 },
+    { "id": "f08", "texto": "Você poderá escolher seu nome, sua profissão e acompanhar seu personagem vivendo dentro dessa cidade.", "de": 23.57, "ate": 29.59 },
+    { "id": "f09", "texto": "Quer ser médico, policial, empresário, mecânico ou professor?", "de": 29.98, "ate": 34.1 },
+    { "id": "f10", "texto": "Nossa cidade precisa de pessoas de todas as profissões.", "de": 34.57, "ate": 37.76 },
+    { "id": "f11", "texto": "Conforme nossa população crescer, novos bairros serão construídos, empresas serão abertas e acontecimentos poderão mudar o destino da cidade.", "de": 38.16, "ate": 46.62 },
+    { "id": "f12", "texto": "Quando chegarmos aos cem seguidores, vamos liberar nossa primeira eleição.", "de": 47.04, "ate": 51.3 },
+    { "id": "f13", "texto": "E vocês poderão escolher quem vai governar a SegueCity.", "de": 51.65, "ate": 54.72 },
+    { "id": "f14", "texto": "Hoje começa nossa história.", "de": 55.18, "ate": 56.85 },
+    { "id": "f15", "texto": "Comente seu nome e sua profissão.", "de": 57.2, "ate": 59.01 },
+    { "id": "f16", "texto": "Quem será o primeiro morador da SegueCity?", "de": 59.37, "ate": 61.82 }
+  ],
+  "plano": "Episódio de 75 s exatos: cada fala é posicionada na linha do tempo com respiros extras nas viradas (depois de 'Ninguém mora nela', antes de 'Hoje começa nossa história' etc.); a voz termina por volta de 67–68 s e os últimos segundos ficam para o amanhecer e a cartela final. A montagem final será feita depois da aprovação do upgrade visual."
+}

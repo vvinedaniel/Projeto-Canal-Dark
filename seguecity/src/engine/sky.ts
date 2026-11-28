@@ -7,19 +7,22 @@ const SW = 270, SH = 480; // resolução do céu (x4 = 1080x1920)
 const NIGHT = ['#050817', '#0b1130', '#151d4a', '#2a2462', '#4a2c6c'].map((h) => hex(h));
 const DUSK = ['#16224f', '#33356e', '#6b4a86', '#c0667a', '#f0a15e'].map((h) => hex(h));
 const DAY = ['#2e62c2', '#3f7bd6', '#5d98e0', '#87b9ea', '#bfe0f2'].map((h) => hex(h));
+const DAWN = ['#26305e', '#4a4c8c', '#9a6496', '#ee9478', '#ffd59a'].map((h) => hex(h));
 
-function stops(night: number): U32[] {
-  // night: 0 = dia, 0.5 = entardecer, 1 = noite
-  if (night >= 0.5) { const t = (night - 0.5) * 2; return NIGHT.map((c, k) => mix(DUSK[k], c, t)); }
-  const t = night * 2; return DAY.map((c, k) => mix(c, DUSK[k], t));
+function stops(night: number, dawn = 0): U32[] {
+  // night: 0 = dia, 0.5 = entardecer/pôr do sol, 1 = noite; dawn: 0..1 mistura para o amanhecer
+  let base: U32[];
+  if (night >= 0.5) { const t = (night - 0.5) * 2; base = NIGHT.map((c, k) => mix(DUSK[k], c, t)); }
+  else { const t = night * 2; base = DAY.map((c, k) => mix(c, DUSK[k], t)); }
+  return dawn > 0 ? base.map((c, k) => mix(c, DAWN[k], dawn)) : base;
 }
 
 const skyCache = new Map<number, OffscreenCanvas>();
-function skyBase(night: number): OffscreenCanvas {
-  const key = Math.round(night * 40);
+function skyBase(night: number, dawn = 0): OffscreenCanvas {
+  const key = Math.round(night * 40) * 100 + Math.round(dawn * 40);
   const hit = skyCache.get(key);
   if (hit) return hit;
-  const st = stops(key / 40);
+  const st = stops(Math.round(night * 40) / 40, Math.round(dawn * 40) / 40);
   const cv = new OffscreenCanvas(SW, SH);
   const ctx = cv.getContext('2d')!;
   const img = ctx.createImageData(SW, SH);
@@ -94,11 +97,20 @@ function cloudSprites() {
   return clouds;
 }
 
-export function drawSky(ctx: CanvasRenderingContext2D | OffscreenCanvasRenderingContext2D, W: number, H: number, night: number, t: number, panX = 0) {
+export function drawSky(ctx: CanvasRenderingContext2D | OffscreenCanvasRenderingContext2D, W: number, H: number, night: number, t: number, panX = 0, dawn = 0, panY = 0) {
   ctx.imageSmoothingEnabled = false;
-  ctx.drawImage(skyBase(night), 0, 0, W, H);
+  ctx.drawImage(skyBase(night, dawn), 0, 0, W, H);
   const px = W / SW;
-  const starA = Math.max(0, (night - 0.55) / 0.45);
+  // sol nascendo no horizonte (amanhecer)
+  if (dawn > 0.05) {
+    const sxp = W * 0.24, syp = H * (0.6 - dawn * 0.12) + panY * 0.0;
+    const g = ctx.createRadialGradient(sxp, syp, 0, sxp, syp, px * 110);
+    g.addColorStop(0, `rgba(255,236,190,${0.75 * dawn})`); g.addColorStop(0.25, `rgba(255,190,130,${0.35 * dawn})`); g.addColorStop(1, 'rgba(255,170,120,0)');
+    ctx.fillStyle = g; ctx.fillRect(0, 0, W, H);
+    ctx.fillStyle = `rgba(255,244,214,${dawn})`;
+    for (let y = -6; y <= 6; y++) { const w = Math.round(Math.sqrt(Math.max(0, 36 - y * y))); ctx.fillRect(Math.round(sxp / px - w) * px, Math.round(syp / px + y) * px, w * 2 * px, px); }
+  }
+  const starA = Math.max(0, (night - 0.55) / 0.45) * (1 - dawn);
   if (starA > 0) {
     for (let k = 0; k < STARS.length; k++) {
       const s = STARS[k];
@@ -136,11 +148,16 @@ export function drawSky(ctx: CanvasRenderingContext2D | OffscreenCanvasRendering
   ctx.globalAlpha = 1;
 }
 
-export function ambientFor(night: number): [number, number, number] {
+export function ambientFor(night: number, dawn = 0): [number, number, number] {
+  const a = ambientBase(night);
+  const d: [number, number, number] = [0.8, 0.66, 0.76];
+  return dawn > 0 ? (a.map((v, k) => v + (d[k] - v) * dawn) as [number, number, number]) : a;
+}
+function ambientBase(night: number): [number, number, number] {
   // multiplicador de luz ambiente (0..1) por canal
   const day: [number, number, number] = [1, 1, 1];
   const dusk: [number, number, number] = [0.86, 0.66, 0.72];
-  const nightC: [number, number, number] = [0.36, 0.4, 0.66];
+  const nightC: [number, number, number] = [0.29, 0.33, 0.57];
   const lerp = (a: number[], b: number[], t: number) => a.map((v, k) => v + (b[k] - v) * t) as [number, number, number];
   return night < 0.5 ? lerp(day, dusk, night * 2) : lerp(dusk, nightC, (night - 0.5) * 2);
 }

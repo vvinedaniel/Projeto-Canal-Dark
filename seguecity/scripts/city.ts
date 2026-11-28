@@ -8,6 +8,7 @@
 import { readFileSync, writeFileSync } from 'node:fs';
 import path from 'node:path';
 import { ROOT } from './lib/env';
+import { appearanceFor, seedOf } from '../src/engine/characters';
 
 const D = (f: string) => path.join(ROOT, 'data', f);
 const load = (f: string) => JSON.parse(readFileSync(D(f), 'utf8'));
@@ -42,7 +43,10 @@ function addResident(nome: string, profissao: string, bairro?: string, teste = f
   const casas = buildings.filter((b) => b.tipo === 'casa' && b.status === 'pronto' && (!bairro || b.bairro === bairro));
   const casa = casas.find((c) => !residents.some((r) => r.casa === c.id)) ?? casas[0];
   const n = residents.length + 1;
-  const r = { id: `m${String(n).padStart(4, '0')}`, nome, profissao: job.id, bairro: casa?.bairro ?? bairro ?? 'Vila Nova', casa: casa?.id, entrada: today(), ...(teste ? { ficticio: true } : {}) };
+  const id = `m${String(n).padStart(4, '0')}`;
+  // aparência persistente: gerada uma vez a partir do id + nome e gravada no cadastro
+  const aparencia = appearanceFor(seedOf(`${id}:${nome}`), job.roupa);
+  const r = { id, nome, profissao: job.id, bairro: casa?.bairro ?? bairro ?? 'Vila Nova', casa: casa?.id, entrada: today(), ...(teste ? { ficticio: true } : {}), aparencia };
   residents.push(r);
   return r;
 }

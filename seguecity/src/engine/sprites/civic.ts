@@ -8,6 +8,7 @@ import { col, lum, row, solid, tileRoof, wallShader, winAt, signPixel, type Grid
 import { INSET } from './buildings';
 import type { Building } from '../../data';
 import type { Obj, Light } from '../types';
+import type { TextMask } from '../font';
 
 const pool = (i: number, j: number, r: number, color: U32, a = 1): Light => ({ x: sx(i, j), y: sy(i, j), r, color, a, kind: 'pool' });
 const halo = (i: number, j: number, z: number, r: number, color: U32, a = 1): Light => ({ x: sx(i, j), y: sy(i, j, z), r, color, a, kind: 'halo' });
@@ -35,7 +36,7 @@ export function prefeitura(b: Building): Obj {
   const colsL = Math.round((i1 - i0) * 16), colsR = Math.round((j1 - j0) * 16);
   const grid: Grid = { z0: 7, floorH: 16, floors: 2, ww: 4, wh: 10, cell: 9, sill: 3, margin: 5 };
   const ws = wallShader({
-    wall: P.cream, trim: P.white, glass: P.glass, frame: P.white, grid, seed, lit: 0.8, colsL, colsR, baseH: 6,
+    wall: P.cream, trim: P.white, glass: P.glass, frame: P.white, grid, seed, lit: 0.8, colsL, colsR, baseH: 6, texture: 'reboco', roof: { w: i1 - i0, d: j1 - j0, kind: 'laje' },
     extra: (o, h, px, py, c, r) => {
       const cols = h.face === 'L' ? colsL : colsR;
       if (r >= H - 4) { o.c = pick(P.white, lum(h) + (r === H - 4 ? -0.25 : 0.12), px, py); return true; } // cornija
@@ -58,13 +59,14 @@ export function prefeitura(b: Building): Obj {
   m.box(pi0 - 0.15, pj0, 0, pi1 + 0.15, pj1 + 0.12, 2, solid(P.stone, 0.15));
   m.box(pi0 - 0.3, pj1 + 0.12, 0, pi1 + 0.3, pj1 + 0.26, 1, solid(P.stone, 0.12));
   for (const ci of [11.4, 12.1, 12.9, 13.6]) m.add(new Cyl(ci, pj1 - 0.1, 0.075, 2, 31, (h, px, py, o) => { o.c = pick(P.white, lum(h) + 0.12 + ((Math.round(h.u * 8) & 1) ? 0 : -0.04), px, py); }));
-  const ent: Sign = { text: 'PREFEITURA', face: 'L', vTop: 4.5, fg: hex('#3a2d4a'), bg: null };
-  m.box(pi0, pj0, 31, pi1, pj1, 36, (h, px, py, o) => {
+  // arquitrave de 8 px: as letras (5 linhas + degrau da isometria) cabem inteiras; com 5 px saíam cortadas
+  const ent: Sign = { text: 'PREFEITURA', face: 'L', vTop: 7.5, fg: hex('#2a2040'), bg: null };
+  m.box(pi0, pj0, 30, pi1, pj1, 38, (h, px, py, o) => {
     if (h.face === 'T') { o.c = pick(P.white, 0.85, px, py); return; }
     if (signPixel(o, h, px, py, ent, Math.round((pi1 - pi0) * 16))) return;
     o.c = pick(P.white, lum(h) + (row(h) === 0 ? -0.2 : 0.05), px, py);
   });
-  m.add(new GableJ(pi0 - 0.05, pj0, pi1 + 0.05, pj1 + 0.04, 36, 8, (h, px, py, o) => {
+  m.add(new GableJ(pi0 - 0.05, pj0, pi1 + 0.05, pj1 + 0.04, 38, 8, (h, px, py, o) => {
     if (h.face === 'GE') { const e = row(h) === 0 || hash2(col(h), row(h)) < 0 ? 1 : 0; o.c = pick(P.white, lum(h) + 0.05 - e * 0.15, px, py); return; }
     o.c = pick(P.slate, lum(h) + 0.05, px, py);
   }));
@@ -117,7 +119,7 @@ export function escola(b: Building): Obj {
   const grid: Grid = { z0: 3, floorH: 13, floors: 2, ww: 7, wh: 6, cell: 9, sill: 3, margin: 4 };
   const signs: Sign[] = [{ text: 'ESCOLA MUNICIPAL', face: 'L', vTop: H - 2, fg: hex('#1f2f6a'), bg: P.white }];
   const ws = wallShader({
-    wall: P.yellow, trim: P.white, glass: P.glass, frame: P.white, grid, seed, lit: 0.55, colsL, colsR, baseH: 3, signs,
+    wall: P.yellow, trim: P.white, glass: P.glass, frame: P.white, grid, seed, lit: 0.55, colsL, colsR, baseH: 3, signs, texture: 'reboco', quoins: true,
     extra: (o, h, px, py, c, r) => {
       if (r === gH || r === gH + 1) { o.c = pick(P.blue, lum(h) + 0.1, px, py); return true; } // faixa azul
       if (r >= H - 8) { o.c = pick(P.white, lum(h) + 0.02, px, py); return true; }
@@ -161,7 +163,7 @@ export function hospital(b: Building): Obj {
     { text: 'EMERGÊNCIA', face: 'R', vTop: 25, fg: hex('#ffffff'), bg: P.red, glow: hex('#ff4a4a') },
   ];
   const ws = wallShader({
-    wall: P.white, trim: P.teal, glass: P.glass, frame: P.white, grid, seed, lit: 0.85, colsL, colsR, baseH: 2, signs, bands: true,
+    wall: P.white, trim: P.teal, glass: P.glass, frame: P.white, grid, seed, lit: 0.85, colsL, colsR, baseH: 2, signs, bands: true, texture: 'painel', roof: { w: i1 - i0, d: j1 - j0, kind: 'manta' },
     extra: (o, h, px, py, c, r) => {
       // cruz vermelha na face +i
       if (h.face === 'R') {
@@ -210,7 +212,7 @@ export function mercado(b: Building): Obj {
   const colsL = Math.round((i1 - i0) * 16), colsR = Math.round((j1 - j0) * 16);
   const grid: Grid = { z0: 99, floorH: 10, floors: 0, ww: 4, wh: 4, cell: 8, sill: 1, margin: 2 };
   const ws = wallShader({
-    wall: P.green, trim: P.white, glass: P.glass, grid, seed, lit: 0, colsL, colsR, baseH: 2,
+    wall: P.green, trim: P.white, glass: P.glass, grid, seed, lit: 0, colsL, colsR, baseH: 2, texture: 'pastilha', roof: { w: i1 - i0, d: j1 - j0, kind: 'manta' },
     extra: (o, h, px, py, c, r) => {
       const cols = h.face === 'L' ? colsL : colsR;
       if (r >= H - 4) { o.c = pick(P.white, lum(h) + 0.05, px, py); return true; }
@@ -269,7 +271,7 @@ export function delegacia(b: Building): Obj {
   const grid: Grid = { z0: 3, floorH: 13, floors: 2, ww: 4, wh: 6, cell: 8, sill: 3, margin: 4 };
   const signs: Sign[] = [{ text: 'DELEGACIA', face: 'L', vTop: H - 2, fg: hex('#ffffff'), bg: P.police, glow: hex('#9cc4ff') }];
   const ws = wallShader({
-    wall: P.white, trim: P.police, glass: P.glass, grid, seed, lit: 0.75, colsL, colsR, baseH: 3, signs, bands: false,
+    wall: P.white, trim: P.police, glass: P.glass, grid, seed, lit: 0.75, colsL, colsR, baseH: 3, signs, bands: false, texture: 'reboco', quoins: true, roof: { w: i1 - i0, d: j1 - j0, kind: 'cascalho' },
     door: { face: 'L', c0: Math.floor(colsL / 2) - 3, w: 6, h: 10, glow: scale(E.cool, 0.6) },
     extra: (o, h, px, py, c, r) => {
       if (r === gH || r === gH + 1) { o.c = pick(P.police, lum(h) + 0.15, px, py); return true; }
@@ -283,9 +285,9 @@ export function delegacia(b: Building): Obj {
   // luz azul na entrada
   const cl = (i0 + i1) / 2;
   m.box(cl - 0.07, j1, 11, cl + 0.07, j1 + 0.1, 13.5, (h, px, py, o) => { o.c = hex('#3a6ae8'); o.e = hex('#4f8dff'); });
-  m.add(new Cyl(i1 - 0.25, j1 + 0.05, 0.02, 0, 38, solid(P.metal, 0.35)));
+  m.add(new Cyl(i1 + 0.05, j1 - 0.3, 0.02, 0, 38, solid(P.metal, 0.35))); // mastro na face lateral (sem placa), longe das letras
   const lights: Light[] = [pool(cl, j1 + 0.4, 1.4, hex('#cfe0ff'), 0.85), halo(cl, j1 + 0.05, 12, 0.5, hex('#4f8dff'), 0.8)];
-  return finish(b, m, [i0, j0, i1, j1 + 0.1], lights, H + 10);
+  return finish(b, m, [i0, j0, i1 + 0.08, j1 + 0.1], lights, H + 10);
 }
 
 // ---------------- OFICINA ----------------
@@ -317,12 +319,22 @@ export function oficina(b: Building): Obj {
   return finish(b, m, [i0, j0, i1 + 0.25, j1], lights, H + 6, 'shop');
 }
 
+// ícone em pixels como máscara de letreiro (uma "letra" só: fica em pé na face inclinada)
+const BUS_ICON = ['.##########.', '#..#..#..#.#', '#..#..#..#.#', '############', '##.######.##', '.#........#.'];
+function iconMask(rows: string[]): TextMask {
+  const w = rows[0].length, h = rows.length + 2;
+  const bits = new Uint8Array(w * h);
+  rows.forEach((r, y) => [...r].forEach((ch, x) => { if (ch === '#') bits[(y + 1) * w + x] = 1; }));
+  return { w, h, bits, base: 1, starts: new Int16Array(w + 1) };
+}
+
 // ---------------- TERMINAL ----------------
 export function terminal(b: Building): Obj {
   const i0 = 10.25, j0 = 21.3, i1 = 11.75, j1 = 23.7, H = 19;
   const colsR = Math.round((j1 - j0) * 16), colsL = Math.round((i1 - i0) * 16);
   const sg: Sign = { text: 'TERMINAL', face: 'R', vTop: H - 2, fg: hex('#ffffff'), bg: P.blue, glow: hex('#9cc8ff') };
-  const sgL: Sign = { text: 'ÔNIBUS', face: 'L', vTop: H - 2, fg: hex('#ffffff'), bg: P.blue, glow: hex('#9cc8ff') };
+  // face estreita (24 px): "ÔNIBUS" ocupava tudo e colava em "TERMINAL" na quina; vai um ícone de ônibus em pé
+  const sgL: Sign = { text: '[ônibus]', face: 'L', vTop: H - 2, fg: hex('#ffffff'), bg: P.blue, glow: hex('#9cc8ff'), mask: iconMask(BUS_ICON) };
   const ws: Shader = (h, px, py, o) => {
     if (h.face === 'T') { o.c = pick(P.concrete, 0.6 + ((Math.floor(h.u * 6) & 1) ? 0.05 : 0), px, py); return; }
     if (signPixel(o, h, px, py, sg, colsR) || signPixel(o, h, px, py, sgL, colsL)) return;

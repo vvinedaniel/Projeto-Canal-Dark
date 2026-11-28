@@ -9,16 +9,20 @@ const FONTS: [string, string, string][] = [
   ['Silkscreen', 'silkscreen-latin-700-normal.woff2', '700'],
 ];
 let loading: Promise<void> | null = null;
+// promessa única de carga das fontes (para quem desenha texto em canvas e precisa esperar por elas)
+export function loadFonts(): Promise<void> {
+  loading ??= Promise.all(
+    FONTS.map(async ([family, file, weight]) => {
+      const f = new FontFace(family, `url(${staticFile(`fonts/${file}`)}) format('woff2')`, { weight });
+      await f.load();
+      (document.fonts as unknown as { add: (f: FontFace) => void }).add(f);
+    }),
+  ).then(() => undefined);
+  return loading;
+}
 export function useFonts() {
   const [handle] = useState(() => delayRender('fontes'));
   useEffect(() => {
-    loading ??= Promise.all(
-      FONTS.map(async ([family, file, weight]) => {
-        const f = new FontFace(family, `url(${staticFile(`fonts/${file}`)}) format('woff2')`, { weight });
-        await f.load();
-        (document.fonts as unknown as { add: (f: FontFace) => void }).add(f);
-      }),
-    ).then(() => undefined);
-    loading.then(() => continueRender(handle)).catch((e) => { console.error(e); continueRender(handle); });
+    loadFonts().then(() => continueRender(handle)).catch((e) => { console.error(e); continueRender(handle); });
   }, [handle]);
 }

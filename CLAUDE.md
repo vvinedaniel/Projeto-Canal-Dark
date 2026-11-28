@@ -274,3 +274,22 @@ e `tools/bench-cap.cjs` (métodos de captura). Resultados em `out/bench.jsonl`.
 - **Ritmo dos planos:** planos de 1 s com transição somem. Mínimo de ~1,6 s por plano numa lista falada.
 - **Reuso:** `src/series/stage.ts` + `EpisodeShell.tsx`; o roteiro de um episódio novo está em
   `docs/NOVO-EPISODIO.md`.
+- **Upgrade V2 (sem refazer a cidade):** a V1 está na tag `seguecity-v1`. Relatório, entregas e números em
+  `seguecity/docs/RELATORIO-V2.md`.
+- **Letreiro legível não é só caber:** nada pode ficar na frente dele. Na V2 havia um mastro sobre a
+  coluna do meio de um "A" (DELEGACIA virou "DELEGACII"), árvores e postes cobrindo FARMÁCIA e uma faixa
+  de 5 px cortando PREFEITURA.
+  - A faixa do letreiro precisa de 5 linhas + o degrau da isometria (≥ 8 px).
+  - "V" de 3 px parece "U": use 5 px, como M e W.
+  - `world.ts` não põe árvore nem poste na frente de fachada com letreiro (`SIGNED`).
+  - Revise com `npm run check:signs:img`: a composição `Placas` mostra um prédio por quadro, de dia e de perto.
+- **Trânsito coerente** (`engine/traffic.ts`): semáforos com ciclo, fila no vermelho e ônibus com
+  paradas. A simulação é determinística (parte de t = 0, com cache por quadro). Com 0 moradores, o
+  trânsito fica desligado e só aparece em trecho rotulado como demonstração.
+- **Imagens de divulgação:**
+  - `Poster4K` (2160×3840) usa outro `Renderer` no dobro do tamanho e o dobro do zoom, com o mesmo
+    enquadramento do vídeo.
+  - `npm run entrega:imagens` gera ilha 4K, closes, personagem, interiores, estados de clima e o
+    comparativo antes × depois. As folhas são montadas com o Playwright pré-instalado.
+- **Desempenho V2:** ~17 quadros/s de render (só render, sem codificar), 4% mais lento que a V1 com todo o
+  detalhe novo. A demo de 15 s fica pronta em ~70 s no total.

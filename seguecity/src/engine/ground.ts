@@ -3,7 +3,7 @@
 // laterais de terra da ilha flutuante e a cascata onde o rio cai da borda.
 import { N, OX, OY, WORLD_H, WORLD_W, rayA, rayB } from './iso';
 import { P } from './palette';
-import { pick, hex, mix, scale, type U32 } from './color';
+import { pick, hex, mix, scale, bayer, type U32 } from './color';
 import { fbm, hash2, vnoise } from './rng';
 import { PB } from './pixel';
 import { tileAt, isRoad, inChannel, RIVER_I0, RIVER_I1, RIVER_D, type TileType } from './map';
@@ -15,6 +15,7 @@ export interface GroundOut {
   water: Int32Array; // x, y, i*256, j*256, brilho*1000 por pixel (ordem de varredura)
   fall: Int32Array; // x, y, topo da queda por pixel
   slabDepth: (d: number, col: number) => number;
+  crystals: Int32Array; // x, y de cada cristal luminoso das encostas
 }
 
 const FOUNTAIN = { i: 12.5, j: 13.5 };
@@ -35,8 +36,11 @@ export function slabDepthAt(dFront: number, col: number) {
   return Math.max(18, base + jag * (0.4 + k));
 }
 
-export function buildGround(lots: Lot[]): GroundOut {
+export interface AO { i0: number; j0: number; i1: number; j1: number; s: number; r: number }
+
+export function buildGround(lots: Lot[], ao: AO[] = []): GroundOut {
   const pb = new PB(WORLD_W, WORLD_H, 0, 0);
+  const topMask = new Uint8Array(WORLD_W * WORLD_H); // 1 = superfície do chão (recebe sombra de contato)
   const water: number[] = [];
   const fall: number[] = [];
   const lotAt = (i: number, j: number) => {
@@ -67,6 +71,7 @@ export function buildGround(lots: Lot[]): GroundOut {
           }
         } else {
           c = topColor(i, j, px, py, lotAt);
+          topMask[py * WORLD_W + px] = 1;
         }
       } else {
         // laterais da ilha: face +j (j = N) e face +i (i = N)
@@ -103,7 +108,26 @@ export function buildGround(lots: Lot[]): GroundOut {
       if (c) pb.data[py * WORLD_W + px] = c;
     }
   }
-  return { canvas: pb.toCanvas(), water: Int32Array.from(water), fall: Int32Array.from(fall), slabDepth: slabDepthAt };
+  // sombra de contato (oclusão ambiente) em volta de prédios, árvores e postes, com pontilhado
+  for (const a of ao) {
+    const x0 = Math.floor((a.i0 - a.j1 - a.r * 2) * 16 + OX) - 2, x1 = Math.ceil((a.i1 - a.j0 + a.r * 2) * 16 + OX) + 2;
+    const y0 = Math.floor((a.i0 + a.j0 - a.r * 2) * 8 + OY) - 2, y1 = Math.ceil((a.i1 + a.j1 + a.r * 2) * 8 + OY) + 2;
+    for (let py = Math.max(0, y0); py < Math.min(WORLD_H, y1); py++)
+      for (let px = Math.max(0, x0); px < Math.min(WORLD_W, x1); px++) {
+        const k = py * WORLD_W + px;
+        if (!topMask[k]) continue;
+        const A = rayA(px), B = rayB(py);
+        const i = (8 * A + B) / 16, j = i - A;
+        const di = Math.max(a.i0 - i, 0, i - a.i1), dj = Math.max(a.j0 - j, 0, j - a.j1);
+        const d = Math.hypot(di, dj);
+        if (d >= a.r) continue;
+        let f = a.s * Math.pow(1 - d / a.r, 1.6);
+        // sombra mais longa para +i (luz vinda do alto à esquerda)
+        if (i > a.i1 && j > a.j0 - 0.2 && j < a.j1 + 0.2) f *= 1.25;
+        if (f > bayer(px, py) * 0.18 + 0.02) pb.data[k] = scale(pb.data[k], 1 - Math.min(0.55, f));
+      }
+  }
+  return { canvas: pb.toCanvas(), water: Int32Array.from(water), fall: Int32Array.from(fall), slabDepth: slabDepthAt, crystals: Int32Array.from(CRYSTALS) };
 }
 
 // tabuleiro das pontes: o canal sob a ponte fica coberto pelo próprio objeto ponte; aqui não muda o chão
@@ -135,8 +159,10 @@ function fallBase(px: number, py: number): U32 {
   return pick(P.water, 0.62 + hash2(px, py >> 3, 9) * 0.25, px, py);
 }
 
+// cristais luminosos encontrados na rocha (desenhados pulsando na emissão a cada quadro)
+const CRYSTALS: number[] = [];
 function slabColor(px: number, py: number, d: number, depth: number, face: 'L' | 'R', along: number): U32 {
-  const fl = face === 'L' ? 0.0 : -0.16;
+  const fl = face === 'L' ? 0.1 : -0.08; // face +j iluminada pela lua
   const wav = (vnoise(along * 1.3, 1.7) - 0.5) * 6 + (vnoise(along * 4.1, 9.2) - 0.5) * 2;
   const dd = d + wav;
   const n = (hash2(px >> 1, py >> 1, 77) - 0.5) * 0.1;
@@ -144,20 +170,43 @@ function slabColor(px: number, py: number, d: number, depth: number, face: 'L' |
   let c: U32;
   if (d < 3) c = pick(P.grass, 0.62 + fl + n, px, py); // borda de grama
   else if (d < 5 && hash2(px, 5, 3) > 0.45) c = pick(P.grass, 0.4 + fl, px, py); // grama pendurada
-  else if (dd < 16) c = pick(P.soil, 0.55 + fl + n + (dd < 7 ? 0.12 : 0), px, py);
-  else if (dd < 30) c = pick(P.clay, 0.5 + fl + n + Math.sin(dd * 0.9) * 0.06, px, py);
-  else if (dd < 44) c = pick(P.dirt, 0.42 + fl + n, px, py);
-  else {
+  else if (dd < 13) c = pick(P.soil, 0.55 + fl + n + (dd < 7 ? 0.12 : 0), px, py);
+  else if (dd < 15.5) c = pick(P.sand, 0.5 + fl + n, px, py); // veio de areia
+  else if (dd < 29) c = pick(P.clay, 0.5 + fl + n + Math.sin(dd * 0.9) * 0.06, px, py);
+  else if (dd < 36) c = pick(P.dirt, 0.42 + fl + n, px, py);
+  else if (dd < 42) {
+    // faixa de basalto escuro com fissuras verticais
+    c = pick(P.rock, 0.22 + fl + n, px, py);
+    if ((px + Math.floor(dd)) % 7 === 0) c = pick(P.black, 0.4, px, py);
+  } else {
     // rocha em blocos irregulares
     const cell = vnoise(px * 0.12, py * 0.09, 41);
     const cr = Math.floor(cell * 6);
     c = pick(P.rock, 0.4 + fl + (cr % 3) * 0.08 + n + (hash2(cr, px >> 4, 13) - 0.5) * 0.08, px, py);
     if (Math.abs(cell * 6 - Math.round(cell * 6)) < 0.08) c = pick(P.rock, 0.15 + fl, px, py);
   }
+  // pedras arredondadas embutidas na terra (com luz em cima à esquerda)
+  if (dd > 8 && dd < 36) {
+    const gx = Math.floor(px / 11), gy = Math.floor((py + gx * 5) / 9);
+    if (hash2(gx, gy, 61) > 0.72) {
+      const cx = gx * 11 + 3 + hash2(gx, gy, 62) * 5, cy = gy * 9 - gx * 5 + 2 + hash2(gx, gy, 63) * 5;
+      const rr = 2 + hash2(gx, gy, 64) * 2.2;
+      const dx = px - cx, dy = py - cy, q = Math.hypot(dx, dy * 1.2);
+      if (q < rr) c = pick(P.rock, 0.45 + fl - (dx + dy) / (rr * 4) + (q > rr - 1 ? -0.15 : 0), px, py);
+    }
+  }
   // raízes
   if (d > 4 && d < 26 && hash2(px, 11, 5) > 0.93 && hash2(px, Math.floor(d / 3), 6) > 0.3) c = pick(P.trunk, 0.35 + fl, px, py);
+  // trepadeiras penduradas da borda (com folhas)
+  const vine = hash2(px >> 1, 21, 31);
+  if (vine > 0.86) {
+    const len = 6 + hash2(px >> 1, 22, 31) * 34;
+    const wig = Math.round(Math.sin(d * 0.35 + px) * 0.6);
+    if (d > 2 && d < len && ((px + wig) & 1) === 0) c = pick(P.foliage, 0.55 + fl - d / 120 + ((Math.floor(d) % 4 === 0) ? 0.15 : 0), px, py);
+    if (d > 2 && d < len && Math.floor(d) % 4 === 0 && hash2(px, Math.floor(d), 33) > 0.4) c = pick(P.foliage, 0.7 + fl, px, py);
+  }
   // cristais brilhantes na rocha (detalhe da ilha)
-  if (d > 50 && hash2(px >> 1, py >> 1, 99) > 0.995) c = hex('#8ef0ff');
+  if (d > 46 && hash2(px >> 1, py >> 1, 99) > 0.993) { c = hex('#8ef0ff'); CRYSTALS.push(px, py); }
   // escurece para baixo e na base
   if (bottom < 5) c = scale(c, 0.6 + bottom * 0.06);
   c = scale(c, 1 - Math.min(0.35, d / 600));
@@ -210,7 +259,12 @@ function sidewalk(ti: number, tj: number, u: number, v: number): number {
 }
 
 function walkColor(i: number, j: number, px: number, py: number, kind: number): U32 {
-  if (kind === 2) return pick(P.curb, 0.85, px, py);
+  if (kind === 2) {
+    // boca de lobo a cada ~3 tiles no meio-fio
+    const along = Math.abs(((i + j) * 1.5) % 4.5 - 2.2);
+    if (along < 0.14) return (px + py) % 2 ? pick(P.black, 0.5, px, py) : pick(P.metal, 0.35, px, py);
+    return pick(P.curb, 0.85, px, py);
+  }
   const gi = Math.floor(i * 4), gj = Math.floor(j * 4);
   const fi = i * 4 - gi, fj = j * 4 - gj;
   let s = 0.62 + (hash2(gi, gj, 3) - 0.5) * 0.1;

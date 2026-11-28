@@ -24,6 +24,8 @@ export interface StageSpec {
   tilt?: number;
   bloom?: number;
   timeOffset?: number; // desloca o "relógio" da cidade (trânsito/pedestres) sem mexer no roteiro
+  dawn?: number; // 0..1 amanhecer
+  weather?: { rain?: number; fog?: number };
 }
 
 export interface Stage {
@@ -46,7 +48,7 @@ export function stage(s: StageSpec): Stage {
     t: s.t, cam, night: s.night ?? 1,
     levels: { civic: 1, home: 1, shop: 1, street: 1, ...s.levels },
     homeFrac: s.homeFrac, dyn: [...d.objs, ...(s.extra ?? [])], refl: d.refl, fireflies: d.flies,
-    overrides: s.overrides, reveal: s.reveal, hidden: s.hidden, bloom: s.bloom ?? 0.8, tilt: s.tilt ?? 0,
+    overrides: s.overrides, reveal: s.reveal, hidden: s.hidden, bloom: s.bloom ?? 0.5, tilt: s.tilt ?? 0, dawn: s.dawn ?? 0, weather: s.weather,
   };
   const P = (wx: number, wy: number) => toScreen(cam, wx, wy);
   const scr = (i: number, j: number, z = 0) => P(sx(i, j), sy(i, j, z));

@@ -6,6 +6,8 @@ import { E, P } from '../palette';
 import { sx, sy } from '../iso';
 import { col, lum, row, roofShader, solid, tileRoof, wallShader, winAt, windowPixel, signPixel, signFits, type Grid, type Sign } from './kit';
 import { buildings } from '../../data';
+import { textMask } from '../font';
+const textMaskW = (t: string) => textMask(t).w;
 import { isRoad as isRoadTile } from '../map';
 import type { Building } from '../../data';
 import type { Obj, Light } from '../types';
@@ -27,10 +29,10 @@ function obj(b: Building, m: Model, fp: [number, number, number, number], group:
 }
 
 // mureta + cascalho + caixa d'água + casa de máquinas
-function rooftop(m: Model, i0: number, j0: number, i1: number, j1: number, z: number, seed: number, opts: { tank?: boolean; ac?: number; parapet?: Ramp; machine?: boolean } = {}) {
+function rooftop(m: Model, i0: number, j0: number, i1: number, j1: number, z: number, seed: number, opts: { tank?: boolean; ac?: number; parapet?: Ramp; machine?: boolean; extras?: number } = {}) {
   const pr = opts.parapet ?? P.concrete;
   const t = 0.07, ph = 3;
-  const ps = solid(pr, 0.02, 0.02);
+  const ps: Shader = (h, px, py, o) => { o.c = pick(pr, lum(h) + (h.face === 'T' ? 0.18 : row(h) >= ph - 1 ? 0.1 : 0) + (hash2(px, py, 5) - 0.5) * 0.04, px, py); };
   m.box(i0, j0, z, i1, j0 + t, z + ph, ps);
   m.box(i0, j0, z, i0 + t, j1, z + ph, ps);
   m.box(i0, j1 - t, z, i1, j1, z + ph, ps);
@@ -48,6 +50,52 @@ function rooftop(m: Model, i0: number, j0: number, i1: number, j1: number, z: nu
   for (let k = 0; k < (opts.ac ?? 0); k++) {
     const a = i0 + 0.15 + rnd() * (i1 - i0 - 0.5), b2 = j0 + 0.15 + rnd() * (j1 - j0 - 0.45);
     m.box(a, b2, z, a + 0.22, b2 + 0.2, z + 3, (h, px, py, o) => { o.c = pick(P.white, lum(h) - 0.15 + ((col(h) % 2) && h.face !== 'T' ? -0.1 : 0), px, py); });
+  }
+  // variedade: placas solares, antena, parabólica ou jardim no terraço
+  const extras = opts.extras ?? (Math.floor(rnd() * 4));
+  const W = i1 - i0, D = j1 - j0;
+  if (extras === 0 && W > 0.9 && D > 0.9) {
+    for (let k = 0; k < 3; k++) {
+      const a = i0 + 0.18 + k * 0.28;
+      if (a + 0.24 > i1 - 0.1) break;
+      m.add(new Poly([[a, j1 - 0.55, z + 1], [a + 0.24, j1 - 0.55, z + 1], [a + 0.24, j1 - 0.2, z + 3.5], [a, j1 - 0.2, z + 3.5]], (h, px, py, o) => { o.c = ((px + py) % 3 === 0) ? hex('#5a7ac8') : pick(P.police, 0.32, px, py); }));
+    }
+  } else if (extras === 1) {
+    const a = i0 + W * 0.7, b2 = j0 + D * 0.3;
+    m.add(new Cyl(a, b2, 0.018, z, z + 16, solid(P.metal, 0.3)));
+    for (const zz of [z + 10, z + 13]) m.box(a - 0.16, b2 - 0.01, zz, a + 0.16, b2 + 0.01, zz + 1, solid(P.metal, 0.3));
+  } else if (extras === 2) {
+    const a = i0 + W * 0.3, b2 = j0 + D * 0.65;
+    m.add(new Cyl(a, b2, 0.02, z, z + 4, solid(P.metal, 0.3)));
+    m.add(new Dome(a + 0.06, b2 + 0.06, z + 6, 0.16, (h, px, py, o) => { o.c = pick(P.white, lum(h) + 0.1, px, py); }, z + 4));
+  } else if (W > 0.8 && D > 0.8) {
+    m.box(i0 + 0.12, j1 - 0.5, z, i0 + 0.55, j1 - 0.14, z + 2, (h, px, py, o) => {
+      if (h.face !== 'T') { o.c = pick(P.wood, lum(h), px, py); return; }
+      o.c = hash2(px, py, seed) > 0.55 ? hex(['#e25a7a', '#f2c84a', '#ffffff'][Math.floor(hash2(px, py, 2) * 3)]) : pick(P.foliage, 0.45 + hash2(px, py) * 0.3, px, py);
+    });
+  }
+}
+
+// aparelhos de ar-condicionado sob algumas janelas das faces visíveis
+function acUnits(m: Model, i0: number, j0: number, i1: number, j1: number, g: Grid, seed: number, prob = 0.28) {
+  const ac: Shader = (h, px, py, o) => {
+    if (h.face === 'T') { o.c = pick(P.white, 0.75, px, py); return; }
+    o.c = pick(P.white, lum(h) - 0.05 + ((col(h) % 2) ? -0.18 : 0) + (row(h) === 0 ? -0.15 : 0), px, py);
+  };
+  for (const face of ['L', 'R'] as const) {
+    const len = face === 'L' ? i1 - i0 : j1 - j0;
+    const cols = Math.round(len * 16);
+    const usable = cols - 2 * g.margin;
+    const n = Math.max(1, Math.floor((usable + g.cell - g.ww) / g.cell));
+    const start = g.margin + Math.floor((usable - (n * g.cell - (g.cell - g.ww))) / 2);
+    for (let f = 0; f < g.floors; f++)
+      for (let c = 0; c < n; c++) {
+        if (hash2(f * 13 + (face === 'L' ? 0 : 7), c, seed + 41) > prob) continue;
+        const u0 = (start + c * g.cell + g.ww + 0.5) / 16, u1 = u0 + 0.2;
+        const z0 = g.z0 + f * g.floorH + g.sill - 4, z1 = z0 + 3;
+        if (face === 'L') m.box(i0 + u0, j1, z0, i0 + Math.min(u1, len - 0.05), j1 + 0.08, z1, ac);
+        else m.box(i1, j1 - Math.min(u1, len - 0.05), z0, i1 + 0.08, j1 - u0, z1, ac);
+      }
   }
 }
 
@@ -70,6 +118,8 @@ export function apartment(b: Building, office = false): Obj {
   const shopH = 11;
   const ws = wallShader({
     wall, trim, glass: P.glass, grid, seed, lit, bands: true, baseH: 2, colsL, colsR, signs,
+    texture: office ? 'painel' : (['pastilha', 'tijolo', 'reboco', 'pastilha', 'painel'] as const)[seed % 5], quoins: !office && seed % 3 === 0, H,
+    roof: { w: i1 - i0, d: j1 - j0 },
     extra: (o, h, px, py, c, r) => {
       if (r >= gH || r < 2) return false;
       // térreo: portaria envidraçada e lojinha
@@ -85,6 +135,13 @@ export function apartment(b: Building, office = false): Obj {
     },
   });
   m.box(i0, j0, 0, i1, j1, H, ws);
+  if (!office) acUnits(m, i0, j0, i1, j1, grid, seed);
+  // marquise da portaria com número do prédio
+  const mid = (i0 + i1) / 2;
+  m.box(mid - 0.3, j1, 11, mid + 0.3, j1 + 0.28, 12.5, (h, px, py, o) => { o.c = pick(office ? P.metal : P.concrete, lum(h) + 0.1, px, py); if (h.face === 'L') o.e = scale(E.warm, 0.3); });
+  const num = String(100 + (seed % 900));
+  const nsg: Sign = { text: num, face: 'L', vTop: 10, fg: hex('#ffffff'), bg: P.police, glow: null, pad: 1 };
+  m.box(mid + 0.32, j1, 7, mid + 0.32 + (textMaskW(num) + 3) / 16, j1 + 0.01, 11, (h, px, py, o) => { if (signPixel(o, h, px, py, nsg, textMaskW(num) + 3)) return; o.c = pick(P.police, 0.6, px, py); }, 'L');
   // varandas nas faces visíveis
   if (!office) {
     const gl = (h: any, px: number, py: number, o: any) => {
@@ -154,7 +211,8 @@ export function house(b: Building): Obj {
   const doorCols = doorFace === 'L' ? colsL : colsR;
   const dc = Math.floor(doorCols * (0.3 + rnd() * 0.3));
   const ws = wallShader({
-    wall, trim: P.white, glass: P.glass, frame: P.white, grid, seed, lit: 0.85, baseH: 2, colsL, colsR,
+    wall, trim: P.white, glass: P.glass, frame: P.white, grid, seed, lit: 0.85, baseH: 3, colsL, colsR, texture: seed % 4 === 0 ? 'tijolo' : 'reboco', quoins: seed % 3 === 1,
+    roof: { w: 2, d: 2, kind: 'laje' },
     door: { face: doorFace, c0: dc, w: 4, h: 9, glow: scale(E.warm, 0.6) },
     extra: (o, h, px, py, c, r) => {
       // grades nas janelas
@@ -166,6 +224,26 @@ export function house(b: Building): Obj {
     },
   });
   m.box(bi0, bj0, 0, bi1, bj1, H, ws);
+  // número da casa ao lado da porta (só quando a porta está numa face visível)
+  const houseNo = String(10 + Number(b.id.replace(/\D/g, '')) * 2);
+  if (front !== 'j-') {
+    const nw = textMaskW(houseNo) + 2;
+    const nsg: Sign = { text: houseNo, face: doorFace, vTop: 8.5, fg: hex('#1b1b24'), bg: null, pad: 0 };
+    const nshade: Shader = (h, px, py, o) => { if (signPixel(o, h, px, py, nsg, nw)) return; o.c = pick(P.white, 0.85, px, py); };
+    if (doorFace === 'L') { const u = bi0 + (dc + 5) / 16; m.box(u, bj1, 9, u + nw / 16, bj1 + 0.02, 16, nshade, 'L'); }
+    else { const u = bj1 - (dc + 5) / 16; m.box(bi1, u - nw / 16, 9, bi1 + 0.02, u, 16, nshade, 'R'); }
+  }
+  // floreiras sob as janelas da frente e ar-condicionado na lateral
+  const fbox: Shader = (h, px, py, o) => { if (h.face === 'T') { o.c = hash2(px, py, seed) > 0.45 ? hex(['#e25a7a', '#f2c84a', '#ff8a3a', '#c58cff'][Math.floor(hash2(px, py, 1) * 4)]) : pick(P.foliage, 0.5, px, py); return; } o.c = pick(P.wood, lum(h) + 0.05, px, py); };
+  const fw = winAt(1, doorCols, grid.z0 + grid.sill, grid);
+  void fw;
+  if (doorFace === 'L') { m.box(bi0 + 0.18, bj1, 3, bi0 + 0.44, bj1 + 0.07, 5, fbox); }
+  else { m.box(bi1, bj0 + 0.18, 3, bi1 + 0.07, bj0 + 0.44, 5, fbox); }
+  if (hash2(seed, 31) > 0.4) {
+    const acS: Shader = (h, px, py, o) => { o.c = pick(P.white, lum(h) - 0.05 + ((col(h) % 2) && h.face !== 'T' ? -0.18 : 0), px, py); };
+    if (doorFace === 'L') m.box(bi1, bj0 + 0.25, 8, bi1 + 0.08, bj0 + 0.45, 11, acS);
+    else m.box(bi0 + 0.25, bj1, 8, bi0 + 0.45, bj1 + 0.08, 11, acS);
+  }
   // telhado cerâmico com beiral (ou laje com caixa d'água)
   const laje = hash2(seed, 3) < 0.25;
   if (laje) {
@@ -242,7 +320,7 @@ export function shop(b: Building): Obj {
   }
   const GREEN = hex('#3ad06a');
   const ws = wallShader({
-    wall, trim: P.white, glass: P.glass, grid, seed, lit: 0.7, bands: true, baseH: 1, colsL, colsR, signs,
+    wall, trim: P.white, glass: P.glass, grid, seed, lit: 0.7, bands: true, baseH: 1, colsL, colsR, signs, roof: { w: i1 - i0, d: j1 - j0 }, texture: 'reboco',
     extra: (o, h, px, py, c, r) => {
       // cruz verde de farmácia na fachada sem nome
       if (pharmacy && h.face === 'L' && !signs.some((sg) => sg.face === 'L')) {

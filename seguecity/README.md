@@ -38,6 +38,12 @@ npm run validate -- out/seguecity-ep01.mp4 --dur 75
   monta a folha de contato.
 - `npm run check:signs` confere se todos os letreiros da cidade cabem nas fachadas. Um letreiro cortado
   pareceria erro de ortografia.
+- `npm run check:signs:img` mostra um prédio com letreiro por quadro, de perto, em `out/stills/placas/`.
+  Serve para conferir se nada tapa as letras.
+- `npm run entrega:imagens` gera as imagens de divulgação em `out/entrega-v2/` e o comparativo
+  antes × depois em `out/comparativo/`. São elas: ilha em 4K (composição `Poster4K`), closes, personagem
+  de exemplo, interiores (`Interiores`) e estados de luz e clima.
+- Relatório do upgrade gráfico V2: `docs/RELATORIO-V2.md`.
 
 ## Narração (pronta para receber a voz)
 

@@ -6,6 +6,7 @@ import { hex, scale, type U32 } from './color';
 import { E, P } from './palette';
 import { vehicleSprite, CAR_COLORS, type VKind } from './sprites/vehicles';
 import { personSprite, randomLook, type Look } from './sprites/people';
+import { vehiclesAt, signalState } from './traffic';
 import type { Obj, Light } from './types';
 import type { World } from './world';
 import type { Sprite } from './model';
@@ -129,6 +130,14 @@ export function rectWalk(i0: number, j0: number, i1: number, j1: number, s: numb
   return { i: q.i, j: q.j, dir: dirOf(q.hd) };
 }
 
+const REFL_SRC: [number, number, U32][] = [];
+for (let j = 1.5; j < 31; j += 1.15) {
+  if (Math.abs(j - 10.5) < 0.8 || Math.abs(j - 24.5) < 0.8) continue;
+  const west = j < 9 ? hex('#d8ecff') : j < 14 ? hex('#ff9a7a') : j < 17 ? hex('#ffd27a') : j < 24 ? hex('#ffcf6e') : hex('#ffb257');
+  REFL_SRC.push([21.22, j, west]);
+  if (Math.floor(j) % 3 === 1) REFL_SRC.push([24.78, Math.floor(j) + 0.5, hex('#ffd98a')]);
+}
+
 const dirOf = (hd: string) => (hd === '+i' ? 0 : hd === '+j' ? 1 : hd === '-i' ? 2 : 3);
 
 let oid = 0;
@@ -154,31 +163,11 @@ const FLIES = (() => {
 export function dynamics(world: World, p: DynParams): { objs: Obj[]; refl: Reflection[]; flies: { x: number; y: number; a: number }[] } {
   const objs: Obj[] = [];
   const t = p.t;
-  // ---- carros
-  for (let k = 0; k < CARS.length; k++) {
-    const c = CARS[k];
-    if (c.rank >= p.traffic) continue;
-    const L = LOOPS[c.loop];
-    const q = at(L, c.s0 + c.v * t);
-    objs.push(vehicleObj(`car${k}`, c.kind, c.color, q.i, q.j, q.hd, t));
-  }
-  if (p.traffic > 0.05) {
-    // ônibus com paradas
-    const L = LOOPS[BUS.loop];
-    const T = L.len / BUS.v + BUS.stops.length * BUS.dwell;
-    let tau = (((t + BUS.s0) % T) + T) % T;
-    let s = 0;
-    const stops = [...BUS.stops, L.len];
-    for (const st of stops) {
-      const travel = (st - s) / BUS.v;
-      if (tau <= travel) { s += tau * BUS.v; tau = -1; break; }
-      tau -= travel; s = st;
-      if (st === L.len) break;
-      if (tau <= BUS.dwell) { tau = -1; break; }
-      tau -= BUS.dwell;
-    }
-    const q = at(L, s);
-    objs.push(vehicleObj('bus', 'bus', 0, q.i, q.j, q.hd, t));
+  // ---- veículos (simulação com semáforos, filas e paradas de ônibus)
+  for (const st of vehiclesAt(t)) {
+    if (st.veh.rank >= p.traffic && st.veh.id !== 'bus') continue;
+    if (st.veh.id === 'bus' && p.traffic <= 0.05) continue;
+    objs.push(vehicleObj(st.veh.id, st.veh.kind, st.veh.color, st.i, st.j, st.hd, t));
   }
   // ---- estacionados (com giroflex)
   objs.push(vehicleObj('amb', 'ambulance', 2, 18.9, 9.5, '-i', t, true));
@@ -208,6 +197,11 @@ export function dynamics(world: World, p: DynParams): { objs: Obj[]; refl: Refle
     const x = sx(li, bj + 0.96), y = sy(li, bj + 0.96, -8) + 3;
     refl.push({ x, y, len: 12 + Math.round(3 * Math.sin(t * 2 + li)), color: E.lampWarm });
   }
+  // luzes das margens refletidas no canal (janelas e postes da avenida Beira-Rio e do calçadão)
+  for (const [i, j, col] of REFL_SRC) {
+    const x = sx(i, j), y = sy(i, j, -8) + 2;
+    refl.push({ x, y, len: 8 + Math.round(3 * Math.sin(t * 1.7 + j * 3)), color: col });
+  }
   const flies = FLIES.map((f) => {
     const i = f.i + Math.sin(t * 0.35 * f.sp + f.ph) * 0.35, j = f.j + Math.cos(t * 0.29 * f.sp + f.ph * 2) * 0.35;
     const z = 8 + Math.sin(t * 0.8 * f.sp + f.ph) * 4;
@@ -220,7 +214,7 @@ export function dynamics(world: World, p: DynParams): { objs: Obj[]; refl: Refle
 function vehicleObj(id: string, kind: VKind, colorIdx: number, i: number, j: number, hd: string, t: number, parked = false): Obj {
   const axis = hd[1] as 'i' | 'j';
   const front = hd[0] === '+';
-  const color = kind === 'police' ? P.white : kind === 'ambulance' ? P.white : kind === 'taxi' ? P.yellow : kind === 'bus' ? P.blue : kind === 'truck' ? P.red : CAR_COLORS[colorIdx];
+  const color = kind === 'police' ? P.white : kind === 'ambulance' ? P.white : kind === 'taxi' ? P.yellow : kind === 'bus' ? P.blue : kind === 'truck' ? P.red : kind === 'bombeiros' ? P.red : kind === 'manutencao' ? P.orange : CAR_COLORS[colorIdx % CAR_COLORS.length];
   const v = vehicleSprite(kind, color, axis, front, `${colorIdx}`);
   const dx = (i - j) * 16, dy = (i + j) * 8;
   const hl = axis === 'i' ? [v.L / 2, v.W / 2] : [v.W / 2, v.L / 2];
@@ -242,8 +236,8 @@ function vehicleObj(id: string, kind: VKind, colorIdx: number, i: number, j: num
   return mkDyn(id, 'veiculo', [i - hl[0], j - hl[1], i + hl[0], j + hl[1]], v.spr, dx, dy, lights, 'street');
 }
 
-export function personObj(id: string, look: Look, key: string, i: number, j: number, dir: number, frame: number, scaleUp = 1, lit = 0): Obj {
-  let spr = personSprite(look, dir, frame, key, scaleUp);
+export function personObj(id: string, look: Look, key: string, i: number, j: number, dir: number, frame: number, scaleUp = 1, lit = 0, pose: 'walk' | 'idle' | 'wave' | 'work' = 'walk'): Obj {
+  let spr = personSprite(look, dir, frame, key, scaleUp, pose);
   if (lit > 0) spr = selfLit(spr);
   const lights: Light[] = lit > 0 ? [{ x: sx(i, j), y: sy(i, j), r: 1.3, color: hex('#ffe2b0'), a: lit, kind: 'pool' }, { x: sx(i, j), y: sy(i, j, 14 * scaleUp), r: 0.5, color: hex('#ffe9c8'), a: lit * 0.35, kind: 'halo' }] : [];
   return mkDyn(id, 'pessoa', [i - 0.04, j - 0.04, i + 0.04, j + 0.04], spr, Math.round(sx(i, j)), Math.round(sy(i, j)), lights, lit > 0 ? 'civic' : 'none');
@@ -311,8 +305,8 @@ function flagObj(k: number, f: { x: number; y: number; big: boolean; i: number; 
 }
 
 function signalObj(k: number, s: { x: number; y: number; phase: number; i: number; j: number }, t: number): Obj {
-  const cyc = ((t + s.phase * 4 + k * 0.7) % 8 + 8) % 8;
-  const state = cyc < 4 ? 2 : cyc < 5 ? 1 : 0; // 0 vermelho, 1 amarelo, 2 verde
+  const sg = signalState(k, 'i', t); // a cabeça do semáforo mostra o eixo i
+  const state = sg === 'g' ? 2 : sg === 'y' ? 1 : 0; // 0 vermelho, 1 amarelo, 2 verde
   const cv = new OffscreenCanvas(3, 8), c = cv.getContext('2d')!;
   const gl = new OffscreenCanvas(3, 8), g = gl.getContext('2d')!;
   const cols = ['#ff3b3b', '#ffb12b', '#5dff7c'];

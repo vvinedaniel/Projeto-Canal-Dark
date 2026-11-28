@@ -1,12 +1,12 @@
 // Monta a cidade: chão, prédios (de data/buildings.json) e decoração procedural determinística.
 import { buildings } from '../data';
-import { buildGround, FOUNTAIN, roadDir, type Lot } from './ground';
+import { buildGround, FOUNTAIN, roadDir, type Lot, type AO } from './ground';
 import { N, OX, OY, WORLD_H, sx, sy } from './iso';
 import { tileAt, isRoad } from './map';
 import { hash2, mulberry32 } from './rng';
 import { apartment, house, shop } from './sprites/buildings';
 import { prefeitura, escola, hospital, mercado, delegacia, oficina, terminal, obra } from './sprites/civic';
-import { tree, lamp, bench, fountain, bridge, trafficLight, busStop, newsstand, popcorn, lotSign, flagpole, festoon, type TreeKind } from './sprites/props';
+import { tree, lamp, bench, fountain, bridge, trafficLight, busStop, newsstand, popcorn, lotSign, flagpole, festoon, monument, coreto, streetClock, flowerBed, trashBin, hydrant, stopSign, type TreeKind } from './sprites/props';
 import type { Obj } from './types';
 
 export interface World {
@@ -21,6 +21,7 @@ export interface World {
   craneTop: { x: number; y: number };
   craneMast: { i: number; j: number };
   fallBottom: { x: number; y: number };
+  fallTop: { x: number; y: number };
   buildTimeMs: number;
 }
 
@@ -38,14 +39,6 @@ export function getWorld(): World {
   const lots: Lot[] = buildings
     .filter((b) => b.status !== 'planejado')
     .map((b) => ({ i0: b.posicao.i, j0: b.posicao.j, i1: b.posicao.i + b.tamanho.w, j1: b.posicao.j + b.tamanho.d, kind: lotKind(b.tipo) }));
-  const ground = buildGround(lots);
-  const water = ground.water;
-  const waterRows = new Int32Array(WORLD_H + 2);
-  let k = 0;
-  for (let y = 0; y <= WORLD_H + 1; y++) {
-    while (k < water.length && water[k + 1] < y) k += 5;
-    waterRows[y] = k;
-  }
 
   const objects: Obj[] = [];
   let craneTop = { x: 0, y: 0 };
@@ -85,6 +78,7 @@ export function getWorld(): World {
   for (const b of buildings.filter((x) => x.status === 'planejado')) objects.push(lotSign(b.posicao.i + 1, b.posicao.j + b.tamanho.d - 0.5));
 
   const rnd = mulberry32(2026);
+  const SIGNED = new Set(['delegacia', 'hospital', 'escola', 'terminal', 'oficina', 'mercado', 'padaria', 'farmacia', 'sorveteria', 'cafe']);
   const occupied = (i: number, j: number) => buildings.some((b) => b.status !== 'planejado' && i >= b.posicao.i && i < b.posicao.i + b.tamanho.w && j >= b.posicao.j && j < b.posicao.j + b.tamanho.d);
 
   // postes ao longo das ruas (lado de trás, braço sobre a rua) e árvores entre eles
@@ -95,18 +89,20 @@ export function getWorld(): World {
       const d = roadDir(ti, tj);
       if (d === 'i' && !isRoad(ti, tj - 1) && tileAt(ti, tj - 1) !== 'river') {
         const back = tileAt(ti, tj - 1);
-        if (ti % 2 === 0 && back !== 'forest') objects.push(lamp(ti + 0.5, tj - 0.07, 'street', 'j'));
-        else if (back !== 'forest' && back !== 'promenade' && hash2(ti, tj, 5) > 0.35 && !(tj === 28 && ti >= 8 && ti <= 11)) objects.push(tree(pickTree(ti, tj), ti + 0.5, tj - 0.07, ti * 97 + tj));
+        if (ti % 2 === 0 && back !== 'forest' && !signFront(ti, tj - 1)) objects.push(lamp(ti + 0.5, tj - 0.07, 'street', 'j'));
+        else if (back !== 'forest' && back !== 'promenade' && hash2(ti, tj, 5) > 0.35 && !(tj === 28 && ti >= 5 && ti <= 11) && !signFront(ti, tj - 1)) objects.push(tree(pickTree(ti, tj), ti + 0.5, tj - 0.07, ti * 97 + tj));
       }
       if (d === 'j' && !isRoad(ti - 1, tj) && tileAt(ti - 1, tj) !== 'river') {
         const back = tileAt(ti - 1, tj);
-        if (tj % 2 === 1 && back !== 'forest') objects.push(lamp(ti - 0.07, tj + 0.5, 'street', 'i'));
-        else if (back !== 'forest' && back !== 'promenade' && hash2(ti, tj, 6) > 0.4) objects.push(tree(pickTree(ti, tj), ti - 0.07, tj + 0.5, ti * 31 + tj * 7));
+        if (tj % 2 === 1 && back !== 'forest' && !signFront(ti - 1, tj)) objects.push(lamp(ti - 0.07, tj + 0.5, 'street', 'i'));
+        else if (back !== 'forest' && back !== 'promenade' && hash2(ti, tj, 6) > 0.4 && !signFront(ti - 1, tj)) objects.push(tree(pickTree(ti, tj), ti - 0.07, tj + 0.5, ti * 31 + tj * 7));
       }
       // árvores na calçada da frente (lado +j / +i), entre os lotes
-      if (d === 'i' && !isRoad(ti, tj + 1) && tileAt(ti, tj + 1) !== 'river' && ti % 3 === 1 && hash2(ti, tj, 9) > 0.45 && !occupiedFront(ti, tj + 1)) objects.push(tree('round', ti + 0.5, tj + 1.07, ti * 13 + tj));
+      if (d === 'i' && !isRoad(ti, tj + 1) && tileAt(ti, tj + 1) !== 'river' && ti % 3 === 1 && hash2(ti, tj, 9) > 0.45 && !occupiedFront(ti, tj + 1) && !signFront(ti, tj - 1)) objects.push(tree('round', ti + 0.5, tj + 1.07, ti * 13 + tj));
     }
   function occupiedFront(i: number, j: number) { return occupied(i, j) && tileAt(i, j) !== 'grass'; }
+  // fachadas com letreiro voltadas para a rua: sem árvore na calçada na frente (a copa tapava letras, ex.: DELEGACIA)
+  function signFront(i: number, j: number) { return buildings.some((b) => SIGNED.has(b.id) && i >= b.posicao.i && i < b.posicao.i + b.tamanho.w && j >= b.posicao.j && j < b.posicao.j + b.tamanho.d); }
 
   // mata nas bordas
   for (let tj = 0; tj < N; tj++)
@@ -132,15 +128,22 @@ export function getWorld(): World {
   // praça central: fonte, bancos, ipês, postes ornamentais, pipoqueiro e banca
   const f = fountain(FOUNTAIN.i, FOUNTAIN.j);
   objects.push(f.obj);
-  for (const [di, dj, al] of [[0, -1.7, 'i'], [0, 1.7, 'i'], [-1.7, 0, 'j'], [1.7, 0, 'j']] as const) objects.push(bench(FOUNTAIN.i + di, FOUNTAIN.j + dj, al));
+  for (const [di, dj, al] of [[0, 1.7, 'i'], [-1.7, 0, 'j'], [1.7, 0, 'j']] as const) objects.push(bench(FOUNTAIN.i + di, FOUNTAIN.j + dj, al));
+  // marcos da praça: coreto (eventos), monumento da fundação, relógio público, bandeira oficial e canteiros
+  objects.push(coreto(12.5, 11.55), monument(12.5, 16.15), streetClock(14.55, 13.5), flagpole(11.55, 16.3, 36));
+  for (const [ci, cj] of [[10.5, 13.9], [14.45, 14.55], [14.45, 12.4]]) objects.push(flowerBed(ci, cj));
+  for (const [ci, cj] of [[11.05, 15.25], [13.95, 12.35], [10.4, 12.0]]) objects.push(trashBin(ci, cj));
   for (const [ci, cj, kd] of [[10.6, 11.6, 'ipeY'], [14.4, 11.6, 'ipeP'], [10.6, 16.4, 'ipeP'], [14.4, 16.4, 'ipeY']] as const) objects.push(tree(kd, ci, cj, Math.round(ci * 100 + cj)));
-  for (const [ci, cj] of [[11.3, 12.3], [13.7, 12.3], [11.3, 14.7], [13.7, 14.7], [12.5, 11.45], [12.5, 15.6]]) objects.push(lamp(ci, cj, 'plaza'));
-  objects.push(festoon(FOUNTAIN.i, FOUNTAIN.j, [[11.3, 12.3], [13.7, 12.3], [11.3, 14.7], [13.7, 14.7], [12.5, 11.45], [12.5, 15.6]], 20, 27));
+  for (const [ci, cj] of [[11.3, 12.3], [13.7, 12.3], [11.3, 14.7], [13.7, 14.7], [12.5, 15.6]]) objects.push(lamp(ci, cj, 'plaza'));
+  objects.push(festoon(FOUNTAIN.i, FOUNTAIN.j, [[11.3, 12.3], [13.7, 12.3], [11.3, 14.7], [13.7, 14.7], [12.5, 11.55], [12.5, 15.6]], 20, 27));
   objects.push(popcorn(14.1, 15.3));
   objects.push(newsstand(10.7, 15.35));
   // jardins da prefeitura
   for (const ci of [10.5, 11.2, 13.8, 14.5]) objects.push(tree('bush', ci, 9.45, Math.round(ci * 10)));
   objects.push(flagpole(10.85, 9.05, 44), flagpole(14.15, 9.05, 44));
+  // mobiliário: hidrantes e lixeiras nas calçadas, placas de PARE nas esquinas sem semáforo
+  for (const [ti, tj] of [[3, 3], [9, 3], [15, 3], [3, 17], [3, 24], [9, 24], [15, 24], [20, 3], [3, 10]]) objects.push(stopSign(ti + 1.1, tj + 1.1));
+  for (let tj = 4; tj < 29; tj += 3) for (const ti of [4, 16]) if (!occupied(ti, tj) || tileAt(ti, tj) === 'grass') objects.push((tj + ti) % 2 ? hydrant(ti + 0.08, tj + 0.5) : trashBin(ti + 0.08, tj + 0.5));
   // pontes
   objects.push(...bridge(10), ...bridge(24));
   // semáforos
@@ -155,19 +158,39 @@ export function getWorld(): World {
   for (const b of buildings.filter((x) => x.tipo === 'casa')) {
     if (hash2(b.posicao.i, b.posicao.j, 3) < 0.5) continue;
     const i = b.posicao.i + (b.frente === 'i+' ? 0.35 : 1.62), j = b.posicao.j + (b.frente === 'j+' ? 0.35 : 0.4);
+    // quintal do outro lado da rua de uma fachada com letreiro: a copa alta tapava as letras (TERMINAL, DELEGACIA)
+    if (b.frente === 'j+' && signFront(Math.floor(i), b.posicao.j - 2)) continue;
+    if (b.frente === 'i+' && signFront(b.posicao.i - 2, Math.floor(j))) continue;
     objects.push(tree(rnd() < 0.3 ? 'ipeY' : rnd() < 0.5 ? 'round' : 'tall', i, j, b.posicao.i * 77 + b.posicao.j));
   }
 
+  // chão por último: recebe a sombra de contato de tudo que está em pé
+  const ao: AO[] = objects.filter((o) => o.layer === 1 && !o.planned && o.kind !== 'grua').map((o) => {
+    const big = o.group === 'home' || o.group === 'civic' || o.group === 'shop';
+    const tree = o.kind === 'arvore' || o.kind === 'arbusto';
+    return { i0: o.fp[0], j0: o.fp[1], i1: o.fp[2], j1: o.fp[3], s: big ? 0.5 : tree ? 0.42 : 0.3, r: big ? 0.32 : tree ? 0.3 : 0.12 };
+  });
+  const ground = buildGround(lots, ao);
+  const water = ground.water;
+  const waterRows = new Int32Array(WORLD_H + 2);
+  let k = 0;
+  for (let y = 0; y <= WORLD_H + 1; y++) {
+    while (k < water.length && water[k + 1] < y) k += 5;
+    waterRows[y] = k;
+  }
   const byId = new Map(objects.map((o) => [o.id, o]));
   const flags = [
     { x: sx(12.5, 6.87), y: sy(12.5, 6.87, 40 + 34 + 30), big: true, i: 12.5, j: 6.87 },
     { x: sx(10.85, 9.05), y: sy(10.85, 9.05, 44), big: false, i: 10.85, j: 9.05 },
     { x: sx(14.15, 9.05), y: sy(14.15, 9.05, 44), big: false, i: 14.15, j: 9.05 },
+    { x: sx(11.55, 16.3), y: sy(11.55, 16.3, 36), big: true, i: 11.55, j: 16.3 },
   ];
   let fx = 0, fy = 0, fn = 0;
   for (let q = 0; q < ground.fall.length; q += 3) { fx += ground.fall[q]; fy = Math.max(fy, ground.fall[q + 1]); fn++; }
   const fallBottom = { x: fn ? fx / fn : 0, y: fy };
-  cached = { OX, OY, ground, water, waterRows, fall: ground.fall, objects, byId, fountainJet: f.jetBase, signals, flags, craneTop, craneMast, fallBottom, buildTimeMs: performance.now() - t0 };
+  let ty = 1e9; for (let q = 0; q < ground.fall.length; q += 3) ty = Math.min(ty, ground.fall[q + 1]);
+  const fallTop = { x: fallBottom.x, y: ty };
+  cached = { OX, OY, ground, water, waterRows, fall: ground.fall, objects, byId, fountainJet: f.jetBase, signals, flags, craneTop, craneMast, fallBottom, fallTop, buildTimeMs: performance.now() - t0 };
   return cached;
 }
 

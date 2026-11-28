@@ -5,7 +5,7 @@ import { pick, hex, scale, type Ramp, type U32 } from '../color';
 import { E, P } from '../palette';
 import { col, lum, row, signPixel, type Sign } from './kit';
 
-export type VKind = 'car' | 'taxi' | 'police' | 'ambulance' | 'bus' | 'truck';
+export type VKind = 'car' | 'taxi' | 'police' | 'ambulance' | 'bus' | 'truck' | 'moto' | 'bombeiros' | 'manutencao';
 export interface VSprite { spr: Sprite; L: number; W: number; lights: { di: number; dj: number; z: number; kind: 'head' | 'tail' | 'beacon' }[] }
 
 const cache = new Map<string, VSprite>();
@@ -18,6 +18,7 @@ export function vehicleSprite(kind: VKind, color: Ramp, axis: 'i' | 'j', front: 
   const dims: Record<VKind, [number, number, number, number]> = {
     car: [0.62, 0.3, 5.5, 9], taxi: [0.62, 0.3, 5.5, 9], police: [0.64, 0.3, 5.5, 9],
     ambulance: [0.74, 0.34, 11, 12], bus: [1.5, 0.36, 15, 15], truck: [1.1, 0.36, 7, 14],
+    moto: [0.4, 0.12, 4, 5], bombeiros: [1.3, 0.38, 9, 13], manutencao: [0.76, 0.34, 10, 11],
   };
   const [L, W, bodyH, topH] = dims[kind];
   const m = new Model();
@@ -47,11 +48,30 @@ export function vehicleSprite(kind: VKind, color: Ramp, axis: 'i' | 'j', front: 
     if (kind === 'ambulance' && h.face === sideFace && r >= 7 && r <= 9 && Math.abs(c - cols * 0.55) < 3 && (Math.abs(c - cols * 0.55) < 1 || r === 8)) { o.c = hex('#e8343c'); return; }
     o.c = pick(color, k, px, py);
   };
-  // rodas
-  const wheel: Shader = (h, px, py, o) => { o.c = pick(P.black, 0.5 + (h.face === 'T' ? 0.1 : 0), px, py); };
+  // sombra suave no chão
+  box(a0 - 0.08, a1 + 0.08, b0 - 0.06, b1 + 0.1, 0, 0.01, (h, px, py, o) => { o.c = hex('#05050c', 120); });
+  // rodas com calota
+  const wheel: Shader = (h, px, py, o) => { o.c = h.face !== 'T' && col(h) % 3 === 1 && row(h) === 1 ? pick(P.metal, 0.75, px, py) : pick(P.black, 0.5 + (h.face === 'T' ? 0.1 : 0), px, py); };
   const wl = L * 0.32;
   for (const al of [-wl, wl]) box(al - 0.07, al + 0.07, b0 - 0.01, b1 + 0.01, 0, 2.5, wheel);
-  if (kind === 'bus') {
+  if (kind === 'moto') {
+    // moto com piloto de capacete
+    box(a0, a1, -0.03, 0.03, 1.5, 3.5, (h, px, py, o) => { o.c = pick(color, lum(h) + 0.15, px, py); if (h.face === endFace && row(h) === 1) { o.c = front ? hex('#fff8d8') : hex('#ff3b46'); o.e = front ? E.head : E.tail; } });
+    box(-0.06, 0.06, -0.05, 0.05, 3.5, 8, (h, px, py, o) => { o.c = pick(P.blue, lum(h) + 0.1, px, py); });
+    box(-0.05, 0.05, -0.045, 0.045, 8, 10.5, (h, px, py, o) => { o.c = pick(P.red, lum(h) + 0.2, px, py); if (h.face === endFace && row(h) === 1) o.c = pick(P.glass, 0.6, px, py); });
+  } else if (kind === 'bombeiros') {
+    box(a0, a1, b0, b1, 1.5, bodyH, (h, px, py, o) => { const r = row(h); if (h.face === sideFace && r >= 3 && r <= 4) { o.c = hex('#f2f2f2'); return; } if (h.face === endFace && r >= 2 && r <= 3 && (col(h) <= 1 || col(h) >= Math.round(W * 16) - 2)) { o.c = front ? hex('#fff8d8') : hex('#ff3b46'); o.e = front ? E.head : E.tail; return; } o.c = pick(P.red, lum(h) + 0.15 + (r <= 1 ? -0.2 : 0), px, py); });
+    const cab0 = front ? a1 - 0.36 : a0, cab1 = front ? a1 : a0 + 0.36;
+    box(cab0, cab1, b0, b1, bodyH, topH, (h, px, py, o) => { o.c = h.face !== 'T' && row(h) >= 1 ? pick(P.glass, lum(h) + 0.1, px, py) : pick(P.red, lum(h) + 0.1, px, py); });
+    // escada sobre a carroceria
+    box(front ? a0 + 0.05 : a0 + 0.42, front ? a1 - 0.42 : a1 - 0.05, -0.08, 0.08, bodyH, bodyH + 2, (h, px, py, o) => { o.c = col(h) % 3 === 0 || h.face === 'T' ? pick(P.metal, 0.8, px, py) : 0; });
+    box(-0.06, 0.06, b0 + 0.06, b1 - 0.06, topH, topH + 1.5, (h, px, py, o) => { o.c = col(h) % 4 < 2 ? hex('#e8343c') : hex('#ffb12b'); });
+    lights.push({ ...toIJ(front ? a1 - 0.18 : a0 + 0.18, 0), z: topH + 1, kind: 'beacon' });
+  } else if (kind === 'manutencao') {
+    box(a0, a1, b0, b1, 1.5, bodyH, (h, px, py, o) => { const r = row(h), c = col(h); if (h.face === sideFace && r >= 3 && r <= 4) { o.c = (c >> 1) % 2 ? hex('#1b1b24') : hex('#ffd84a'); return; } if (h.face === endFace && r >= 2 && r <= 3 && (c <= 1 || c >= Math.round(W * 16) - 2)) { o.c = front ? hex('#fff8d8') : hex('#ff3b46'); o.e = front ? E.head : E.tail; return; } if (h.face === endFace && r >= 6 && r <= 8 && c > 0 && c < Math.round(W * 16) - 1) { o.c = pick(P.glass, 0.6, px, py); return; } o.c = pick(P.orange, lum(h) + 0.15 + (r <= 1 ? -0.2 : 0), px, py); });
+    box(-0.05, 0.05, -0.05, 0.05, bodyH, bodyH + 1.5, (h, px, py, o) => { o.c = hex('#ffb12b'); });
+    lights.push({ ...toIJ(0, 0), z: bodyH + 1, kind: 'beacon' });
+  } else if (kind === 'bus') {
     box(a0, a1, b0, b1, 1.5, bodyH, (h, px, py, o) => {
       const r = row(h), c = col(h);
       const cols = h.face === endFace ? Math.round(W * 16) : Math.round(L * 16);
